@@ -1,0 +1,13 @@
+# Git
+.gitignore
+.git
+
+# Node
+node_modules/*
+.eslintrc.json
+
+# WebStorm
+.idea
+
+# VSCode
+.vscode/*
