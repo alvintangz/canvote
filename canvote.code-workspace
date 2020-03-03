@@ -1,0 +1,27 @@
+{
+    "folders": [
+        {
+            "name": "Authentication Microservice",
+            "path": "auth-service"
+        },
+        {
+            "name": "Voting Microservice",
+            "path": "voting-service"
+        },
+        {
+            "name": "WebSockets Microservice",
+            "path": "ws-service"
+        },
+        {
+            "name": "Frontend",
+            "path": "frontend"
+        },
+        {
+            "name": "Helm Charts - Deployment",
+            "path": "helm"
+        }
+    ],
+    "settings": {
+        "files.autoSave": "afterDelay"
+    }
+}

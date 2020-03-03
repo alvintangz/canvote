@@ -1,0 +1,16 @@
+# Git
+.gitignore
+.git
+
+# Node
+node_modules/*
+.eslintrc.json
+
+# Gulp
+gulpfile.js
+
+# WebStorm
+.idea
+
+# VSCode
+.vscode/*
