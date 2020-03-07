@@ -1,6 +1,8 @@
 const { gql, makeExecutableSchema } = require("apollo-server-express");
 
 const PoliticalParty = require("./models/politicalParty").PoliticalParties;
+const District = require("./models/district").Districts;
+
 
 const typeDefs = gql`
   type PoliticalParty {
@@ -8,14 +10,25 @@ const typeDefs = gql`
     name: String!
     colour: String!
   }
+
+  type District {
+    id: ID!
+    name: String!
+  }
+
   type Query {
     getPoliticalParties: [PoliticalParty]
     getPoliticalParty(id: ID!): PoliticalParty
+
+    getDistricts: [District]
+    getDistrict(id: ID!): District
   }
   type Mutation {
     addPoliticalParty(name: String!, colour: String!): PoliticalParty
     updatePoliticalParty(id: ID!, name: String!, colour: String!): PoliticalParty
     deletePoliticalParty(id: ID!): PoliticalParty
+
+    addDistrict(name: String!): District
   }
 `;
 
@@ -30,7 +43,18 @@ const resolvers = {
           err ? reject(err) : resolve(res)
         })
       })
-    }
+    },
+    getDistricts: (parent, args) => {
+      return District.find({});
+    },
+    getDistrict: (parent, args) => {
+      return new Promise((resolve, reject) => {
+        District.findById(args.id, (err, res) => {
+          err ? reject(err) : resolve(res)
+        })
+      })
+    },
+
   },
   Mutation: {
     addPoliticalParty: (parent, args) => {
@@ -56,6 +80,17 @@ const resolvers = {
     deletePoliticalParty: (parent, args) => {
       return new Promise((resolve, reject) => {
         PoliticalParty.findByIdAndRemove({_id: args.id}, (err, res) => {
+          err ? reject(err) : resolve(res)
+        })
+      })
+    },
+
+    addDistrict: (parent, args) => {
+      let newDistrict = new District({
+        name: args.name
+      });
+      return new Promise((resolve, reject) => {
+        newDistrict.save((err, res) => {
           err ? reject(err) : resolve(res)
         })
       })
