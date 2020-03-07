@@ -2,7 +2,6 @@ const District = require("./schema").Districts;
 
 
 const addDistrict = (parent, args) => {
-  console.log("in here")
   let newDistrict = new District({
     name: args.name
   });
@@ -25,7 +24,16 @@ const getDistrict = (parent, args) => {
   })
 }
 
-module.exports = { addDistrict, getDistrict, getDistricts }
+const getDistrictByName = (parent, args) => {
+  return new Promise((resolve, reject) => {
+    District.find({name: args.name}, (err, res) => {
+      if (err || res.length == 0) {return reject(err)}
+      return resolve(res)
+    })
+  })
+}
+
+module.exports = { addDistrict, getDistrict, getDistricts, getDistrictByName }
 
 
 // getDistricts: (parent, args) => {
