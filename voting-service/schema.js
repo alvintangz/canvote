@@ -1,8 +1,7 @@
 const { gql, makeExecutableSchema } = require("apollo-server-express");
 
-const PoliticalParty = require("./models/politicalParty").PoliticalParties;
-const District = require("./models/district").Districts;
-
+const DistrictResolver = require('./models/district/resolver')
+const PoliticalPartyResolver = require('./models/politicalParty/resolver')
 
 const typeDefs = gql`
   type PoliticalParty {
@@ -34,67 +33,20 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    getPoliticalParties: (parent, args) => {
-      return PoliticalParty.find({});
-    },
-    getPoliticalParty: (parent, args) => {
-      return new Promise((resolve, reject) => {
-        PoliticalParty.findById(args.id, (err, res) => {
-          err ? reject(err) : resolve(res)
-        })
-      })
-    },
-    getDistricts: (parent, args) => {
-      return District.find({});
-    },
-    getDistrict: (parent, args) => {
-      return new Promise((resolve, reject) => {
-        District.findById(args.id, (err, res) => {
-          err ? reject(err) : resolve(res)
-        })
-      })
-    },
+    getPoliticalParties: PoliticalPartyResolver.getPoliticalParties,
+    getPoliticalParty: PoliticalPartyResolver.getPoliticalParty,
+
+    getDistricts: DistrictResolver.getDistricts,
+    getDistrict: DistrictResolver.getDistrict
 
   },
   Mutation: {
-    addPoliticalParty: (parent, args) => {
-      let newPoliticalParty = new PoliticalParty({
-        name: args.name,
-        colour: args.colour
-      });
-      return new Promise((resolve, reject) => {
-        newPoliticalParty.save((err, res) => {
-          err ? reject(err) : resolve(res)
-        })
-      })
-    },
-    updatePoliticalParty: (parent, args) => {
-      return new Promise((resolve, reject) => {
-        PoliticalParty.findOneAndUpdate({_id: args.id},
-          {$set: {name: args.name, colour: args.colour }}, { new: true },
-          (err, res) => {
-            err ? reject(err) : resolve(res)
-          })
-        })
-    },
-    deletePoliticalParty: (parent, args) => {
-      return new Promise((resolve, reject) => {
-        PoliticalParty.findByIdAndRemove({_id: args.id}, (err, res) => {
-          err ? reject(err) : resolve(res)
-        })
-      })
-    },
+    addPoliticalParty: PoliticalPartyResolver.addPoliticalParty,
+    updatePoliticalParty: PoliticalPartyResolver.updatePoliticalParty,
+    deletePoliticalParty: PoliticalPartyResolver.deletePoliticalParty,
 
-    addDistrict: (parent, args) => {
-      let newDistrict = new District({
-        name: args.name
-      });
-      return new Promise((resolve, reject) => {
-        newDistrict.save((err, res) => {
-          err ? reject(err) : resolve(res)
-        })
-      })
-    }
+    addDistrict: DistrictResolver.addDistrict
+
   }
 };
 
