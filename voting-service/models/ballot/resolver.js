@@ -46,13 +46,5 @@ const getBallotByCandidate = (parent, args) => {
 }
 
 
-// const getVoterByEmail = (parent, args) => {
-//   return new Promise((resolve, reject) => {
-//     Voter.find({email: args.email}, (err, res) => {
-//       if (err || res.length == 0) {return reject(err)}
-//       return resolve(res)
-//     })
-//   })
-// }
 
 module.exports = { addBallot, getBallots, getBallot, getBallotByCandidate }

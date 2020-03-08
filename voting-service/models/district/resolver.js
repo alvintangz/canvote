@@ -36,13 +36,3 @@ const getDistrictByName = (parent, args) => {
 module.exports = { addDistrict, getDistrict, getDistricts, getDistrictByName }
 
 
-// getDistricts: (parent, args) => {
-//   return District.find({});
-// },
-// getDistrict: (parent, args) => {
-//   return new Promise((resolve, reject) => {
-//     District.findById(args.id, (err, res) => {
-//       err ? reject(err) : resolve(res)
-//     })
-//   })
-// }

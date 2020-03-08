@@ -14,18 +14,15 @@ const addVote = (parent, args) => {
       VoterResolver.getVoterByEmail(null, {email: args.voter})
       .then((e) => {
         if (e == null) { return reject({err: "The voter does not exist with this email"}) }
-        console.log("first line is good")
 
         // make sure this voter hasn't already voted
           getVoteByEmail(null, {email: args.voter})
           .then((e) => {
-            console.log("we are good")
               // we can add
               newVote.save((err, res) => {
               err ? reject(err) : resolve(res)
           })})
           .catch((e) => {
-            console.log("in the catch")
             return reject({"err": "This voter has already voted"})
           })
         })   
