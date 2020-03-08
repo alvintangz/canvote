@@ -11,7 +11,7 @@ const addVoter = (parent, args) => {
     email: args.email
   });
   return new Promise((resolve, reject) => {
-    if (!validateEmail(args.email)) { console.log("not valid"); return reject({err: "Email is not valid"})}
+    if (!validateEmail(args.email)) { return reject({err: "Email is not valid"})}
     newVoter.save((err, res) => {
       err ? reject(err) : resolve(res)
     })

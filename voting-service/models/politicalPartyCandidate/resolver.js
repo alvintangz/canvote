@@ -24,15 +24,20 @@ const addPoliticalPartyCandidate = (parent, args) => {
 
     return new Promise((resolve, reject) => {
       // check political party exists
-      PoliticalPartyResolver.getPoliticalPartyByName(null, {name: args.political_party})
+      PoliticalPartyResolver.getPoliticalParty(null, {id: args.political_party})
       .then((e) => {
+        if (e == null) { return reject({err: "The political party does not exist"}) }
+
         // check district exists
-        DistrictResolver.getDistrictByName(null, {name: args.district})        
-        .then(
+        DistrictResolver.getDistrict(null, {id: args.district})        
+        .then((e) => {
+          if (e == null) { return reject({err: "The district does not exist"}) }
+
           // we can add
           newPoliticalPartyCandidate.save((err, res) => {
               err ? reject(err) : resolve(res)
             })          
+          }
         )
         .catch((e) => {
           reject({err: "The district does not exist"})
@@ -47,10 +52,10 @@ const addPoliticalPartyCandidate = (parent, args) => {
 const updatePoliticalPartyCandidate = (parent, args) => {
 
     return new Promise((resolve, reject) => {
-      PoliticalPartyResolver.getPoliticalPartyByName(null, {name: args.political_party})
+      PoliticalPartyResolver.getPoliticalParty(null, {id: args.political_party})
       .then((e) => {
         // check district is good
-        DistrictResolver.getDistrictByName(null, {name: args.district})        
+        DistrictResolver.getDistrict(null, {id: args.district})        
         .then(
           // we can add
           PoliticalPartyCandidate.findOneAndUpdate({_id: args.id},
