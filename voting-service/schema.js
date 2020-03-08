@@ -3,6 +3,7 @@ const { gql, makeExecutableSchema } = require("apollo-server-express");
 const DistrictResolver = require('./models/district/resolver')
 const PoliticalPartyResolver = require('./models/politicalParty/resolver')
 const PoliticalPartyCandidateResolver = require('./models/politicalPartyCandidate/resolver')
+const VoterResolver = require('./models/voter/resolver')
 
 
 const typeDefs = gql`
@@ -17,11 +18,16 @@ const typeDefs = gql`
     name: String!
   }
 
-  type politicalPartyCandidate {
+  type PoliticalPartyCandidate {
     id: ID!
     name: String!
     political_party: String!
     district: String!
+  }
+
+  type Voter {
+    id: ID!
+    email: String!
   }
 
   type Query {
@@ -32,8 +38,11 @@ const typeDefs = gql`
     getDistrict(id: ID!): District
 
     
-    getPoliticalPartyCandidates: [politicalPartyCandidate]
-    getPoliticalPartyCandidate(id: ID!): politicalPartyCandidate
+    getPoliticalPartyCandidates: [PoliticalPartyCandidate]
+    getPoliticalPartyCandidate(id: ID!): PoliticalPartyCandidate
+
+    getVoters: [Voter]
+    getVoter(id: ID!): Voter
 
   }
   type Mutation {
@@ -43,9 +52,12 @@ const typeDefs = gql`
 
     addDistrict(name: String!): District
 
-    addPoliticalPartyCandidate(name: String!, political_party: String!, district: String!): politicalPartyCandidate
-    updatePoliticalPartyCandidate(id: ID!, name: String!, political_party: String!, district: String!): politicalPartyCandidate
-    deletePoliticalPartyCandidate(id: ID!): politicalPartyCandidate
+    addPoliticalPartyCandidate(name: String!, political_party: String!, district: String!): PoliticalPartyCandidate
+    updatePoliticalPartyCandidate(id: ID!, name: String!, political_party: String!, district: String!): PoliticalPartyCandidate
+    deletePoliticalPartyCandidate(id: ID!): PoliticalPartyCandidate
+
+    addVoter(email: String!): Voter
+
   }
 `;
 
@@ -58,7 +70,10 @@ const resolvers = {
     getDistrict: DistrictResolver.getDistrict,
 
     getPoliticalPartyCandidates: PoliticalPartyCandidateResolver.getPoliticalPartyCandidates,
-    getPoliticalPartyCandidate: PoliticalPartyCandidateResolver.getPoliticalPartyCandidate
+    getPoliticalPartyCandidate: PoliticalPartyCandidateResolver.getPoliticalPartyCandidate,
+
+    getVoters: VoterResolver.getVoters,
+    getVoter: VoterResolver.getVoter
 
   },
   Mutation: {
@@ -70,7 +85,9 @@ const resolvers = {
 
     addPoliticalPartyCandidate: PoliticalPartyCandidateResolver.addPoliticalPartyCandidate,
     updatePoliticalPartyCandidate: PoliticalPartyCandidateResolver.updatePoliticalPartyCandidate,
-    deletePoliticalPartyCandidate: PoliticalPartyCandidateResolver.deletePoliticalPartyCandidate
+    deletePoliticalPartyCandidate: PoliticalPartyCandidateResolver.deletePoliticalPartyCandidate,
+
+    addVoter: VoterResolver.addVoter
 
   }
 };
