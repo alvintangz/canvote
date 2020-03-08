@@ -1,5 +1,7 @@
 # CanVote: Authentication Microservice :lock:
 
+[![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
+
 The Authentication Microservice is a service the manages user resources through RESTful and action endpoints, as well as carry out authentication for all users of the platform. As the goal of the microservices is to solely focusing on doing what they do best, stateful sessions provides barriers and thus stateless JWT tokens are issued from this service. 
 
 This service utilizes [:zap: FastAPI](https://github.com/tiangolo/fastapi), a modern, fast Python web framework that takes advantages of other great existing Python packages such as [Pydantic](https://github.com/samuelcolvin/pydantic/) and [Starlette](https://github.com/encode/starlette). It already comes with support for [OpenAPI Specification](https://github.com/OAI/OpenAPI-Specification) generation with Swagger and ReDoc. Thanks [tiangolo](https://github.com/tiangolo) :smile:
