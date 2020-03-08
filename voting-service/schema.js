@@ -5,6 +5,8 @@ const PoliticalPartyResolver = require('./models/politicalParty/resolver')
 const PoliticalPartyCandidateResolver = require('./models/politicalPartyCandidate/resolver')
 const VoterResolver = require('./models/voter/resolver')
 const BallotResolver = require('./models/ballot/resolver')
+const VoteResolver = require('./models/vote/resolver')
+
 
 
 
@@ -38,6 +40,12 @@ const typeDefs = gql`
     timestamp: String
   }
 
+  type Vote {
+    id: ID!
+    voter: String!
+    timestamp: String
+  }
+
   type Query {
     getPoliticalParties: [PoliticalParty]
     getPoliticalParty(id: ID!): PoliticalParty
@@ -56,6 +64,9 @@ const typeDefs = gql`
     getBallot(id: ID!): Ballot
     getBallotByCandidate(candidate: String!): [Ballot]
 
+    getVotes: [Vote]
+    getVote(id: ID!): Vote
+
   }
   type Mutation {
     addPoliticalParty(name: String!, colour: String!): PoliticalParty
@@ -72,7 +83,7 @@ const typeDefs = gql`
 
     addBallot(candidate: String!): Ballot
 
-
+    addVote(voter: String!): Vote
   }
 `;
 
@@ -92,7 +103,10 @@ const resolvers = {
 
     getBallots: BallotResolver.getBallots,
     getBallot: BallotResolver.getBallot,
-    getBallotByCandidate: BallotResolver.getBallotByCandidate
+    getBallotByCandidate: BallotResolver.getBallotByCandidate,
+
+    getVotes: VoteResolver.getVotes,
+    getVote: VoteResolver.getVote,
 
   },
   Mutation: {
@@ -108,7 +122,10 @@ const resolvers = {
 
     addVoter: VoterResolver.addVoter,
 
-    addBallot: BallotResolver.addBallot
+    addBallot: BallotResolver.addBallot,
+
+    addVote: VoteResolver.addVote,
+
 
   }
 };
