@@ -33,7 +33,6 @@ class UserRead(UserBase):
         title="Is Active",
         description="Flag: If the user account is active. Required: Account must be activated."
     )
-    is_locked: bool = Field(..., title="Is Locked", description="Flag: If the user is locked out of their account.")
 
     class Config:
         schema_extra = {
@@ -44,8 +43,7 @@ class UserRead(UserBase):
                 'lastName': 'Sans',
                 'role': 'voter',
                 'isActivated': True,
-                'isActive': True,
-                'isLocked': False
+                'isActive': True
             }
         }
 
@@ -77,10 +75,18 @@ class CurrentUser(UserBase):
 
 
 class UserUpdate(UserBase):
-    id: int = Field(..., description="User's identifier.")
     is_active: bool = Field(
         ...,
         title="Is Active",
         description="Flag: If the user account is active. Required: Account must be activated."
     )
-    is_locked: bool = Field(..., title="Is Locked", description="Flag: If the user is locked out of their account.")
+
+    class Config:
+        schema_extra = {
+            'example': {
+                'email': 'thierry.sans@ubc.ca',
+                'firstName': 'Thierry',
+                'lastName': 'Sans',
+                'isActive': True
+            }
+        }

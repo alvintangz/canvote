@@ -18,7 +18,7 @@ def __send_email(
     html_message: str,
     sender: str
 ) -> bool:
-    logging.info(f'Sending email to { len(recipients) } recipients - ', subject)
+    logging.info(f'Sending email to %d recipients - %s', len(recipients), subject)
     return requests.post(
         f"https://api.mailgun.net/v3/{config.EMAIL_DOMAIN_NAME}/messages",
         auth=("api", config.EMAIL_MAILGUN_API_KEY),
@@ -38,7 +38,11 @@ def send_simple_email(
     paragraph: str,
     sender: str = config.EMAIL_DEFAULT_SENDER
 ) -> bool:
-    html_message = env.get_template('default.html').render(subject=header, message=paragraph)
+    html_message = env.get_template('simple.html').render(
+        subject=header,
+        message=paragraph,
+        logo=f"{config.HOST_BASE_URL}/static/logo.png"
+    )
     return __send_email(recipients, subject, html_message, sender)
 
 
@@ -57,4 +61,4 @@ def send_email_with_button(
         btn_link=btn_link,
         btn_text=btn_text
     )
-    return __send_email(recipients, subject, html_message, sender)
+    return __send_email(recipients, subject, html_message, sender, logo=f"{config.HOST_BASE_URL}/static/logo.png")

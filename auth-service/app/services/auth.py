@@ -14,7 +14,7 @@ def retrieve_user_if_password_matches(db: Session, verify_this: EmailPassword) -
     :param db: The sqlalchemy database session.
     :return: The user.
     """
-    db_user = db.query(User.email == verify_this.email).first()
+    db_user = db.query(User).filter_by(email=verify_this.email).first()
     if db_user and bcrypt.verify(verify_this.password, db_user.hashed_password):
         return db_user
     return None

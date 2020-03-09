@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Body, Depends, Response, HTTPException
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError, DecodeError, InvalidSignatureError
 from sqlalchemy.orm import Session
-from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_204_NO_CONTENT
+from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_204_NO_CONTENT, HTTP_500_INTERNAL_SERVER_ERROR
 
 from app.api.security.utils import CanVoteAuthorizedUser
 from app.core import config
+from app.core.responses import DEFAULT_401, DEFAULT_400
 from app.db.utils import get_db
 from app.enums.auth import OptionalAuthFactor
 from app.schemas import EmailPassword, AuthFactorResponse
@@ -29,10 +30,17 @@ AUTH_ROUTES = {
                 "has another factor of authentication, then set a temporary token and prompt client to other "
                 "factor of authentication. If the e-mail and password is correct and no other factor of authentication "
                 "is required, then set a JWT session token. Other authentication factors include: totp, recognition.",
-    response_description=f'JWT has been set in a SameSite, { "Secure " if config.PRODUCTION else ""}and HttpOnly '
+    response_description=f'A token has been set in a SameSite, { "Secure " if config.PRODUCTION else ""}and HttpOnly '
                          f'cookie with the key set as "{config.JWT_SESSION_COOKIE_NAME}" for '
                          f'{config.JWT_SESSION_MAX_AGE_MINUTES} minutes.',
-    response_model=AuthFactorResponse
+    response_model=AuthFactorResponse,
+    responses={
+        **DEFAULT_400,
+        HTTP_401_UNAUTHORIZED: {
+            'description': "The email and/or password is incorrect. Another reason could be that the account is "
+                           "not active."
+        }
+    }
 )
 def login_first(
     response: Response,
@@ -44,8 +52,25 @@ def login_first(
     """
     db_user = retrieve_user_if_password_matches(db, body)
     if not db_user:
-        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="The email and/or password is incorrect.")
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail="The email and/or password is incorrect. If you have not activated your account, you must do so "
+                   "in order to make a new password."
+        )
+    elif not db_user.is_active:
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail="Your account is disabled. Please contact support."
+        )
+    elif not db_user.is_activated:
+        # Should never reach this case
+        raise HTTPException(
+            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Your account is active but it looks like you haven't been activated. Please contact support."
+        )
+
     # TODO: Check if other authentication method is needed
+    # TODO: SameSite
     response.set_cookie(
         config.JWT_SESSION_COOKIE_NAME,
         value=create_jwt_for_user_session(db_user),
@@ -115,6 +140,7 @@ def login_first(
     description="Logs out a user by removing a stateless JWT cookie.",
     response_description=f'JWT has been removed from the "{ config.JWT_SESSION_COOKIE_NAME }" cookie.',
     status_code=HTTP_204_NO_CONTENT,
+    responses={**DEFAULT_401}
 )
 def logout(current_user=Depends(CanVoteAuthorizedUser())):
     """
@@ -135,7 +161,8 @@ def logout(current_user=Depends(CanVoteAuthorizedUser())):
     responses={
         HTTP_401_UNAUTHORIZED: {
             "description": "JWT token failed validation or the user associated with token is no longer an active user."
-        }
+        },
+        **DEFAULT_400
     }
 )
 def verify(

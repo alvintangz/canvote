@@ -22,7 +22,6 @@ class User(Base):
     last_name = Column('last_name', String, index=True)
     is_activated = Column('is_activated', Boolean(), default=False)
     is_active = Column('is_active', Boolean(), default=False)
-    is_locked = Column('is_locked', Boolean(), default=False)
     role = Column('role', Enum(RoleEnum), index=True)
     # created_by, created_at
 

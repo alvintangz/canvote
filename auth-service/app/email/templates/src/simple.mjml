@@ -8,7 +8,7 @@
     <mj-body background-color="white">
         <mj-section>
         <mj-column>
-            <mj-image width="150px" src="https://i.ibb.co/2d6YnYj/canvote.png"></mj-image>
+            <mj-image width="150px" src="{{ logo }}"></mj-image>
             <mj-divider border-color="#ff0050"></mj-divider>
             <mj-text font-size="20px">{{ subject }}</mj-text>
             <mj-text>

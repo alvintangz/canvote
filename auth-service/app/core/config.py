@@ -5,6 +5,10 @@ from sqlalchemy.engine.url import URL as DB_CONNECTION_URL
 # Opposite to Django's DEBUG mode :)
 PRODUCTION = os.getenv("PRODUCTION", "True") == "True"
 
+# Host Base URL (The base URL of this service)
+
+HOST_BASE_URL = os.getenv("HOST_BASE_URL", "http://localhost:3001")
+
 # Debugging
 # Note: Doesn't matter in PRODUCTION mode as all values are a hard false
 
@@ -59,7 +63,7 @@ PAGE_SIZE_DEFAULT = 25
 
 EMAIL_MAILGUN_API_KEY = os.getenv("EMAIL_MAILGUN_API_KEY")
 EMAIL_DEFAULT_SENDER = os.getenv("EMAIL_DEFAULT_SENDER", "CanVote <no-reply@can-vote.works>")
-EMAIL_DOMAIN_NAME = os.getenv("EMAIL_DOMAIN_NAME", "can-vote.works")
+EMAIL_DOMAIN_NAME = os.getenv("EMAIL_DOMAIN_NAME", "mg.can-vote.works")
 
 # Account activation url
 
@@ -69,5 +73,6 @@ ACCOUNT_ACTIVATION_QUERY_KEY = os.getenv("ACCOUNT_ACTIVATION_QUERY_KEY", "tkn")
 # Administrator's Account
 
 ADMIN_ACCOUNT_EMAIL = os.getenv("ADMIN_ACCOUNT_EMAIL", "admin@can-vote.works")
+ADMIN_ACCOUNT_PASSWORD = os.getenv("ADMIN_ACCOUNT_PASSWORD")
 ADMIN_ACCOUNT_FIRST_NAME = os.getenv("ADMIN_ACCOUNT_FIRST_NAME", "Team")
 ADMIN_ACCOUNT_LAST_NAME = os.getenv("ADMIN_ACCOUNT_FIRST_NAME", "DMA")

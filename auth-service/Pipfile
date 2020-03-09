@@ -22,10 +22,11 @@ psycopg2-binary = "*"
 jinja2 = "*"
 passlib = {extras = ["bcrypt"],version = "*"}
 requests = "*"
+aiofiles = "*"
 
 [requires]
 python_version = "3.7"
 
 [scripts]
 # Not to be run in production - should use gunicorn ontop
-serve-dev = "uvicorn app.main:app --reload --port=3001"
+serve-dev = "uvicorn --log-level=debug --reload --port=3001 app.main:app"

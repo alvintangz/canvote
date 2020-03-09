@@ -10,7 +10,7 @@ engine = create_engine(
 )
 
 # TODO: Scoped session?
-db_session = scoped_session(
+session = scoped_session(
     sessionmaker(autocommit=False, autoflush=False, bind=engine)
 )
 

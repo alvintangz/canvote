@@ -14,7 +14,7 @@ This service utilizes [:zap: FastAPI](https://github.com/tiangolo/fastapi), a mo
 2. [Pipenv](https://github.com/pypa/pipenv): Pipenv is a new packaging tool for Python maintaining packages through a `Pipfile` and creates/manages a virtualenv
 3. One (or both) of the following<sup>*</sup>:
     - [Docker](https://www.docker.com): Desktop, or Engine
-    - [PostgreSQL](https://www.postgresql.org/download/) or [Redis](https://redis.io/download)
+    - [PostgreSQL](https://www.postgresql.org/download/) and [Redis](https://redis.io/download)
 4. [MailGun](https://www.mailgun.com/) API Key
 
 <small>***\*With Docker, you can easily create PostgresSQL and Redis containers on the fly. This is recommended for fast development.***</small>
@@ -32,11 +32,14 @@ Please follow the steps in order.
     $ pipenv shell
     ```
 5. Set up schemas in database: [Run migrations](#run-migrations)
-6. Finally, you can start the development server through Uvicorn running on port `3001`:
+6. Run the following command to set up the initial user:
+    ```bash
+    (auth-service) python3 ./scripts/db_initiate.py
+    ```
+7. Finally, you can start the development server through Uvicorn running on port `3001`:
     ```bash
     (auth-service) pipenv run serve-dev
     ```
-   <small>This should automatically create an administrator account with the e-mail set in the environment variables. It should also send an e-mail to that e-mail address to set up their password and account.</small>
     - Swagger: [http://localhost:3001/api/v1/docs/swagger](http://localhost:3001/api/v1/docs/swagger)
     - ReDoc: [http://localhost:3001/api/v1/docs/redoc](http://localhost:3001/api/v1/docs/redoc)
     - OpenAPI Spec (JSON): [http://localhost:3001/api/v1/docs/openapi.json](http://localhost:3001/api/v1/docs/openapi.json)
@@ -62,6 +65,8 @@ $ docker run -p 5432:5432 --env POSTGRES_PASSWORD=Password@123 -e POSTGRES_USER=
 
 - Production :shipit:
     - `PRODUCTION` - Either `True` or `False`; set to `True` by default. Opposite to Django's `DEBUG` mode.
+- Host Base URL
+    - `HOST_BASE_URL` - Host base URL; set to `http://localhost:3001` by default
 - Timezone :clock2: 
     - `TIMEZONE` - Set to `America/Toronto` by default
 - Database: Should use PostgreSQL; if you set up using [PostgreSQL Setup](#postgresql-setup) instructions, you can skip this.
@@ -82,6 +87,7 @@ $ docker run -p 5432:5432 --env POSTGRES_PASSWORD=Password@123 -e POSTGRES_USER=
     - `ACCOUNT_ACTIVATION_QUERY_KEY` - The query parameters key where the value should be the JWT activation token; set to `tkn` by default
 - Administrator's Account
     - `ADMIN_ACCOUNT_EMAIL` - The admin's email address; set to `admin@can-vote.works` by default
+    - `ADMIN_ACCOUNT_PASSWORD` - The admin's password
     - `ADMIN_ACCOUNT_FIRST_NAME` - The admin's first name; set to `Team` by default
     - `ADMIN_ACCOUNT_LAST_NAME` - The admin's last name; set to `DMA` by default
 
