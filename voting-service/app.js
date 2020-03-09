@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 // const cors = require("cors");
 const { ApolloServer } = require("apollo-server-express");
+require("dotenv").config();
 
 const schema = require('./schema')
 
@@ -19,12 +20,10 @@ const server = new ApolloServer({
 
 server.applyMiddleware({ app });
 
-
-
-
 // Start Server.
-app.listen({ port: 4000 }, () =>
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+let port = process.env.PORT || 3002
+app.listen({ port: port}, () =>
+  console.log(`🚀 Server ready at http://localhost:${port}${server.graphqlPath}`)
 );
 
 
