@@ -80,7 +80,7 @@ $ docker run -p 5432:5432 --env POSTGRES_PASSWORD=Password@123 -e POSTGRES_USER=
     - `JWT_ACTIVATION_SECRET_KEY` - Secret Key used for Activation - only for this service
 - E-mail (via HTTP - not SMTP - using MailGun)
     - `EMAIL_MAILGUN_API_KEY` - API Key from MailGun
-    - `EMAIL_DEFAULT_SENDER` - Default sender for all emails; set to `CanVote <no-reply@can-vote.works>` by default
+    - `EMAIL_DEFAULT_SENDER` - Default sender for all emails; set to `CanVote <no-reply@mg.can-vote.works>` by default
     - `EMAIL_DOMAIN_NAME` - Domain name for sending emails through MailGun; set to `can-vote.works` by default
 - Account Activation URL
     - `ACCOUNT_ACTIVATION_URL` - The front-end URL for activating an account; set to `http://localhost:3000/activate.html` by default

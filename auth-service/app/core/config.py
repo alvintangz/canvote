@@ -62,7 +62,7 @@ PAGE_SIZE_DEFAULT = 25
 # E-mail (via HTTP - not SMTP - using MailGun)
 
 EMAIL_MAILGUN_API_KEY = os.getenv("EMAIL_MAILGUN_API_KEY")
-EMAIL_DEFAULT_SENDER = os.getenv("EMAIL_DEFAULT_SENDER", "CanVote <no-reply@can-vote.works>")
+EMAIL_DEFAULT_SENDER = os.getenv("EMAIL_DEFAULT_SENDER", "CanVote <no-reply@mg.can-vote.works>")
 EMAIL_DOMAIN_NAME = os.getenv("EMAIL_DOMAIN_NAME", "mg.can-vote.works")
 
 # Account activation url
