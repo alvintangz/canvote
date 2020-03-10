@@ -28,6 +28,9 @@ function getAllResolvers(query) {
 
 const server = new ApolloServer({
   schema: schema,
+  formatError: (err) => {
+    return err.message
+  },
   context: ({ req, res }) => {
     let payload = {role: "administrator"};
 
