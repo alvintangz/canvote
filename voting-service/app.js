@@ -1,19 +1,20 @@
-const resolversList = require('./resolversList').resolversList
-const authRoles = require('./authRoles').resolverToRole
+const { resolversList } = require('./resolversList');
+const authRoles = require('./authRoles').resolverToRole;
 
-const express = require("express");
-const bodyParser = require("body-parser");
+const express = require('express');
+const bodyParser = require('body-parser');
 // const cors = require("cors");
-const { ApolloServer } = require("apollo-server-express");
+const { ApolloServer } = require('apollo-server-express');
 const jwt = require('jsonwebtoken');
 
 
-require("dotenv").config();
+require('dotenv').config();
 
-const schema = require('./schema')
+const schema = require('./schema');
 
-const db = require('./db')
-db.on('error', console.error.bind(console, 'MongoDB connection error:'))
+const db = require('./db');
+
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 
 const app = express();
@@ -21,18 +22,16 @@ const app = express();
 app.use(bodyParser.json());
 
 function getAllResolvers(query) {
-  query = query.replace(/[{}]|query|mutation|[()]|"|:/g, " ")
-  queryList = query.split(" ")
-  return queryList.filter((a) => a !== "" && resolversList.includes(a))
+  const queryNew = query.replace(/[{}]|query|mutation|[()]|"|:/g, ' ');
+  const queryList = queryNew.split(' ');
+  return queryList.filter((a) => a !== '' && resolversList.includes(a));
 }
 
 const server = new ApolloServer({
-  schema: schema,
-  formatError: (err) => {
-    return err.message
-  },
+  schema,
+  formatError: (err) => err.message,
   context: ({ req, res }) => {
-    let payload = {role: "administrator"};
+    const payload = { role: 'administrator' };
 
     // jwt.verify('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZXNzaW9uIiwiaWQiOjEsImVtYWlsIjoiYWRtaW5AY2FuLXZvdGUud29ya3MiLCJuYW1lIjp7ImZ1bGwiOiJUZWFtIERNQSIsImZpcnN0IjoiVGVhbSIsImxhc3QiOiJETUEifSwicm9sZSI6ImFkbWluaXN0cmF0b3IiLCJleHAiOjE1ODM3MjQ2MTMsIm5iZiI6MTU4MzcyMjgxM30.-H-D2DAd1DRhbQidkUH4UtSXsrORt1Qq5h8A63qalEQ',
     // process.env.JWT_KEY, (err, decoded) => {
@@ -46,20 +45,15 @@ const server = new ApolloServer({
     // resolvers.forEach(resolver => {
     //   if (!authRoles[payload.role].includes(resolver)) {
     //     return res.status(401).send({err: `${payload.role} is not authenticated for action ${resolver}`})
-    //   }      
+    //   }
     // });
 
-    // if we reach here, we are good    
+    // if we reach here, we are good
   },
 });
 
 server.applyMiddleware({ app });
 
 // Start Server.
-let port = process.env.PORT || 3002
-app.listen({ port: port}, () =>
-  console.log(`🚀 Server ready at http://localhost:${port}${server.graphqlPath}`)
-);
-
-
-
+const port = process.env.PORT || 3002;
+app.listen({ port }, () => console.log(`🚀 Server ready at http://localhost:${port}${server.graphqlPath}`));

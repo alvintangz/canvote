@@ -1,15 +1,16 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+
+const { Schema } = mongoose;
 
 const districtSchema = new Schema(
   {
     name: {
       type: String,
       required: true,
-      unique: true
-    }
-  }
+      unique: true,
+    },
+  },
 );
 
-let Districts = mongoose.model("District", districtSchema);
+const Districts = mongoose.model('District', districtSchema);
 module.exports = { Districts, districtSchema };

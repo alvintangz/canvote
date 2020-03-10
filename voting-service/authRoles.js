@@ -1,25 +1,26 @@
 const resolverToRole = {
-  "administrator": [
-    "getPoliticalPartyCandidates", "getPoliticalPartyCandidate", "addPoliticalPartyCandidate", "updatePoliticalPartyCandidate", "deletePoliticalPartyCandidate",
-    "getPoliticalParties", "getPoliticalParty", "getPoliticalPartyByName", "addPoliticalParty", "updatePoliticalParty", "deletePoliticalParty",
-    "addDistrict", "getDistrict", "getDistricts", "getDistrictByName"
-    
+  administrator: [
+    'getPoliticalPartyCandidates', 'getPoliticalPartyCandidate', 'addPoliticalPartyCandidate', 'updatePoliticalPartyCandidate', 'deletePoliticalPartyCandidate',
+    'getPoliticalParties', 'getPoliticalParty', 'getPoliticalPartyByName', 'addPoliticalParty', 'updatePoliticalParty', 'deletePoliticalParty',
+    'addDistrict', 'getDistrict', 'getDistricts', 'getDistrictByName',
+
 
   ],
-  "electionOfficer": [
-    "addVoter", "getVoters", "getVoter", "getVoterByEmail"
+  electionOfficer: [
+    'addVoter', 'getVoters', 'getVoter', 'getVoterByEmail',
   ],
-  "voter": [
-    "addVote", "addBallot"
+  voter: [
+    'addVote', 'addBallot',
 
-  ]
-}
+  ],
+};
 
-module.exports = { resolverToRole }
+module.exports = { resolverToRole };
 
 
 /*
-Ability for Administrative Officers to create, update and delete Election Officers, political parties, ridings and candidates
+Ability for Administrative Officers to create, update and delete Election Officers,
+political parties, ridings and candidates
 
 Ability for Election Officers to create, update, and delete Voters
 

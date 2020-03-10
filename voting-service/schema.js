@@ -1,13 +1,11 @@
-const { gql, makeExecutableSchema } = require("apollo-server-express");
+const { gql, makeExecutableSchema } = require('apollo-server-express');
 
-const DistrictResolver = require('./models/district/resolver')
-const PoliticalPartyResolver = require('./models/politicalParty/resolver')
-const PoliticalPartyCandidateResolver = require('./models/politicalPartyCandidate/resolver')
-const VoterResolver = require('./models/voter/resolver')
-const BallotResolver = require('./models/ballot/resolver')
-const VoteResolver = require('./models/vote/resolver')
-
-
+const DistrictResolver = require('./models/district/resolver');
+const PoliticalPartyResolver = require('./models/politicalParty/resolver');
+const PoliticalPartyCandidateResolver = require('./models/politicalPartyCandidate/resolver');
+const VoterResolver = require('./models/voter/resolver');
+const BallotResolver = require('./models/ballot/resolver');
+const VoteResolver = require('./models/vote/resolver');
 
 
 const typeDefs = gql`
@@ -129,10 +127,10 @@ const resolvers = {
     addVote: VoteResolver.addVote,
 
 
-  }
+  },
 };
 
 module.exports = makeExecutableSchema({
   typeDefs: [typeDefs],
-  resolvers: resolvers
+  resolvers,
 });

@@ -1,20 +1,21 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+
+const { Schema } = mongoose;
 
 const ballotSchema = new Schema(
   {
     candidate: {
       type: String,
       required: true,
-      unique: false
+      unique: false,
     },
     timestamp: {
       type: Date,
-      default: Date.now
-    }
-  } 
+      default: Date.now,
+    },
+  },
 );
 
 
-let Ballots = mongoose.model("Ballot", ballotSchema);
+const Ballots = mongoose.model('Ballot', ballotSchema);
 module.exports = { Ballots, ballotSchema };

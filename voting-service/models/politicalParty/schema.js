@@ -1,20 +1,21 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+
+const { Schema } = mongoose;
 
 const politicalPartySchema = new Schema(
   {
     name: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
     },
     colour: {
       type: String,
       required: true,
-      unique: true
-    }
-  }
+      unique: true,
+    },
+  },
 );
 
-let PoliticalParties = mongoose.model("PoliticalParty", politicalPartySchema);
+const PoliticalParties = mongoose.model('PoliticalParty', politicalPartySchema);
 module.exports = { PoliticalParties, politicalPartySchema };
