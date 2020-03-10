@@ -35,16 +35,41 @@ const getBallot = (parent, args) => {
 }
 
 const getBallotByCandidate = (parent, args) => {
-  console.log(args)
   return new Promise((resolve, reject) => {
     Ballot.find({candidate: args.candidate}, (err, res) => {
-      console.log(res)
       if (err || res.length == 0) {return reject(err)}
       return resolve(res)
     })
   })
 }
 
+const getBallotByPoliticalParty = (parent, args) => {
+  return new Promise((resolve, reject) => {
+    // get the ballots
+    let result = []
+
+    Ballot.find({}).then((a) => { 
+      // console.log(a)
+      a.forEach((ballot, index) => {
+          // find political party
+          PoliticalPartyCandidateResolver.getPoliticalPartyForCandidate(null, {id: ballot.candidate})
+          .then((e) => {
+              
+                if (e.political_party == args.political_party) { result.push(ballot) }
+                if (index == a.length - 1) {  return resolve(result) }
+          })   
+          .catch((e) => {
+            reject({err: "The candidate does not exist"})      
+          })
+        })
+      })
+      
+    })
+  }      
 
 
-module.exports = { addBallot, getBallots, getBallot, getBallotByCandidate }
+
+
+
+
+module.exports = { addBallot, getBallots, getBallot, getBallotByCandidate, getBallotByPoliticalParty }

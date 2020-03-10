@@ -5,10 +5,7 @@ const addVote = (parent, args) => {
     let newVote = new Vote({
       voter: args.voter
     });
-
-
-
-
+    
     return new Promise((resolve, reject) => {
       // check email exists
       VoterResolver.getVoterByEmail(null, {email: args.voter})

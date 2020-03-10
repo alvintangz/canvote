@@ -15,6 +15,16 @@ const getPoliticalPartyCandidate = (parent, args) => {
   })
 }
 
+const getPoliticalPartyForCandidate = (parent, args) => {
+  return new Promise((resolve, reject) => {
+    PoliticalPartyCandidate.find({_id: args.id}, (err, res) => {
+      // console.log(res[0])
+      err ? reject(err) : resolve({political_party: res[0].political_party})
+      if (err == null) { return reject() }
+    })
+  })
+}
+
 const addPoliticalPartyCandidate = (parent, args) => {
   let newPoliticalPartyCandidate = new PoliticalPartyCandidate({
     name: args.name,
@@ -84,5 +94,5 @@ const deletePoliticalPartyCandidate = (parent, args) => {
 };
 
 
-module.exports = { getPoliticalPartyCandidates, getPoliticalPartyCandidate, addPoliticalPartyCandidate, updatePoliticalPartyCandidate, deletePoliticalPartyCandidate }
+module.exports = { getPoliticalPartyCandidates, getPoliticalPartyCandidate, getPoliticalPartyForCandidate, addPoliticalPartyCandidate, updatePoliticalPartyCandidate, deletePoliticalPartyCandidate }
 

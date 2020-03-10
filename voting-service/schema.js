@@ -63,6 +63,7 @@ const typeDefs = gql`
     getBallots: [Ballot]
     getBallot(id: ID!): Ballot
     getBallotByCandidate(candidate: String!): [Ballot]
+    getBallotByPoliticalParty(political_party: String!): [Ballot]
 
     getVotes: [Vote]
     getVote(id: ID!): Vote
@@ -104,6 +105,7 @@ const resolvers = {
     getBallots: BallotResolver.getBallots,
     getBallot: BallotResolver.getBallot,
     getBallotByCandidate: BallotResolver.getBallotByCandidate,
+    getBallotByPoliticalParty: BallotResolver.getBallotByPoliticalParty,
 
     getVotes: VoteResolver.getVotes,
     getVote: VoteResolver.getVote,

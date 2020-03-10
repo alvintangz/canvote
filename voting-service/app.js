@@ -39,12 +39,12 @@ const server = new ApolloServer({
     // });
 
     // what we essentially do is take the query, parse which resolvers are being called, and see if the role has access to each
-    let resolvers = getAllResolvers(JSON.stringify(req.body))
-    resolvers.forEach(resolver => {
-      if (!authRoles[payload.role].includes(resolver)) {
-        return res.status(401).send({err: `${payload.role} is not authenticated for action ${resolver}`})
-      }      
-    });
+    // let resolvers = getAllResolvers(JSON.stringify(req.body))
+    // resolvers.forEach(resolver => {
+    //   if (!authRoles[payload.role].includes(resolver)) {
+    //     return res.status(401).send({err: `${payload.role} is not authenticated for action ${resolver}`})
+    //   }      
+    // });
 
     // if we reach here, we are good    
   },
