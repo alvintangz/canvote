@@ -1,7 +1,11 @@
 const Ballot = require('./schema').Ballots;
 const PoliticalPartyCandidateResolver = require('../politicalPartyCandidate/resolver');
+const authRoles = require('../../authRoles').resolverToRole;
 
-const addBallot = (parent, args) => {
+
+const addBallot = (parent, args, context) => {
+  if (!authRoles[context.payload.role].includes('addBallot')) throw new Error(`User ${context.payload.role} cannot access resolver addBallot`)
+  
   const newBallot = new Ballot({
     candidate: args.candidate,
   });
@@ -22,22 +26,32 @@ const addBallot = (parent, args) => {
   });
 };
 
-const getBallots = (parent, args) => Ballot.find({});
+const getBallots = (parent, args, context) => {
+  if (!authRoles[context.payload.role].includes('getBallots')) throw new Error(`User ${context.payload.role} cannot access resolver getBallots`)
 
-const getBallot = (parent, args) => new Promise((resolve, reject) => {
+  return Ballot.find({});
+}
+
+const getBallot = (parent, args, context) => new Promise((resolve, reject) => {
+  if (!authRoles[context.payload.role].includes('getBallot')) throw new Error(`User ${context.payload.role} cannot access resolver getBallot`)
+
   Ballot.findById(args.id, (err, res) => {
     err ? reject(err) : resolve(res);
   });
 });
 
-const getBallotByCandidate = (parent, args) => new Promise((resolve, reject) => {
+const getBallotByCandidate = (parent, args, context) => new Promise((resolve, reject) => {
+  if (!authRoles[context.payload.role].includes('getBallotByCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver getBallotByCandidate`)
+
   Ballot.find({ candidate: args.candidate }, (err, res) => {
     if (err || res.length == 0) { return reject(err); }
     return resolve(res);
   });
 });
 
-const getBallotByPoliticalParty = (parent, args) => new Promise((resolve, reject) => {
+const getBallotByPoliticalParty = (parent, args, context) => new Promise((resolve, reject) => {
+  if (!authRoles[context.payload.role].includes('getBallotByPoliticalParty')) throw new Error(`User ${context.payload.role} cannot access resolver getBallotByPoliticalParty`)
+
   // get the ballots
   const result = [];
 

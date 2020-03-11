@@ -1,4 +1,6 @@
 const Voter = require('./schema').Voters;
+const authRoles = require('../../authRoles').resolverToRole;
+
 
 // https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
 function validateEmail(email) {
@@ -6,7 +8,9 @@ function validateEmail(email) {
   return re.test(String(email).toLowerCase());
 }
 
-const addVoter = (parent, args) => {
+const addVoter = (parent, args, context) => {
+  if (!authRoles[context.payload.role].includes('addVoter')) throw new Error(`User ${context.payload.role} cannot access resolver addVoter`)
+
   const newVoter = new Voter({
     email: args.email,
   });
@@ -18,15 +22,22 @@ const addVoter = (parent, args) => {
   });
 };
 
-const getVoters = (parent, args) => Voter.find({});
+const getVoters = (parent, args, context) => { 
+  if (!authRoles[context.payload.role].includes('addBallot')) throw new Error(`User ${context.payload.role} cannot access resolver addBallot`)
+  return Voter.find({})
+}; 
 
-const getVoter = (parent, args) => new Promise((resolve, reject) => {
+const getVoter = (parent, args, context) => new Promise((resolve, reject) => {
+  if (!authRoles[context.payload.role].includes('getVoter')) throw new Error(`User ${context.payload.role} cannot access resolver getVoter`)
+
   Voter.findById(args.id, (err, res) => {
     err ? reject(err) : resolve(res);
   });
 });
 
-const getVoterByEmail = (parent, args) => new Promise((resolve, reject) => {
+const getVoterByEmail = (parent, args, context) => new Promise((resolve, reject) => {
+  if (!authRoles[context.payload.role].includes('getVoterByEmail')) throw new Error(`User ${context.payload.role} cannot access resolver getVoterByEmail`)
+
   Voter.find({ email: args.email }, (err, res) => {
     if (err || res.length == 0) { return reject(err); }
     return resolve(res);

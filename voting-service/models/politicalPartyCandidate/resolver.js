@@ -1,17 +1,27 @@
 const PoliticalPartyCandidate = require('./schema').PoliticalPartyCandidates;
 const PoliticalPartyResolver = require('../politicalParty/resolver');
 const DistrictResolver = require('../district/resolver');
+const authRoles = require('../../authRoles').resolverToRole;
 
 
-const getPoliticalPartyCandidates = (parent, args) => PoliticalPartyCandidate.find({});
+const getPoliticalPartyCandidates = (parent, args, context) => {
+  if (!authRoles[context.payload.role].includes('getPoliticalPartyCandidates')) throw new Error(`User ${context.payload.role} cannot access resolver getPoliticalPartyCandidates`)
 
-const getPoliticalPartyCandidate = (parent, args) => new Promise((resolve, reject) => {
+  return PoliticalPartyCandidate.find({});
+
+}
+
+const getPoliticalPartyCandidate = (parent, args, context) => new Promise((resolve, reject) => {
+  if (!authRoles[context.payload.role].includes('getPoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver getPoliticalPartyCandidate`)
+
   PoliticalPartyCandidate.findById(args.id, (err, res) => {
     err ? reject(err) : resolve(res);
   });
 });
 
-const getPoliticalPartyForCandidate = (parent, args) => new Promise((resolve, reject) => {
+const getPoliticalPartyForCandidate = (parent, args, context) => new Promise((resolve, reject) => {
+  if (!authRoles[context.payload.role].includes('getPoliticalPartyForCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver getPoliticalPartyForCandidate`)
+
   PoliticalPartyCandidate.find({ _id: args.id }, (err, res) => {
     // console.log(res[0])
     err ? reject(err) : resolve({ political_party: res[0].political_party });
@@ -19,7 +29,9 @@ const getPoliticalPartyForCandidate = (parent, args) => new Promise((resolve, re
   });
 });
 
-const addPoliticalPartyCandidate = (parent, args) => {
+const addPoliticalPartyCandidate = (parent, args, context) => {
+  if (!authRoles[context.payload.role].includes('addPoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver addPoliticalPartyCandidate`)
+
   const newPoliticalPartyCandidate = new PoliticalPartyCandidate({
     name: args.name,
     political_party: args.political_party,
@@ -52,7 +64,9 @@ const addPoliticalPartyCandidate = (parent, args) => {
   });
 };
 
-const updatePoliticalPartyCandidate = (parent, args) => new Promise((resolve, reject) => {
+const updatePoliticalPartyCandidate = (parent, args, context) => new Promise((resolve, reject) => {
+  if (!authRoles[context.payload.role].includes('updatePoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver updatePoliticalPartyCandidate`)
+
   PoliticalPartyResolver.getPoliticalParty(null, { id: args.political_party })
     .then((e) => {
       // check district is good
@@ -75,6 +89,8 @@ const updatePoliticalPartyCandidate = (parent, args) => new Promise((resolve, re
 });
 
 const deletePoliticalPartyCandidate = (parent, args) => new Promise((resolve, reject) => {
+  if (!authRoles[context.payload.role].includes('deletePoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver deletePoliticalPartyCandidate`)
+
   PoliticalPartyCandidate.findByIdAndRemove({ _id: args.id }, (err, res) => {
     err ? reject(err) : resolve(res);
   });

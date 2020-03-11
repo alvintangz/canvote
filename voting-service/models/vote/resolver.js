@@ -1,7 +1,10 @@
 const Vote = require('./schema').Votes;
 const VoterResolver = require('../voter/resolver');
+const authRoles = require('../../authRoles').resolverToRole;
 
-const addVote = (parent, args) => {
+const addVote = (parent, args, context) => {
+  if (!authRoles[context.payload.role].includes('addVote')) throw new Error(`User ${context.payload.role} cannot access resolver addVote`)
+
   const newVote = new Vote({
     voter: args.voter,
   });
@@ -29,9 +32,15 @@ const addVote = (parent, args) => {
   });
 };
 
-const getVotes = (parent, args) => Vote.find({});
+const getVotes = (parent, args, context) => {
+  if (!authRoles[context.payload.role].includes('getVotes')) throw new Error(`User ${context.payload.role} cannot access resolver getVotes`)
 
-const getVote = (parent, args) => new Promise((resolve, reject) => {
+  return Vote.find({});
+}
+
+const getVote = (parent, args, context) => new Promise((resolve, reject) => {
+  if (!authRoles[context.payload.role].includes('addBallot')) throw new Error(`User ${context.payload.role} cannot access resolver addBallot`)
+
   Vote.findById(args.id, (err, res) => {
     err ? reject(err) : resolve(res);
   });
