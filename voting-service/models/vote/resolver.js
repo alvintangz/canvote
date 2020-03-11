@@ -46,7 +46,7 @@ const getVote = (parent, args, context) => new Promise((resolve, reject) => {
   });
 });
 
-const getVoteByEmail = (parent, args) => new Promise((resolve, reject) => {
+const getVoteByEmail = (parent, args, context) => new Promise((resolve, reject) => {
   Vote.find({ voter: args.email }, (err, res) => {
     if (err) { return reject(err); }
     if (res.length == 0) { return resolve(res); }

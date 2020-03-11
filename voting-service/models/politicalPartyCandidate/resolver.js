@@ -88,7 +88,7 @@ const updatePoliticalPartyCandidate = (parent, args, context) => new Promise((re
     });
 });
 
-const deletePoliticalPartyCandidate = (parent, args) => new Promise((resolve, reject) => {
+const deletePoliticalPartyCandidate = (parent, args, context) => new Promise((resolve, reject) => {
   if (!authRoles[context.payload.role].includes('deletePoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver deletePoliticalPartyCandidate`)
 
   PoliticalPartyCandidate.findByIdAndRemove({ _id: args.id }, (err, res) => {
