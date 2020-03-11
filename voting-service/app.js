@@ -19,6 +19,8 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 const app = express();
 
+const prod = process.env.PRODUCTION == 1 ? false : true
+
 app.use(bodyParser.json());
 
 function getAllResolvers(query) {
@@ -29,6 +31,8 @@ function getAllResolvers(query) {
 
 const server = new ApolloServer({
   schema,
+  introspection: prod,
+  playground: prod,
   formatError: (err) => err.message,
   context: ({ req, res }) => {
     const payload = { role: 'administrator' };
