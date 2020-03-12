@@ -1,4 +1,4 @@
-# Default values for canvote-chart.
+# Default values for auth-service.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -32,7 +32,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 3001
 
 ingress:
   enabled: false
@@ -65,4 +65,23 @@ tolerations: []
 
 affinity: {}
 
-
+configuration:
+  PRODUCTION:
+  HOST_BASE_URL:
+  TIMEZONE:
+  DATABASE_USERNAME:
+  DATABASE_PASSWORD:
+  DATABASE_HOST:
+  DATABASE_PORT:
+  DATABASE_DB:
+  JWT_SESSION_SECRET_KEY:
+  JWT_ACTIVATION_SECRET_KEY:
+  EMAIL_MAILGUN_API_KEY:
+  EMAIL_DEFAULT_SENDER:
+  EMAIL_DOMAIN_NAME:
+  ACCOUNT_ACTIVATION_URL:
+  ACCOUNT_ACTIVATION_QUERY_KEY:
+  ADMIN_ACCOUNT_EMAIL:
+  ADMIN_ACCOUNT_PASSWORD:
+  ADMIN_ACCOUNT_FIRST_NAME:
+  ADMIN_ACCOUNT_LAST_NAME:

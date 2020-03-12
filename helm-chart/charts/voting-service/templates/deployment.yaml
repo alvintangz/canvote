@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "canvote-chart.fullname" . }}
+  name: {{ include "voting-service.fullname" . }}
   labels:
-    {{- include "canvote-chart.labels" . | nindent 4 }}
+    {{- include "voting-service.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "canvote-chart.selectorLabels" . | nindent 6 }}
+      {{- include "voting-service.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "canvote-chart.selectorLabels" . | nindent 8 }}
+        {{- include "voting-service.selectorLabels" . | nindent 8 }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "canvote-chart.serviceAccountName" . }}
+      serviceAccountName: {{ include "voting-service.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:

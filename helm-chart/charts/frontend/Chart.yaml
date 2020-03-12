@@ -1,6 +1,6 @@
 apiVersion: v2
-name: canvote
-description: Chart for CanVote, a voting platform for a Canadian election designed for CSCC09.
+name: frontend
+description: A Helm chart for Kubernetes
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -18,24 +18,4 @@ version: 0.1.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
-appVersion: 1.0.0
-
-# Maintainers
-maintainers:
-    - name: Alvin Tang
-      email: alvin.tang@mail.utoronto.ca
-      url: https://alvintang.me
-    - name: Dharmik Shah
-    - name: Mikhail Makarov
-
-# Dependencies
-dependencies:
-    # https://github.com/helm/charts/tree/master/stable/nginx-ingress
-    - name: nginx-ingress
-      version: 0.30.0
-      repository: https://kubernetes-charts.storage.googleapis.com/
-    # https://github.com/helm/charts/tree/master/stable/mongodb
-    - name: mongodb
-      version: 7.8.7
-      repository: https://kubernetes-charts.storage.googleapis.com/
-      alias: mongo-voting-1
+appVersion: 1.16.0

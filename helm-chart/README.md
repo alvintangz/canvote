@@ -5,6 +5,7 @@ Deploying CanVote on [Kubernetes](https://kubernetes.io/) with [Helm](https://he
 ## Writing Helm Charts
 
 TODO.
+helm dep update .
 
 ## Deployment
 
