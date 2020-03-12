@@ -17,7 +17,7 @@ class AddUserForm extends React.Component {
 
  handleAddUser(event) {
    console.log("user added: " + this.state.username);
-   //api.signup(this.state.username, this.state.password);
+   //api.addUser(this.state.username);
    event.preventDefault();
  }
 
@@ -28,7 +28,7 @@ class AddUserForm extends React.Component {
          Add user:
          <input type="text" value={this.state.username} onChange={this.handleUsernameChange} />
        </label>
-       <input type="submit" value="Add user" />
+       <input type="submit" value="Add user" className="btn btn-default"/>
      </form>
    );
  }

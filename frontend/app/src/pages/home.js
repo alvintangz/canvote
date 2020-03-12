@@ -27,20 +27,20 @@ class RadioForm extends React.Component {
      <form onSubmit={this.handleSubmit}>
        <div>
          Vote for:
-         <div>
-            Option 1
+         <div className="radio">
             <input type="radio" value="option1" onChange={this.handleVoteChange} checked={this.state.vote === "option1"}/>
+            Option 1
          </div>
-         <div>
-            Option 2
+         <div className="radio">
             <input type="radio" value="option2" onChange={this.handleVoteChange} checked={this.state.vote === "option2"}/>
+            Option 2
          </div>
-         <div>
-            Option 3
+         <div className="radio">
             <input type="radio" value="option3" onChange={this.handleVoteChange} checked={this.state.vote === "option3"}/>
+            Option 3
          </div>
        </div>
-       <button onClick={this.handleVote}>Vote</button>
+       <button onClick={this.handleVote} className="btn btn-primary">Vote</button>
      </form>
    );
  }

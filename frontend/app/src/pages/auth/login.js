@@ -38,14 +38,20 @@ class LoginForm extends React.Component {
     return (
       <form>
         <label>
-          Username:
-          <input type="text" value={this.state.username} onChange={this.handleUsernameChange} />
-          Password:
-          <input type="password" value={this.state.password} onChange={this.handlePasswordChange} />
+          <div className="form-group">
+            Username:
+            <input type="text" value={this.state.username} onChange={this.handleUsernameChange} />
+          </div>
+          <div className="form-group">
+            Password:
+            <input type="password" value={this.state.password} onChange={this.handlePasswordChange} />
+          </div>
         </label>
-        <button onClick={this.handleSignup}>Sign up</button>
-        or
-        <button onClick={this.handleSignin}>Sign in</button>
+        <div className="form-group">
+          <button onClick={this.handleSignup} className="btn btn-default">Sign up</button>
+          or
+          <button onClick={this.handleSignin} className="btn btn-primary">Sign in</button>
+        </div>
       </form>
     );
   }
