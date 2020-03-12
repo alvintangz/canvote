@@ -19,7 +19,6 @@ module.exports = [
       'shared',
       'api',
       'login',
-      'loginform',
     ],
   },
   {

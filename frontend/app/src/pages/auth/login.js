@@ -1,21 +1,34 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-
+ import React from 'react';
+ import ReactDOM from 'react-dom';
+ 
 class LoginForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: ''};
+    this.state = {username: '', password:''};
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleUsernameChange = this.handleUsernameChange.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handleSignup = this.handleSignup.bind(this);
+    this.handleSignin = this.handleSignin.bind(this);
   }
 
-  handleChange(event) {
-    this.setState({value: event.target.value});
+  handleUsernameChange(event) {
+    this.setState({username: event.target.value});
   }
 
-  handleSubmit(event) {
-    alert('A name was submitted: ' + this.state.value);
+  handlePasswordChange(event) {
+    this.setState({password: event.target.value});
+  }
+
+  handleSignup(event) {
+    console.log("signup");
+    //api.signup(this.state.username, this.state.password);
+    event.preventDefault();
+  }
+
+  handleSignin(event) {
+    console.log("signin");
+    //api.signin(this.state.username, this.state.password);
     event.preventDefault();
   }
 
@@ -23,10 +36,14 @@ class LoginForm extends React.Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <label>
-          Name:
-          <input type="text" value={this.state.value} onChange={this.handleChange} />
+          Username:
+          <input type="text" value={this.state.username} onChange={this.handleUsernameChange} />
+          Password:
+          <input type="password" value={this.state.password} onChange={this.handlePasswordChange} />
         </label>
-        <input type="submit" value="Submit" />
+        <button onClick={this.handleSignup}>Sign up</button>
+        or
+        <button onClick={this.handleSignin}>Sign in</button>
       </form>
     );
   }
