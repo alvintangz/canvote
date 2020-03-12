@@ -42,22 +42,6 @@ module.exports = {
           extensions: ['.js', '.jsx'],
         },
       },
-      // {
-      //   test: /\.s[ac]ss$/i,
-      //   use: [
-      //     {
-      //       loader: 'sass-loader',
-      //       options: {
-      //         includePaths: [
-      //           './node_modules',
-      //           './node_modules/wet-boew/node_modules',
-      //           './node_modules/GCWeb/src/variant-default',
-      //         ],
-      //         style: 'compressed',
-      //       },
-      //     },
-      //   ],
-      // },
     ],
   },
   optimization: {

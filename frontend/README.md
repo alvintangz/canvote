@@ -43,9 +43,7 @@ Look at `proxy.config.js` and then look at your console when you go to specific 
 
 ### Stylesheets
 
-All stylesheets live in `app/styles`. Imported styles from `GCWeb`, a Canada.ca theme that uses wet-boew and Bootstrap v3.4.1.
-
-*Note: This may need to be moved over to webpack in order to bundle Glyphicons fonts from Bootstrap v3.4.1.*
+All stylesheets live in `app/styles`. Imported styles from `GCWeb` (a Canada.ca theme), `wet-boew` (a government of Canada Web Framework) and `Bootstrap v3.4.1`.
 
 ## Deployment
 
