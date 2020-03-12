@@ -23,6 +23,7 @@ class LoginForm extends React.Component {
   handleSignup(event) {
     console.log("signup");
     //api.signup(this.state.username, this.state.password);
+    window.location.href="/admin.html";
     event.preventDefault();
   }
 
@@ -35,7 +36,7 @@ class LoginForm extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form>
         <label>
           Username:
           <input type="text" value={this.state.username} onChange={this.handleUsernameChange} />

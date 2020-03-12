@@ -19,4 +19,8 @@ module.exports = [
     name: 'home',
     path: 'pages/home.js',
   },
+  {
+    name: 'admin',
+    path: 'pages/admin.js',
+  },
 ];

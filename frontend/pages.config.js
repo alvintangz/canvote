@@ -28,4 +28,11 @@ module.exports = [
       'home',
     ],
   },
+  {
+    htmlFile: 'admin.html',
+    scripts: [
+      'shared',
+      'admin',
+    ],
+  },
 ];
