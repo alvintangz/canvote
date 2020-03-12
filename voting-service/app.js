@@ -1,33 +1,22 @@
 const { resolversList } = require('./resolversList');
-const authRoles = require('./authRoles').resolverToRole;
 
 const express = require('express');
 const bodyParser = require('body-parser');
-// const cors = require("cors");
 const { ApolloServer, AuthenticationError } = require('apollo-server-express');
 const jwt = require('jsonwebtoken');
-
 
 require('dotenv').config();
 
 const schema = require('./schema');
-
 const db = require('./db');
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
 
 const app = express();
 
 const prod = process.env.PRODUCTION == 1 ? false : true
 
 app.use(bodyParser.json());
-
-function getAllResolvers(query) {
-  const queryNew = query.replace(/[{}]|query|mutation|[()]|"|:/g, ' ');
-  const queryList = queryNew.split(' ');
-  return queryList.filter((a) => a !== '' && resolversList.includes(a));
-}
 
 const server = new ApolloServer({
   schema,
