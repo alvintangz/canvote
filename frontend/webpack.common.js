@@ -29,7 +29,7 @@ module.exports = {
         // https://github.com/babel/babel-loader/blob/master/README.md
         // Babel Presets in babel configuration file (.babelrc) - includes a react preset
         // Note: "use strict" is added upon by babel
-        test: /\.(js|jsx)$/,
+        test: /\.(js|jsx|ts|tsx)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -39,7 +39,7 @@ module.exports = {
             path.resolve(__dirname, 'components'),
             path.resolve('node_modules'),
           ],
-          extensions: ['.js', '.jsx'],
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
         },
       },
     ],
