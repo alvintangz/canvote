@@ -34,7 +34,7 @@ Please follow the steps in order.
 5. Set up schemas in database: [Run migrations](#run-migrations)
 6. Run the following command to set up the initial user:
     ```bash
-    (auth-service) python3 ./scripts/db_initiate.py
+    (auth-service) PYTHONPATH=. python ./scripts/db_initiate.py
     ```
 7. Finally, you can start the development server through Uvicorn running on port `3001`:
     ```bash
@@ -107,7 +107,7 @@ $ PYTHONPATH=. alembic revision --autogenerate -m "<Message Here>"
 Run migrations to update the state of a database's schema.
 
 ```bash
-PYTHONPATH=. alembic upgrade head
+$ (auth-service) PYTHONPATH=. alembic upgrade head
 ```
 
 ### E-mail Templating
