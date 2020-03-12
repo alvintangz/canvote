@@ -13,4 +13,19 @@ module.exports = [
       'babe',
     ],
   },
+  {
+    htmlFile: 'auth/login.html',
+    scripts: [
+      'shared',
+      'api',
+      'login',
+      'loginform',
+    ],
+  },
+  {
+    htmlFile: 'home.html',
+    scripts: [
+      'shared',
+    ],
+  },
 ];
