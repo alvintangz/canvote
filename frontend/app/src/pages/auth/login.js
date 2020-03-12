@@ -1,6 +1,6 @@
  import React from 'react';
  import ReactDOM from 'react-dom';
- 
+
 class LoginForm extends React.Component {
   constructor(props) {
     super(props);
@@ -29,6 +29,7 @@ class LoginForm extends React.Component {
   handleSignin(event) {
     console.log("signin");
     //api.signin(this.state.username, this.state.password);
+    window.location.href="/home.html";
     event.preventDefault();
   }
 

@@ -15,7 +15,6 @@ let api = (function(){
           .catch(function (error) {
             console.log(error);
           });
-        this.onlogin(username, password);
     }
 
     module.signin = function(username, password) {
@@ -36,7 +35,6 @@ let api = (function(){
             // always executed
         });
 
-        this.onlogin(username, password);
     }
 
     

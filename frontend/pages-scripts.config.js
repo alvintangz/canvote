@@ -15,4 +15,8 @@ module.exports = [
     name: 'login',
     path: 'pages/auth/login.js',
   },
+  {
+    name: 'home',
+    path: 'pages/home.js',
+  },
 ];

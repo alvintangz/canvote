@@ -25,6 +25,7 @@ module.exports = [
     htmlFile: 'home.html',
     scripts: [
       'shared',
+      'home',
     ],
   },
 ];
