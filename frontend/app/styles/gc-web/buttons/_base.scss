@@ -1,0 +1,15 @@
+/*
+ WET button overwrites
+ */
+
+body {
+	.btn-primary {
+		background-color: $accent-blue;
+		border-color: $accent-blue;
+	}
+}
+
+.btn {
+	font-family: Lato, sans-serif; // same font as %defaults-alternative-font-family
+}
+

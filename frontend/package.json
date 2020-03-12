@@ -10,7 +10,6 @@
   },
   "author": "Dharmik Shah; Alvin Tang; Mikhail Makarov",
   "dependencies": {
-    "GCWeb": "git://github.com/alvintangz/GCWeb.git#canvote",
     "axios": "^0.19.2",
     "bootstrap-sass": "^3.4.1",
     "react": "^16.13.0",

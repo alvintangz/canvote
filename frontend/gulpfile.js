@@ -34,7 +34,6 @@ const compileSassIntoMemory = () => gulp.src('./app/styles/**/*.scss')
     includePaths: [
       './node_modules',
       './node_modules/wet-boew/node_modules',
-      './node_modules/GCWeb/src/variant-default',
     ],
     style: 'compressed',
   }).on('error', sass.logError))
