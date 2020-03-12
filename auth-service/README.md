@@ -107,7 +107,7 @@ $ PYTHONPATH=. alembic revision --autogenerate -m "<Message Here>"
 Run migrations to update the state of a database's schema.
 
 ```bash
-$ (auth-service) PYTHONPATH=. alembic upgrade head
+$ PYTHONPATH=. alembic upgrade head
 ```
 
 ### E-mail Templating
