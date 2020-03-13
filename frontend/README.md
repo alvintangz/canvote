@@ -1,50 +1,44 @@
-# CanVote: Frontend :page_facing_up:
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-The frontend of CanVote. It should serve files 
-It utilizes [GulpJS](https://gulpjs.com/) and [Webpack](https://webpack.js.org/) to build, and with [Browser Sync](https://browsersync.io/) to serve the project.
+## Available Scripts
 
-## Install
+In the project directory, you can run:
 
-You will need [node](https://nodejs.org/en/) with npm. When you have it, install all dependencies.
+### `yarn start`
 
-```shell script
-npm install
-```
+Runs the app in the development mode.<br />
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-*Note that you may see a message from npm about 2 vulnerabilities. You can safely ignore this message as this project does not utilize jQuery which is a dependency of GCWeb.*
+The page will reload if you make edits.<br />
+You will also see any lint errors in the console.
 
-## Development
+### `yarn test`
 
-### Start Development Server
+Launches the test runner in the interactive watch mode.<br />
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-Run the npm script below and then head over to [http://localhost:3000](http://localhost:3000). [http://localhost:2999](http://localhost:2999) is where you'll have access to Browser Sync UI.
+### `yarn build`
 
-```shell script
-npm run serve:dev
-```
+Builds the app for production to the `build` folder.<br />
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-In addition to starting the development server, you should start all other required microservices. Learn more about [proxying](#proxying) here.
+The build is minified and the filenames include the hashes.<br />
+Your app is ready to be deployed!
 
-With [Browser Sync](https://browsersync.io/) and middleware such as Webpack Dev Middleware, any changes to `app/styles`, `app/assets`, `app/html`, and `app/js` may restart your browser.
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### Developing with JavaScript
+### `yarn eject`
 
-This project utilizes [Webpack](https://webpack.js.org/) to bundle JavaScript and JSX into separate JavaScript files. As such, you can define all JavaScript entry points in `pages-scripts.config.js` for easy bundling. This allows specific JavaScript to be bundled together, separating page specific JavaScript in one JavaScript file and another in another file. Also note to set specific JavaScript entry points for each HTML page in `pages.config.js` which will then be injected into specified HTML files.
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-In `app/src`, you should see:
-- `/api` - API to backend microservices live here
-- `/components` - React components, which may use JS from `/api`
-- `/pages` - Page specific JavaScript files which can import React components or api functions from `/api`
-- `shared.jsx` - JSX that should be shared with all HTML files. For example, it contains JavaScript and JSX for header and footer
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-### Proxying
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-Look at `proxy.config.js` and then look at your console when you go to specific URLs. Proxying has been done via `http-proxy-middleware` in gulpfile.
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-### Stylesheets
+## Learn More
 
-All stylesheets live in `app/styles`. Imported styles from `GCWeb` (a Canada.ca theme), `wet-boew` (a government of Canada Web Framework) and `Bootstrap v3.4.1`.
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-## Deployment
-
-TODO.
+To learn React, check out the [React documentation](https://reactjs.org/).

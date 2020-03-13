@@ -1,0 +1,24 @@
+/**
+ * CanVote Frontend Theme
+ * Thanks to the folks at the Government of Canada for creating GCWeb.
+ * Uses the Web Experience Toolkit (WET) v4.0.32 and Bootstrap (SASS v3.4.1)
+ * MIT License: https://github.com/wet-boew/GCWeb/blob/v6.0/License-en.txt
+ */
+
+// GCWeb variables
+@import "gc-web/variables";
+
+// Custom variables
+@import "variables";
+
+// Bootstrap
+@import "wet-boew/base/bootstrap";
+
+// WET Core
+@import "wet-boew/base/wet-boew";
+
+// GCWeb Theme
+@import "gc-web/defaults";
+
+// Import custom SCSS for CanVote
+@import "custom";
