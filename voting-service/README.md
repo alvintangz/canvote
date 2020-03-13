@@ -33,7 +33,7 @@ Let's set up a admin user. The admin user is allowed to define other users. We w
 ```bash
 docker exec -it $(docker ps -aqf 'name=canvote-vote') bash
 
-root@51f5158c4fae:/\# mongo --port 27017 --authenticationDatabase "admin" -u "mongoadmin" -p "secret"
+root@51f5158c4fae:/ mongo --port 27017 --authenticationDatabase "admin" -u "mongoadmin" -p "secret"
 
 > use c09
 
