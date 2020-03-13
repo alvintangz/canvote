@@ -1,0 +1,23 @@
+<mjml>
+    <mj-head>
+        <mj-attributes>
+            <mj-all font-family="Lato, Arial, Helvetica" />
+            <mj-text padding-bottom="0" />
+        </mj-attributes>
+    </mj-head>
+    <mj-body background-color="white">
+        <mj-section>
+            <mj-column>
+                <mj-image width="150px" src="{{ logo }}"></mj-image>
+                <mj-divider border-color="#ff0050"></mj-divider>
+                <mj-text font-size="20px">{{ subject }}</mj-text>
+                <mj-text>
+                    <p>{{ message }}</p>
+                </mj-text>
+                <mj-button background-color="#ff0050" color="white" href="{{ btn_link }}">
+                    {{ btn_text }}
+                </mj-button>
+            </mj-column>
+        </mj-section>
+    </mj-body>
+</mjml>
