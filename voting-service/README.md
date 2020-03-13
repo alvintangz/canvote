@@ -102,7 +102,10 @@ ADMIN_ACCOUNT_PASSWORD=Password@123
 Start the `auth-service`, then run from the ```voting-service``` directory:
 
 ```bash
-curl -X POST "http://localhost:3001/api/v1/auth/login/first" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"email\":\"admin@can-vote.works\",\"password\":\"Password@123\"}" -c cookie.txt
+curl -X POST "http://localhost:3001/api/v1/auth/login/first" \
+    -H "accept: application/json" -H "Content-Type: application/json" \
+    -d "{\"email\":\"admin@can-vote.works\",\"password\":\"Password@123\"}" \
+    -c cookie.txt
 ```
 
 This logs in the admin user, and stores their cookie in `cookie.txt` (with the information that they are an admin)
@@ -114,7 +117,10 @@ Now it is time to run the voting service.
 run ```npm run serve:dev```, and you should see a `Connected to db` output in the console. Then run
 
 ```bash
-curl -v  -X POST -H "Content-Type: application/json" --data '{ "query": "{ getDistricts { id } }" }' http://localhost:3002/graphql -b cookie.txt
+curl -v -X POST http://localhost:3002/graphql \
+    -H "Content-Type: application/json" \
+    --data '{ "query": "{ getDistricts { id } }" }' \
+    -b cookie.txt
 ```
 
 Notice how we are passing our `cookie.txt` that we got from the `auth-service`.
