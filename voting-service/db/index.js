@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-console.log(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DATABASE}`)
+
 mongoose
   .connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DATABASE}`, {
     useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true, user: `${process.env.MONGO_USERNAME}`, pass: `${process.env.MONGO_PASSWORD}`,

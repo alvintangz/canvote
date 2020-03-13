@@ -23,7 +23,7 @@ externalViewer: [
   'deletePoliticalPartyCandidate', 'getBallotByCandidate', 'getBallots', 'getDistrict',
   'getDistrictByName', 'getDistricts', 'getPoliticalParty', 'getPoliticalPartyByName',
   'getPoliticalPartyCandidate', 'getVoter', 'getVoterByEmail', 'getVoters',
-  'updatePoliticalParty', 'updatePoliticalPartyCandidate', 'addVote', 'getBallot'
+  'updatePoliticalParty', 'updatePoliticalPartyCandidate', 'addVote', 'getBallot',
 ],
 */
 

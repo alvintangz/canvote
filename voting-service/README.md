@@ -29,11 +29,11 @@ docker run -d --name canvote-vote \
 ```
 This will spin up a docker container with is accessed from our application using port 2000.
 
-Let's set up a admin user. The admin user is allowed to define other users. We will define a user "username" with password "password" that is the owner of the "c09" database. You can change the "username" and "password" fields.
+Let's set up a admin user. The admin user is allowed to define other users. We will define a user `"username"` with password `"password"` that is the owner of the `"c09"` database. You can change the "username" and "password" fields.
 ```bash
 docker exec -it $(docker ps -aqf 'name=canvote-vote') bash
 
-root@51f5158c4fae:/# mongo --port 27017 --authenticationDatabase "admin" -u "mongoadmin" -p "secret"
+root@51f5158c4fae:/\# mongo --port 27017 --authenticationDatabase "admin" -u "mongoadmin" -p "secret"
 
 > use c09
 
@@ -44,8 +44,6 @@ root@51f5158c4fae:/# mongo --port 27017 --authenticationDatabase "admin" -u "mon
     roles: [ { role: "dbOwner", db: "c09" }]
   }
 )
-
-// you could set "username" and "password" to what you want
 
 > exit
 > exit
@@ -103,7 +101,9 @@ ADMIN_ACCOUNT_PASSWORD=Password@123
 
 Start the `auth-service`, then run from the ```voting-service``` directory:
 
-```curl -X POST "http://localhost:3001/api/v1/auth/login/first" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"email\":\"admin@can-vote.works\",\"password\":\"Password@123\"}" -c cookie.txt```
+```bash
+curl -X POST "http://localhost:3001/api/v1/auth/login/first" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"email\":\"admin@can-vote.works\",\"password\":\"Password@123\"}" -c cookie.txt
+```
 
 This logs in the admin user, and stores their cookie in `cookie.txt` (with the information that they are an admin)
 
@@ -111,11 +111,15 @@ This logs in the admin user, and stores their cookie in `cookie.txt` (with the i
 
 Now it is time to run the voting service. 
 
-run ```npm run serve:dev```, and you should see a `Connected to db` output.
+run ```npm run serve:dev```, and you should see a `Connected to db` output in the console. Then run
 
-```curl -v  -X POST -H "Content-Type: application/json" --data '{ "query": "{ getDistricts { id } }" }' http://localhost:3002/graphql -b cookie.txt```
+```bash
+curl -v  -X POST -H "Content-Type: application/json" --data '{ "query": "{ getDistricts { id } }" }' http://localhost:3002/graphql -b cookie.txt
+```
 
-You will get `{"data":{"getDistricts":[]}}` back, since there is no data, but it works.
+Notice how we are passing our `cookie.txt` that we got from the `auth-service`.
+
+You will get the response `{"data":{"getDistricts":[]}}`, since there is no data in the , but it works.
 
 Now, navigate to `http://localhost:3002/graphql` and try entering the query:
 ```
@@ -125,9 +129,25 @@ Now, navigate to `http://localhost:3002/graphql` and try entering the query:
   }
 }
 ```
-in the box. There is **no cookie** yet. After you hit play, the message back is `"User externalViewer cannot access resolver getDistricts"`. Since our resolvers have protected access, meaning that only certain roles can access certain methods, the role `externalViewer`, meaning someone who is not logged in, does not have access to this resolver.
+There is **no cookie** on the frontend yet (WIP). After you hit play, the message back is `"User externalViewer cannot access resolver getDistricts"`. Since our resolvers have protected access, meaning that only certain roles can access certain methods, the role `externalViewer`, meaning someone who is not logged in, does not have access to this resolver.
 
 **For testing purposes**, look at `authRoles.js` on how to allow `externalViewer` access to everything.
+
+Play around with it. There is a docs tab on the right that shows you what is supported.
+
+Just remember that anything that is a `mutation` must be surrounded with that tag. For example:
+
+```
+mutation {
+  addPoliticalParty(name:"pol1", colour: "red") {
+    id
+    name
+    colour
+  }
+}
+```
+
+If you want to actually see this in the database, go back to your docker container and run `mongo --port 27017 --authenticationDatabase "c09" -u "username" -p "password"`
 
 ## Deployment
 
