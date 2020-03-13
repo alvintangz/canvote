@@ -15,20 +15,20 @@ const addVoter = (parent, args, context) => {
     email: args.email,
   });
   return new Promise((resolve, reject) => {
-    if (!validateEmail(args.email)) { return reject({ err: 'Email is not valid' }); }
+    if (!validateEmail(args.email)) throw new Error('Email is not valid');
     newVoter.save((err, res) => {
       err ? reject(err) : resolve(res);
     });
   });
 };
 
-const getVoters = (parent, args, context) => { 
-  if (!authRoles[context.payload.role].includes('addBallot')) throw new Error(`User ${context.payload.role} cannot access resolver addBallot`)
-  return Voter.find({})
-}; 
+const getVoters = (parent, args, context) => {
+  if (!authRoles[context.payload.role].includes('addBallot')) throw new Error(`User ${context.payload.role} cannot access resolver addBallot`);
+  return Voter.find({});
+};
 
 const getVoter = (parent, args, context) => new Promise((resolve, reject) => {
-  if (!authRoles[context.payload.role].includes('getVoter')) throw new Error(`User ${context.payload.role} cannot access resolver getVoter`)
+  if (!authRoles[context.payload.role].includes('getVoter')) throw new Error(`User ${context.payload.role} cannot access resolver getVoter`);
 
   Voter.findById(args.id, (err, res) => {
     err ? reject(err) : resolve(res);
@@ -36,10 +36,10 @@ const getVoter = (parent, args, context) => new Promise((resolve, reject) => {
 });
 
 const getVoterByEmail = (parent, args, context) => new Promise((resolve, reject) => {
-  if (!authRoles[context.payload.role].includes('getVoterByEmail')) throw new Error(`User ${context.payload.role} cannot access resolver getVoterByEmail`)
+  if (!authRoles[context.payload.role].includes('getVoterByEmail')) throw new Error(`User ${context.payload.role} cannot access resolver getVoterByEmail`);
 
   Voter.find({ email: args.email }, (err, res) => {
-    if (err || res.length == 0) { return reject(err); }
+    if (err || res.length === 0) { return reject(err); }
     return resolve(res);
   });
 });

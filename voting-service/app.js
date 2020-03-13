@@ -1,9 +1,10 @@
-const { resolversList } = require('./resolversList');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const { ApolloServer, AuthenticationError } = require('apollo-server-express');
 const jwt = require('jsonwebtoken');
+// const { resolversList } = require('./resolversList');
 
 require('dotenv').config();
 
@@ -14,40 +15,28 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 const app = express();
 
-const prod = process.env.PRODUCTION == 1 ? false : true
+const prod = parseInt(process.env.PRODUCTION, 10) !== 1;
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 const server = new ApolloServer({
   schema,
   introspection: prod,
   playground: prod,
   formatError: (err) => err.message,
-  context: ({ req, res }) => {
-    
-    const payload = { role: 'administrator' };
+  context: ({ req }) => {
+    let payload = { role: 'externalViewer' };
+    // some endpoints don't need cookies
+    if (!req.cookies['cv.token']) return { payload };
 
-    if (payload.role.length == 0) {
-      throw new AuthenticationError("You must be logged in");
-    }
-    return {payload};
+    jwt.verify(req.cookies['cv.token'],
+      process.env.JWT_SECRET_KEY, (err, decoded) => {
+        if (err) throw new AuthenticationError('The jwt token is not valid');
+        if (decoded) payload = decoded;
+      });
 
-    // jwt.verify('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZXNzaW9uIiwiaWQiOjEsImVtYWlsIjoiYWRtaW5AY2FuLXZvdGUud29ya3MiLCJuYW1lIjp7ImZ1bGwiOiJUZWFtIERNQSIsImZpcnN0IjoiVGVhbSIsImxhc3QiOiJETUEifSwicm9sZSI6ImFkbWluaXN0cmF0b3IiLCJleHAiOjE1ODM3MjQ2MTMsIm5iZiI6MTU4MzcyMjgxM30.-H-D2DAd1DRhbQidkUH4UtSXsrORt1Qq5h8A63qalEQ',
-    // process.env.JWT_KEY, (err, decoded) => {
-    //   console.log(req);
-    //   if (err) { res.status(500).send({err: "You must be authenticated first"})}
-    //   payload = decoded;
-    // });
-
-    // what we essentially do is take the query, parse which resolvers are being called, and see if the role has access to each
-    // let resolvers = getAllResolvers(JSON.stringify(req.body))
-    // resolvers.forEach(resolver => {
-    //   if (!authRoles[payload.role].includes(resolver)) {
-    //     return res.status(401).send({err: `${payload.role} is not authenticated for action ${resolver}`})
-    //   }
-    // });
-
-    // if we reach here, we are good
+    return { payload };
   },
 });
 

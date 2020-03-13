@@ -5,14 +5,13 @@ const authRoles = require('../../authRoles').resolverToRole;
 
 
 const getPoliticalPartyCandidates = (parent, args, context) => {
-  if (!authRoles[context.payload.role].includes('getPoliticalPartyCandidates')) throw new Error(`User ${context.payload.role} cannot access resolver getPoliticalPartyCandidates`)
+  if (!authRoles[context.payload.role].includes('getPoliticalPartyCandidates')) throw new Error(`User ${context.payload.role} cannot access resolver getPoliticalPartyCandidates`);
 
   return PoliticalPartyCandidate.find({});
-
-}
+};
 
 const getPoliticalPartyCandidate = (parent, args, context) => new Promise((resolve, reject) => {
-  if (!authRoles[context.payload.role].includes('getPoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver getPoliticalPartyCandidate`)
+  if (!authRoles[context.payload.role].includes('getPoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver getPoliticalPartyCandidate`);
 
   PoliticalPartyCandidate.findById(args.id, (err, res) => {
     err ? reject(err) : resolve(res);
@@ -20,7 +19,7 @@ const getPoliticalPartyCandidate = (parent, args, context) => new Promise((resol
 });
 
 const getPoliticalPartyForCandidate = (parent, args, context) => new Promise((resolve, reject) => {
-  if (!authRoles[context.payload.role].includes('getPoliticalPartyForCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver getPoliticalPartyForCandidate`)
+  if (!authRoles[context.payload.role].includes('getPoliticalPartyForCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver getPoliticalPartyForCandidate`);
 
   PoliticalPartyCandidate.find({ _id: args.id }, (err, res) => {
     // console.log(res[0])
@@ -30,7 +29,7 @@ const getPoliticalPartyForCandidate = (parent, args, context) => new Promise((re
 });
 
 const addPoliticalPartyCandidate = (parent, args, context) => {
-  if (!authRoles[context.payload.role].includes('addPoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver addPoliticalPartyCandidate`)
+  if (!authRoles[context.payload.role].includes('addPoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver addPoliticalPartyCandidate`);
 
   const newPoliticalPartyCandidate = new PoliticalPartyCandidate({
     name: args.name,
@@ -42,12 +41,12 @@ const addPoliticalPartyCandidate = (parent, args, context) => {
     // check political party exists
     PoliticalPartyResolver.getPoliticalParty(null, { id: args.political_party })
       .then((e) => {
-        if (e == null) { return reject({ err: 'The political party does not exist' }); }
+        if (e == null) { return reject(new Error('The political party does not exist')); }
 
         // check district exists
         DistrictResolver.getDistrict(null, { id: args.district })
           .then((e) => {
-            if (e == null) { return reject({ err: 'The district does not exist' }); }
+            if (e == null) { return reject(new Error('The district does not exist')); }
 
             // we can add
             newPoliticalPartyCandidate.save((err, res) => {
@@ -55,17 +54,17 @@ const addPoliticalPartyCandidate = (parent, args, context) => {
             });
           })
           .catch((e) => {
-            reject({ err: 'The district does not exist' });
+            return reject(new Error('The political party does not exist'));
           });
       })
       .catch((e) => {
-        reject({ err: 'The political party does not exist' });
+        reject(new Error('The political party does not exist'));
       });
   });
 };
 
 const updatePoliticalPartyCandidate = (parent, args, context) => new Promise((resolve, reject) => {
-  if (!authRoles[context.payload.role].includes('updatePoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver updatePoliticalPartyCandidate`)
+  if (!authRoles[context.payload.role].includes('updatePoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver updatePoliticalPartyCandidate`);
 
   PoliticalPartyResolver.getPoliticalParty(null, { id: args.political_party })
     .then((e) => {
@@ -74,22 +73,25 @@ const updatePoliticalPartyCandidate = (parent, args, context) => new Promise((re
         .then(
           // we can add
           PoliticalPartyCandidate.findOneAndUpdate({ _id: args.id },
-            { $set: { name: args.name, political_party: args.political_party, district: args.district } }, { new: true },
+            {
+              $set:
+              { name: args.name, political_party: args.political_party, district: args.district },
+            }, { new: true },
             (err, res) => {
               err ? reject(err) : resolve(res);
             }),
         )
         .catch((e) => {
-          reject({ err: 'The district does not exist' });
+          reject(new Error('The district does not exist'));
         });
     })
     .catch((e) => {
-      reject({ err: 'The political party does not exist' });
+      reject(new Error('The political party does not exist'));
     });
 });
 
 const deletePoliticalPartyCandidate = (parent, args, context) => new Promise((resolve, reject) => {
-  if (!authRoles[context.payload.role].includes('deletePoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver deletePoliticalPartyCandidate`)
+  if (!authRoles[context.payload.role].includes('deletePoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver deletePoliticalPartyCandidate`);
 
   PoliticalPartyCandidate.findByIdAndRemove({ _id: args.id }, (err, res) => {
     err ? reject(err) : resolve(res);
@@ -98,5 +100,10 @@ const deletePoliticalPartyCandidate = (parent, args, context) => new Promise((re
 
 
 module.exports = {
-  getPoliticalPartyCandidates, getPoliticalPartyCandidate, getPoliticalPartyForCandidate, addPoliticalPartyCandidate, updatePoliticalPartyCandidate, deletePoliticalPartyCandidate,
+  getPoliticalPartyCandidates,
+  getPoliticalPartyCandidate,
+  getPoliticalPartyForCandidate,
+  addPoliticalPartyCandidate,
+  updatePoliticalPartyCandidate,
+  deletePoliticalPartyCandidate,
 };
