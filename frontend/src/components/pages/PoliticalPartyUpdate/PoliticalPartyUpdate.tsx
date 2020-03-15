@@ -64,7 +64,10 @@ export default function UpdatePoliticalParty(props) {
     function handleSubmit(event: React.SyntheticEvent): void {
         event.preventDefault();
 
-        updatePoliticalParty({ variables: { name: politicalPartyName, colour: colour, id: props.match.params.userId }})
+        updatePoliticalParty({ variables: { 
+            name: politicalPartyName === "" ? data['getPoliticalParty'].name : politicalPartyName,
+            colour: colour === "" ? data['getPoliticalParty'].colour : colour,
+            id: props.match.params.userId }})
             .then((res) => console.log(res))
             .catch((err) => console.log(err))
     }

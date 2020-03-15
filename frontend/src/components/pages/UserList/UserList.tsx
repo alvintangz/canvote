@@ -27,13 +27,12 @@ class UserList extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {search: '', results: [], renderList: [], page: 1, maxPage: 1};
-    
         this.handleSearchChange = this.handleSearchChange.bind(this);
         this.handlePrevPageChange = this.handlePrevPageChange.bind(this);
         this.handleNextPageChange = this.handleNextPageChange.bind(this);
     }
 
-    renderedResults(list: User[]) {
+    renderedResults = (list: User[]) => {
         const result = list.map((user, index) => {
             return (<tr key={user.id}>
                             <td>{user.firstName}</td>
@@ -51,16 +50,16 @@ class UserList extends React.Component<Props, State> {
 
         this.setState({renderList: result});
 
-    }
+    };
 
-    retrieveData() {
+    retrieveData = () => {
         let splitSearch = this.state.search.split(" ");
 
         const userSearch: ListUsersOptions = {
             first_name: splitSearch[0],
             last_name: splitSearch[1] ? splitSearch[1] : '',
             page: this.state.page,
-        }
+        };
 
         if (this.props.currentUser.role === UserRole.administrator) {
             users.listByRoleNamePage(UserRole.election_officer, userSearch)
@@ -80,9 +79,9 @@ class UserList extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        this.retrieveData();   
+        this.retrieveData();
     }
-        
+
 
     handleSearchChange(event: React.FormEvent<HTMLInputElement>): void {
         this.setState({search: event.currentTarget.value, page: 1}, function() {

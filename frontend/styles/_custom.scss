@@ -3,6 +3,16 @@ html, body, #root {
   height: 100%;
 }
 
+h1 {
+  margin-bottom: 26px;
+}
+
+.alert {
+  h2 {
+    font-size: 1.2em;
+  }
+}
+
 h3 {
   font-size: 20px;
 }

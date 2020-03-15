@@ -75,7 +75,8 @@ const updatePoliticalPartyCandidate = (parent, args, context) => new Promise((re
   PoliticalPartyResolver.getPoliticalPartyByName(null, { name: args.political_party }, context)
     .then((e) => {
       // check district is good
-      DistrictResolver.getDistrict(null, { id: args.district })
+      console.log(`78 - ${args.district}`)
+      DistrictResolver.getDistrictByName(null, { name: args.district }, context)
         .then(
           // we can add
           PoliticalPartyCandidate.findOneAndUpdate({ _id: args.id },

@@ -17,19 +17,22 @@ interface Props {
 interface State {
     email: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    created: User,
 }
 
 export class UserCreate extends Component<Props, State> {
     private roleForCreation;
+
     constructor(props: Props) {
         super(props);
 
         this.roleForCreation = this.props.currentUser.role === UserRole.administrator ? UserRole.election_officer : UserRole.voter;
         this.state = {
-            email: null,
-            firstName: null,
-            lastName: null
+            email: '',
+            firstName: '',
+            lastName: '',
+            created: null
         };
     }
 
@@ -47,28 +50,36 @@ export class UserCreate extends Component<Props, State> {
 
     handleSubmit = (event: React.SyntheticEvent): void => {
         event.preventDefault();
-        const jsonObj : User = {
-            email: this.state.email,
-            firstName: this.state.firstName,
-            lastName: this.state.lastName
-        };
         users.createByRole(
             this.props.currentUser.role === UserRole.administrator ? UserRole.election_officer : UserRole.voter,
-            jsonObj
-        ).then((result) => {
-            console.log(result);
-        }).catch((err) => {
-            console.log(err);
-        });
+            {
+                email: this.state.email,
+                firstName: this.state.firstName,
+                lastName: this.state.lastName
+            }).then((res) => {
+                this.setState({ created: res.data, email: null, firstName: null, lastName: null });
+            }).catch((err) => {
+                this.setState({ created: null });
+                console.log(err);
+            });
     };
 
     render() {
+        const roleForCreation = this.roleForCreation === UserRole.voter ? 'Voter' : 'Election Officer';
         return (
             <div>
-                <h1>Add {this.roleForCreation === UserRole.voter ? 'Voter' : 'Election Officer'}</h1>
+                <h1>Create User: {roleForCreation}</h1>
+                {
+                    this.state.created && (
+                        <div className="alert alert-success">
+                            <h2>User Account Created</h2>
+                            <p>A {roleForCreation} user account for {this.state.created.firstName} {this.state.created.lastName} has been created. They should expect an e-mail in their inbox shortly.</p>
+                        </div>
+                    )
+                }
                 <form onSubmit={this.handleSubmit}>
                     <div className="form-group">
-                        <label>
+                        <label className="required">
                             E-mail address:
                             <input type="email"
                                    className="form-control"
@@ -78,7 +89,7 @@ export class UserCreate extends Component<Props, State> {
                         </label>
                     </div>
                     <div className="form-group">
-                        <label>
+                        <label className="required">
                             First Name:
                             <input type="text"
                                    className="form-control"
@@ -88,7 +99,7 @@ export class UserCreate extends Component<Props, State> {
                         </label>
                     </div>
                     <div className="form-group">
-                        <label>
+                        <label className="required">
                             Last Name:
                             <input type="text"
                                    className="form-control"

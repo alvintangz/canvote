@@ -73,7 +73,7 @@ export default function PoliticalPartyCreate(props) {
                                     return (
                                         <tr>
                                             <td> {row.name} </td>
-                                            <td> <div style={{width: '50px', height:'50px', backgroundColor:`${row.colour}`}}></div> </td>
+                                            <td> <div style={{width:'50px',height:'50px',border:'1px solid black', backgroundColor:`${row.colour}`}}></div> </td>
                                             <td>
                                                 <Link to={`/manage/parties/${row.id}`}>
                                                     <button type="button" className="btn btn-primary">Edit</button>
