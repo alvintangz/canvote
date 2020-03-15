@@ -21,6 +21,8 @@ const resolversList = [
   'getDistrict',
   'getDistricts',
   'getDistrictByName',
+  'updateDistrict',
+  'deleteDistrict',
   'addBallot',
   'getBallots',
   'getBallot',

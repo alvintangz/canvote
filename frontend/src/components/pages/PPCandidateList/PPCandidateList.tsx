@@ -18,43 +18,38 @@ const GET_POLITICAL_PARTY_CANDIDATES = gql`
     }
 `;
 
-interface Props {
-    currentUser: User;
-}
+const DELETE_POLITICAL_PARTY_CANDIDATE = gql`
+    mutation deletePoliticalPartyCandidate($id: ID!) {
+        deletePoliticalPartyCandidate(id: $id) {
+            id
+            name
+            political_party
+            district
+        }
+    }
+`;
 
-interface State {
-    politicalPartyName: string;
-    colour: string;
-}
 
 export default function PPCandidateList(props) {
 
     const [politicalParties, setPoliticalParties] = useState([]);
     const {loading, error, data} = useQuery(GET_POLITICAL_PARTY_CANDIDATES, {errorPolicy: 'all'});
+    const [deletePoliticalPartyCandidate] = useMutation(DELETE_POLITICAL_PARTY_CANDIDATE, {errorPolicy: 'all'})
+
 
     if (data) {
         console.log(data)
     }
-    // function handlePoliticalPartyChange(event: React.FormEvent<HTMLInputElement>): void {
-    //     setPoliticalPartyName(event.currentTarget.value)
-    // }
 
-    // function handleColourChange(event: any): void {
-    //     setColour(event.hex)
-    // }
-
-    // function handleSubmit(event: React.SyntheticEvent): void {
-    //     event.preventDefault();
-
-    //     addPoliticalParty({ variables: { name: politicalPartyName, colour: colour }})
-    //         .then((res) => console.log(res))
-    //         .catch((err) => console.log(err))
-    // }
-
-    useEffect(() => {
-
-        // console.log(data, error, loading);
-    }, []);
+    function deleteRow(e) {
+        let r = window.confirm("Are you sure you want to delete this?");
+        if (r) {
+            deletePoliticalPartyCandidate({ variables: { id: e }})
+                .then((res) => window.location.reload())
+                .catch((err) => console.log(err))
+        }
+    }
+  
 
 
     return (
@@ -74,7 +69,7 @@ export default function PPCandidateList(props) {
                             {
                                 data['getPoliticalPartyCandidates'].map((row) => {
                                     return (
-                                        <tr>
+                                        <tr key={row.id}>
                                             <td> {row.name} </td>
                                             <td> {row.political_party} </td>
                                             <td> {row.district} </td>
@@ -84,8 +79,10 @@ export default function PPCandidateList(props) {
                                                     <button type="button" className="btn btn-primary">Edit</button>
                                                 </Link>
                                             </td>
-                                            <td><button type="button" className="btn btn-danger">Delete</button></td>
-
+                                            <td>
+                                                <button type="button" className="btn btn-danger" onClick={() => deleteRow(row.id)}>Delete</button>
+                                            
+                                            </td>
                                         </tr>
                                     )
                                 })
@@ -98,24 +95,6 @@ export default function PPCandidateList(props) {
             
 
         </div>
-        // <div>
-        //     <h1>Create Political Party</h1>
-        //     <form onSubmit={handleSubmit}>
-        //         <div className="form-group">
-        //             <label>
-        //                 Political Party Name:
-        //                 <input type="text" className="form-control"
-        //                 placeholder="Political Party name" value={politicalPartyName} onChange={handlePoliticalPartyChange} required/>
-        //             </label>
-        //         </div>
-        //         <div className="form-group">
-        //             <label>
-        //                 Political Party Colour:
-        //                 <HuePicker color={colour} onChangeComplete={handleColourChange}/>
-        //             </label>
-        //         </div>
-        //         <input type="submit" className="btn btn-primary" value="Submit" />
-        //     </form>
-        // </div>
+       
     );
 }

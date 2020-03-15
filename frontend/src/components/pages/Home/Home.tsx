@@ -18,7 +18,7 @@ const Home = (props) => {
                 <h2>Shortcuts</h2>
                 <div className="row">
                    {LinksByUserRole[LinksByUserRole.findIndex(item => item.role === role)].links.map(link => (
-                    <div className="col-lg-4 col-md-6">
+                    <div className="col-lg-4 col-md-6" key={link.title}>
                         <h3>
                             <Link to={link.linkTo}>{link.title}</Link>
                         </h3>

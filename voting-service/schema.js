@@ -73,6 +73,9 @@ const typeDefs = gql`
     deletePoliticalParty(id: ID!): PoliticalParty
 
     addDistrict(name: String!): District
+    updateDistrict(id: ID!, name: String!): District
+    deleteDistrict(id: ID!): District
+
 
     addPoliticalPartyCandidate(name: String!, political_party: String!, district: String!): PoliticalPartyCandidate
     updatePoliticalPartyCandidate(id: ID!, name: String!, political_party: String!, district: String!): PoliticalPartyCandidate
@@ -115,6 +118,8 @@ const resolvers = {
     deletePoliticalParty: PoliticalPartyResolver.deletePoliticalParty,
 
     addDistrict: DistrictResolver.addDistrict,
+    updateDistrict: DistrictResolver.updateDistrict,
+    deleteDistrict: DistrictResolver.deleteDistrict,
 
     addPoliticalPartyCandidate: PoliticalPartyCandidateResolver.addPoliticalPartyCandidate,
     updatePoliticalPartyCandidate: PoliticalPartyCandidateResolver.updatePoliticalPartyCandidate,

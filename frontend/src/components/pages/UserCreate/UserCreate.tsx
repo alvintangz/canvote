@@ -57,7 +57,7 @@ export class UserCreate extends Component<Props, State> {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName
             }).then((res) => {
-                this.setState({ created: res.data, email: null, firstName: null, lastName: null });
+                this.setState({ created: res.data, email: '', firstName: '', lastName: '' });
             }).catch((err) => {
                 this.setState({ created: null });
                 console.log(err);

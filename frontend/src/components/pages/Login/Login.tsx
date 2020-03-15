@@ -16,6 +16,7 @@ const mapDispatchToProps = dispatch => ({
 
 interface Props {
     onLoggedIn: (user: User) => void;
+    location: Location;
 }
 
 interface State {
@@ -23,6 +24,11 @@ interface State {
     password: string;
     errorDetails: string[];
     success: boolean;
+}
+
+enum AlertState {
+    ACTIVATED,
+    ACCESS_DENIED
 }
 
 class Login extends React.Component<Props, State> {
@@ -61,31 +67,60 @@ class Login extends React.Component<Props, State> {
         });
     };
 
+    get alertState(): AlertState | null {
+        const searchParams = new URLSearchParams(this.props.location.search);
+        if (searchParams.get('activated')) return AlertState.ACTIVATED;
+        if (searchParams.get('denied')) return AlertState.ACCESS_DENIED;
+        return null;
+    }
+
     render() {
         if (this.state.success) return (<Redirect to="/" />);
         return (
             // TODO
             <div>
                 <h1>Login</h1>
-                {this.state.errorDetails && this.state.errorDetails.length > 0 && (
+                {this.state.errorDetails && this.state.errorDetails.length > 0 ? (
                     <div className="alert alert-warning">
                         <p>Issue logging in</p>
                         <ul>
                             {this.state.errorDetails.map(error => <li>{error}</li>)}
                         </ul>
                     </div>
+                ) : (
+                    this.alertState === AlertState.ACTIVATED ? (
+                        <div className="alert alert-success">
+                            <h2>Account Activated</h2>
+                            <p>You account has been activated. You can now log in.</p>
+                        </div>
+                    ) : (this.alertState === AlertState.ACCESS_DENIED && (
+                        <div className="alert alert-danger">
+                            <h2>Access Denied</h2>
+                            <p>You were trying to access a page that you do not have access to.</p>
+                        </div>
+                    ))
                 )}
                 <form onSubmit={this.handleSubmit}>
                     <div className="form-group">
-                        <label>
+                        <label className="required">
                             E-mail address:
-                            <input type="email" className="form-control" placeholder="E-mail address" onChange={this.handleEmailChange} required/>
+                            <input type="email"
+                                   className="form-control"
+                                   placeholder="E-mail address"
+                                   name="username"
+                                   onChange={this.handleEmailChange}
+                                   required />
                         </label>
                     </div>
                     <div className="form-group">
-                        <label>
+                        <label className="required">
                             Password:
-                            <input type="password" className="form-control" placeholder="Password" onChange={this.handlePasswordChange} required/>
+                            <input type="password"
+                                   className="form-control"
+                                   placeholder="Password"
+                                   onChange={this.handlePasswordChange}
+                                   autoComplete="password"
+                                   required />
                         </label>
                     </div>
                     <input type="submit" className="btn btn-primary" value="Submit" />

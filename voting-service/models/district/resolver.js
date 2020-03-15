@@ -37,6 +37,24 @@ console.log("in dist")
   });
 });
 
+const updateDistrict = (parent, args, context) => new Promise((resolve, reject) => {
+  if (!authRoles[context.payload.role].includes('updateDistrict')) throw new Error(`User ${context.payload.role} cannot access resolver updateDistrict`);
+
+  District.findOneAndUpdate({ _id: args.id },
+    { $set: { name: args.name } }, { new: true },
+    (err, res) => {
+      err ? reject(err) : resolve(res);
+    });
+});
+
+const deleteDistrict = (parent, args, context) => new Promise((resolve, reject) => {
+  if (!authRoles[context.payload.role].includes('deleteDistrict')) throw new Error(`User ${context.payload.role} cannot access resolver deleteDistrict`);
+
+  District.findByIdAndRemove({ _id: args.id }, (err, res) => {
+    err ? reject(err) : resolve(res);
+  });
+});
+
 module.exports = {
-  addDistrict, getDistrict, getDistricts, getDistrictByName,
+  addDistrict, getDistrict, getDistricts, getDistrictByName, updateDistrict, deleteDistrict,
 };

@@ -8,7 +8,6 @@ interface Props {
 }
 
 interface State {
-    tkn: string,
     pwd: string,
     pwdConfirm: string,
     error: string,
@@ -19,7 +18,6 @@ export class ActivateAccount extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            tkn: '',
             pwd: '',
             pwdConfirm: '',
             error: null,
@@ -27,15 +25,18 @@ export class ActivateAccount extends React.Component<Props, State> {
         };
     }
 
-    componentDidMount() {
+    get queryParams(): { token: string, email: string } {
         const searchParams = new URLSearchParams(this.props.location.search);
-        this.setState({ tkn: searchParams.get('tkn') });
+        return {
+            token: searchParams.get('tkn'),
+            email: searchParams.get('email')
+        };
     }
 
     handleSubmit = (event: React.SyntheticEvent): void => {
         event.preventDefault();
         try {
-            me.activateAccount(this.state.tkn, this.state.pwd, this.state.pwdConfirm)
+            me.activateAccount(this.queryParams.token, this.state.pwd, this.state.pwdConfirm)
                 .then(() => {
                     this.setState({ activated: true });
                 })
@@ -62,9 +63,9 @@ export class ActivateAccount extends React.Component<Props, State> {
             <div>
                 <h1>Activate Account</h1>
                 {
-                    !this.state.tkn ? (
+                    !(this.queryParams.token && this.queryParams.email) ? (
                         <div className="alert alert-danger">
-                            <p>Invalid token for account activation.</p>
+                            <p>Invalid query parameters.</p>
                         </div>
                     ) : (
                         <form onSubmit={this.handleSubmit}>
@@ -99,6 +100,8 @@ export class ActivateAccount extends React.Component<Props, State> {
                                            required />
                                 </label>
                             </div>
+                            {/* https://www.chromium.org/developers/design-documents/create-amazing-password-forms */}
+                            <input type="hidden" name="username" value={this.queryParams.email} />
                             <input type="submit" className="btn btn-primary" value="Submit" />
                         </form>
                     )
