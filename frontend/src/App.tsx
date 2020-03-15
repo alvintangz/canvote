@@ -1,11 +1,6 @@
 import React from 'react';
 import './App.scss';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "./components/pages/Home/Home";
 import Login from "./components/pages/Login/Login";
 import ResetPassword from "./components/pages/ResetPassword/ResetPassword";
@@ -14,63 +9,103 @@ import LiveResults from "./components/pages/LiveResults/LiveResults";
 import Credits from "./components/pages/Credits/Credits";
 import UserList from "./components/pages/UserList/UserList";
 import UserCreate from "./components/pages/UserCreate/UserCreate";
+import PoliticalPartyCreate from "./components/pages/UserCreate/PoliticalPartyCreate/PoliticalPartyCreate";
 import UserUpdate from "./components/pages/UserUpdate/UserUpdate";
 import NotFound from "./components/pages/NotFound/NotFound";
+import meApi from './api/me';
+import {AxiosResponse} from "axios";
+import {User} from "./interfaces/user";
+import {AuthActionType} from "./enums/actions/auth.types";
+import {connect} from "react-redux";
+import PrivateRoute from "./PrivateRoute";
+import {UserRole} from "./enums/role";
+import Header from "./components/Header";
+import Icon from './Icon.png';
 
-function App() {
-  return (
-    <Router>
-      <header>
-        <div className="container">
-          <div className="row">
-            <div className="brand col-xs-5 col-md-4">
-              CanVote
-            </div>
-            <div className="col-lg-8 text-right">
-              <Link to="/auth/login" className="btn btn-primary">Log in</Link>
-            </div>
-          </div>
-        </div>
-      </header>
-      <main>
-        <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
-          <Route path="/auth/login">
-            <Login />
-          </Route>
-          <Route path="/reset-password">
-            <ResetPassword />
-          </Route>
-          <Route path="/activate">
-            <ActivateAccount />
-          </Route>
-          <Route path="/live-results">
-            <LiveResults />
-          </Route>
-          <Route path="/manage/users">
-            <UserList />
-          </Route>
-          <Route path="/manage/users/new">
-            <UserCreate />
-          </Route>
-          <Route path="/manage/users/:userId">
-            <UserUpdate />
-          </Route>
-          <Route path="/credits">
-            <Credits />
-          </Route>
-          <Route path="*">
-            <NotFound />
-          </Route>
-        </Switch>
-      </main>
-      <footer>
-        Footer
-      </footer>
-    </Router>
-  );
+
+const mapStateToProps = state => {
+  return ({currentUser: state.authReducer.user});
+};
+
+const mapDispatchToProps = dispatch => ({
+  onLoggedIn: (user) =>
+      dispatch({ type: AuthActionType.USER_AUTHENTICATED_FROM_CHECK, user }),
+});
+
+interface Props {
+  onLoggedIn: (user: User) => void;
+  currentUser: User;
 }
 
-export default App;
+interface State {
+  loaded: boolean;
+}
+
+class App extends React.Component<Props, State> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loaded: false
+    };
+  }
+
+  componentDidMount() {
+    meApi.retrieve().then((response: AxiosResponse<User>) => {
+      this.props.onLoggedIn(response.data);
+    }).finally(() => {
+      this.setState({ loaded: true });
+    });
+  }
+
+  render() {
+    if (this.state.loaded) {
+      return (
+          <Router>
+            <Header />
+            <main className="container">
+              <Switch>
+                <Route exact path="/" component={Home} />
+                <Route exact path="/credits" component={Credits} />
+                <Route exact path="/auth/login" component={Login} />
+                <Route exact path="/activate" component={ActivateAccount} />
+                <Route exact path="/live-results" component={LiveResults} />
+                <PrivateRoute exact
+                              path="/reset-password"
+                              currentUser={this.props.currentUser}
+                              canAccess={[UserRole.voter, UserRole.election_officer, UserRole.administrator]}
+                              component={ResetPassword} />
+                <PrivateRoute exact
+                              path="/manage/users"
+                              currentUser={this.props.currentUser}
+                              canAccess={[UserRole.administrator, UserRole.election_officer]}
+                              component={UserList} />
+                <PrivateRoute exact
+                              path="/manage/users/new"
+                              currentUser={this.props.currentUser}
+                              canAccess={[UserRole.administrator, UserRole.election_officer]}
+                              component={UserCreate} />
+                <PrivateRoute exact
+                              path="/manage/users/:userId"
+                              currentUser={this.props.currentUser}
+                              canAccess={[UserRole.administrator, UserRole.election_officer]}
+                              component={UserUpdate} />
+                <Route path="*" component={NotFound} />
+              </Switch>
+            </main>
+            <footer className="container">
+              <hr />
+              Footer
+            </footer>
+          </Router>
+      );
+    } else {
+      return (
+          <div className="loading">
+            Loading...
+          </div>
+      );
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

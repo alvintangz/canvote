@@ -1,4 +1,4 @@
-import {AuthFactor} from "../enums/auth-factor";
+import {AuthFactor} from "../../enums/auth-factor";
 
 export interface AuthFactorResponse {
     loggedIn: boolean,

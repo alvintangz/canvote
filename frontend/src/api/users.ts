@@ -1,19 +1,47 @@
 import apiBase from './base';
-import services from '../services';
 import { UserRole } from '../enums/role';
 import { AxiosResponse } from "axios";
 import { User } from "../interfaces/user";
 
 const axios = apiBase.axios.create({
-  baseURL: services.auth.baseUrl,
+  baseURL: process.env.REACT_APP_AUTH_SERVICE_BASE_URL,
+  withCredentials: true
 });
 
-const craftEndpoint = (role: UserRole.voter | UserRole.election_officer, userId?: number): string => {
+interface ListUsersOptions {
+  first_name: string;
+  last_name: string;
+  email: string;
+  page: number;
+  size: number;
+}
+
+const craftEndpoint = (role: UserRole.voter | UserRole.election_officer, userId?: number, options?: ListUsersOptions): string => {
   let endpoint = 'users/election-officers';
   if (role === UserRole.voter) endpoint = 'users/voters';
   if (userId) endpoint = `${endpoint}/${userId.toString()}`;
+  if (options && Object.keys(options).length > 0) {
+    let moreThanOneQueryParam = false;
+    Object.keys(options).forEach(key => {
+      if (moreThanOneQueryParam)
+        endpoint += "&"
+      else
+        endpoint += "?"
+
+      endpoint += `${key}=${options[key]}`;
+      moreThanOneQueryParam = true;
+    });
+  }
   return endpoint;
 };
+
+function listByRoleNamePage(
+  role: UserRole.voter | UserRole.election_officer,
+  options: ListUsersOptions
+): Promise<AxiosResponse<User[]>> {
+  const endpoint = craftEndpoint(role, undefined, options);
+  return axios.get(endpoint);
+}
 
 function retrieveByRole(
     role: UserRole.voter | UserRole.election_officer,
@@ -40,4 +68,4 @@ function updateByRole(
   return axios.put(endpoint, toUpdate);
 }
 
-export default { retrieveByRole, createByRole, updateByRole };
+export default { retrieveByRole, createByRole, updateByRole, listByRoleNamePage};

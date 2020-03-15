@@ -67,7 +67,7 @@ EMAIL_DOMAIN_NAME = os.getenv("EMAIL_DOMAIN_NAME", "mg.can-vote.works")
 
 # Account activation url
 
-ACCOUNT_ACTIVATION_URL = os.getenv("ACCOUNT_ACTIVATION_URL", "http://localhost:3000/activate.html")
+ACCOUNT_ACTIVATION_URL = os.getenv("ACCOUNT_ACTIVATION_URL", "http://localhost:3000/activate")
 ACCOUNT_ACTIVATION_QUERY_KEY = os.getenv("ACCOUNT_ACTIVATION_QUERY_KEY", "tkn")
 
 # Administrator's Account

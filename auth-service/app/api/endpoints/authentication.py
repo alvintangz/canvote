@@ -12,6 +12,7 @@ from app.schemas import EmailPassword, AuthFactorResponse
 from app.services.auth import retrieve_user_if_password_matches
 from app.services.jwt import create_jwt_for_user_session, retrieve_current_user_from_jwt_for_user_session
 from app.services.user import retrieve_user_by_email
+from secure import SecureCookie
 
 router = APIRouter()
 
@@ -71,13 +72,18 @@ def login_first(
 
     # TODO: Check if other authentication method is needed
     # TODO: SameSite
-    response.set_cookie(
+
+    secure_cookie = SecureCookie(
+        expires=config.JWT_SESSION_MAX_AGE_MINUTES / 60, 
+        samesite=None,
+        httponly=True,
+        secure=config.PRODUCTION,
+    )
+
+    secure_cookie.starlette(
+        response,
         config.JWT_SESSION_COOKIE_NAME,
         value=create_jwt_for_user_session(db_user),
-        # Convert to seconds - https://www.starlette.io/responses/#set-cookie
-        max_age=config.JWT_SESSION_MAX_AGE_MINUTES * 60,
-        httponly=True,
-        secure=config.PRODUCTION
     )
     return AuthFactorResponse(logged_in=True)
 

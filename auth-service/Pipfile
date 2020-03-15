@@ -23,6 +23,7 @@ jinja2 = "*"
 passlib = {extras = ["bcrypt"],version = "*"}
 requests = "*"
 aiofiles = "*"
+secure = "*"
 
 [requires]
 python_version = "3.7"

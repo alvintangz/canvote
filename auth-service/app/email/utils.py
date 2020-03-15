@@ -59,6 +59,7 @@ def send_email_with_button(
         subject=header,
         message=paragraph,
         btn_link=btn_link,
-        btn_text=btn_text
+        btn_text=btn_text,
+        logo=f"{config.HOST_BASE_URL}/static/logo.png"
     )
-    return __send_email(recipients, subject, html_message, sender, logo=f"{config.HOST_BASE_URL}/static/logo.png")
+    return __send_email(recipients, subject, html_message, sender)

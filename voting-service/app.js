@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { ApolloServer, AuthenticationError } = require('apollo-server-express');
 const jwt = require('jsonwebtoken');
+const cors = require('cors')
 // const { resolversList } = require('./resolversList');
 
 require('dotenv').config();
@@ -17,6 +18,9 @@ const app = express();
 
 const prod = parseInt(process.env.PRODUCTION, 10) !== 1;
 
+//app.use(cors({origin: 'http://localhost:3000', credentials: true}));
+
+
 app.use(bodyParser.json());
 app.use(cookieParser());
 
@@ -26,6 +30,8 @@ const server = new ApolloServer({
   playground: prod,
   formatError: (err) => err.message,
   context: ({ req }) => {
+
+    console.log(req.cookies);
     let payload = { role: 'externalViewer' };
     // some endpoints don't need cookies
     if (!req.cookies['cv.token']) return { payload };
@@ -40,8 +46,7 @@ const server = new ApolloServer({
   },
 });
 
-server.applyMiddleware({ app });
-
+server.applyMiddleware({ app, cors : {credentials: true, origin: 'http://localhost:3000' }});
 // Start Server.
 const port = process.env.PORT || 3002;
 app.listen({ port }, () => console.log(`🚀 Server ready at http://localhost:${port}${server.graphqlPath}`));
