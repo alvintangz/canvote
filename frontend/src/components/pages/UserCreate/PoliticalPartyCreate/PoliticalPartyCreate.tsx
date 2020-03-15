@@ -1,90 +1,131 @@
-import React, { Component } from 'react';
+// import React, { Component } from 'react';
+import React, { useState } from 'react';
+
 import { HuePicker } from 'react-color';
 
-import ApolloClient from 'apollo-boost';
 import gql from 'graphql-tag';
+import { useMutation } from "@apollo/react-hooks";
+import { User } from '../../../../interfaces/user';
 
- 
-const client = new ApolloClient({
-    uri: process.env.REACT_APP_VOTING_SERVICE_BASE_URL + 'graphql',
-    credentials: 'include',
+// mutation submitComment($repoFullName: String!, $commentContent: String!) {
+//     submitComment(repoFullName: $repoFullName, commentContent: $commentContent) {
+//       postedBy {
+//         login
+//         html_url
+//       }
+//       createdAt
+//       content
+//     }
+//   }
 
-  });
-
-
-
+const CREATE_POLITICAL_PARTY = gql`
+    mutation addPoliticalParty($name: String!, $colour: String!) {
+        addPoliticalParty(name: $name, colour: $colour) {
+            name
+            colour
+        }
+    }
+`;
 
 interface Props {
-    currentUser: User
+    currentUser: User;
 }
 
 interface State {
-    politicalPartyName: string
-    colour: string
-
+    politicalPartyName: string;
+    colour: string;
 }
 
+export default function PoliticalPartyCreate(props) {
+
+    const [politicalPartyName, setPoliticalPartyName] = useState("");
+    const [colour, setColour] = useState("fff");
+    const [addPoliticalParty, { data }] = useMutation(CREATE_POLITICAL_PARTY);
 
 
-export class PoliticalPartyCreate extends Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {politicalPartyName: "", colour: "#fff"}
-        this.handlePoliticalPartyChange = this.handlePoliticalPartyChange.bind(this);
-        this.handleColourChange = this.handleColourChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handlePoliticalPartyChange(event: React.FormEvent<HTMLInputElement>): void {
-        this.setState({politicalPartyName: event.currentTarget.value});
-    }
-
-    handleColourChange(colour: any): void {
-        console.log("colour change")
-        this.setState({ colour: colour.hex });
+    function handlePoliticalPartyChange(event: React.FormEvent<HTMLInputElement>): void {
+        setPoliticalPartyName(event.currentTarget.value)
         // this.setState({politicalPartyName: event.currentTarget.value});
     }
 
-    handleSubmit(event: React.SyntheticEvent): void {
-        event.preventDefault();
-        console.log("submitted");
+    function handleColourChange(event: any): void {
+        setColour(event.hex)
+        // this.setState({politicalPartyName: event.currentTarget.value});
+    }
 
-        client.query({
-            query: gql`
-                {
-                getDistricts {
-                  id
-                }
-              }          
-            `,
-          })
-            .then(data => console.log(data))
-            .catch(error => console.error(error));
+    function handleSubmit(event: React.SyntheticEvent): void {
+        event.preventDefault();
+        // const [createPoliticalParty] = useMutation(CREATE_POLITICAL_PARTY);
+
+        addPoliticalParty({ variables: { name: politicalPartyName, colour: "red" }}).then((res) => {
+            console.log("good");
+            console.log(res);
+        }).catch(err => {
+            console.log("err occured")
+            console.log(err);
+        });
     }
-    render() {
-        return (
-            <div>
-                <h1>Create Political Party</h1>
-                <form onSubmit={this.handleSubmit}>
-                    <div className="form-group">
-                        <label>
-                            Political Party Name:
-                            <input type="text" className="form-control"
-                            placeholder="Political Party name" value={this.state.politicalPartyName} onChange={this.handlePoliticalPartyChange} required/>
-                        </label>
-                    </div>
-                    <div className="form-group">
-                        <label>
-                            Political Party Colour:
-                            <HuePicker color={this.state.colour} onChangeComplete={this.handleColourChange}/>
-                        </label>
-                    </div>
-                    <input type="submit" className="btn btn-primary" value="Submit" />
-                </form>
-            </div>
-        );
-    }
+
+    
+    return (
+        <div>
+            <h1>Create Political Party</h1>
+            <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label>
+                        Political Party Name:
+                        <input type="text" className="form-control"
+                        placeholder="Political Party name" value={politicalPartyName} onChange={handlePoliticalPartyChange} required/>
+                    </label>
+                </div>
+                <div className="form-group">
+                    <label>
+                        Political Party Colour:
+                        {/* <input type="color" value={colour} onChange={handleColourChange} /> */}
+                        <HuePicker color={colour} onChangeComplete={handleColourChange}/>
+                    </label>
+                </div>
+                <input type="submit" className="btn btn-primary" value="Submit" />
+            </form>
+        </div>
+    );
 }
 
-export default PoliticalPartyCreate;
+// export class PoliticalPartyCreate extends Component<Props, State> {
+//     constructor(props: Props) {
+//         super(props);
+//         this.state = {politicalPartyName: "", colour: "#fff"}
+//         this.handlePoliticalPartyChange = this.handlePoliticalPartyChange.bind(this);
+//         this.handleColourChange = this.handleColourChange.bind(this);
+//         this.handleSubmit = this.handleSubmit.bind(this);
+//     }
+
+//     handlePoliticalPartyChange(event: React.FormEvent<HTMLInputElement>): void {
+//         this.setState({politicalPartyName: event.currentTarget.value});
+//     }
+
+//     handleColourChange(event): void {
+//         console.log("colour change")
+//         this.setState({ colour: event.value });
+//         // this.setState({politicalPartyName: event.currentTarget.value});
+//     }
+
+//     handleSubmit(event: React.SyntheticEvent): void {
+//         event.preventDefault();
+//         const [createPoliticalParty] = useMutation(CREATE_POLITICAL_PARTY);
+
+//         createPoliticalParty({ variables: { name: this.state.politicalPartyName, color: this.state.colour }}).then((res) => {
+//             console.log(res);
+//         }).catch(err => {
+//             console.log(err);
+//         });
+//     }
+//     render() {
+//         return (
+            
+//         );
+//     }
+// }
+
+// export default PoliticalPartyCreate;
 

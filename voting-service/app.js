@@ -31,7 +31,6 @@ const server = new ApolloServer({
   formatError: (err) => err.message,
   context: ({ req }) => {
 
-    console.log(req.cookies);
     let payload = { role: 'externalViewer' };
     // some endpoints don't need cookies
     if (!req.cookies['cv.token']) return { payload };

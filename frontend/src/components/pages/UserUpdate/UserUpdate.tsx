@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {Link} from "react-router-dom";
 import './UserUpdate.scss';
 import auth from '../../../api/auth';
 import { AxiosResponse, AxiosError } from 'axios';
@@ -41,7 +42,7 @@ export class UserUpdate extends Component<Props, State> {
         console.log(this.props.currentUser.role)
 
         this.setState({userId: this.props.match.params.userId}, () => {
-            users.retrieveByRole(this.props.currentUser.role === UserRole.voter ? UserRole.election_offier : UserRole.voter
+            users.retrieveByRole(this.props.currentUser.role === UserRole.voter ? UserRole.election_officer : UserRole.voter
                 , this.state.userId)
             .then((e) => {
                 console.log(e.data)
@@ -165,7 +166,10 @@ export class UserUpdate extends Component<Props, State> {
                             Deactivate User
                         </label>
                     </div>
-                    <input type="submit" className="btn btn-primary" value="Submit" />
+                    <input type="submit" className="btn btn-success" value="Submit" />
+                    <Link to={`/manage/users/`}>
+                        <button className="btn btn-default">Cancel</button>
+                    </Link>
                 </form>
             </div>
         );

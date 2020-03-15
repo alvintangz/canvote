@@ -4,11 +4,15 @@ import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
-import { store } from './store'
+import { store } from './store';
+import apolloClient from './api/apolloClient';
+import { ApolloProvider } from '@apollo/react-components';
 
 ReactDOM.render(
     <Provider store={store}>
-        <App />
+        <ApolloProvider client={apolloClient}>
+            <App />
+        </ApolloProvider>
     </Provider>,
     document.getElementById('root')
 );

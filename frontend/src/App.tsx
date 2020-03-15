@@ -11,6 +11,7 @@ import UserList from "./components/pages/UserList/UserList";
 import UserCreate from "./components/pages/UserCreate/UserCreate";
 import PoliticalPartyCreate from "./components/pages/UserCreate/PoliticalPartyCreate/PoliticalPartyCreate";
 import UserUpdate from "./components/pages/UserUpdate/UserUpdate";
+import Vote from "./components/pages/Vote/Vote";
 import NotFound from "./components/pages/NotFound/NotFound";
 import meApi from './api/me';
 import {AxiosResponse} from "axios";
@@ -21,6 +22,7 @@ import PrivateRoute from "./PrivateRoute";
 import {UserRole} from "./enums/role";
 import Header from "./components/Header";
 import Icon from './Icon.png';
+import baseApi from './api/base';
 
 
 const mapStateToProps = state => {
@@ -30,10 +32,13 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
   onLoggedIn: (user) =>
       dispatch({ type: AuthActionType.USER_AUTHENTICATED_FROM_CHECK, user }),
+  onInvalidAuth: () =>
+      dispatch({ type: AuthActionType.INVALID_AUTH })
 });
 
 interface Props {
   onLoggedIn: (user: User) => void;
+  onInvalidAuth: () => void;
   currentUser: User;
 }
 
@@ -52,6 +57,10 @@ class App extends React.Component<Props, State> {
   componentDidMount() {
     meApi.retrieve().then((response: AxiosResponse<User>) => {
       this.props.onLoggedIn(response.data);
+      // TODO: Now listen in on 401 and log out
+      baseApi.onError(error => {
+        if (error.code === "401") this.props.onInvalidAuth();
+      })
     }).finally(() => {
       this.setState({ loaded: true });
     });
@@ -89,6 +98,11 @@ class App extends React.Component<Props, State> {
                               currentUser={this.props.currentUser}
                               canAccess={[UserRole.administrator, UserRole.election_officer]}
                               component={UserUpdate} />
+                <PrivateRoute exact
+                              path="/vote"
+                              currentUser={this.props.currentUser}
+                              canAccess={[UserRole.voter]}
+                              component={Vote} />
                 <Route path="*" component={NotFound} />
               </Switch>
             </main>

@@ -61,10 +61,30 @@ class Header extends React.Component<Props, {}> {
                 </div>
                 <nav className="cv-nav">
                     <div className="container">
-                        <ul className="list-inline menu">
-                            <li>Home</li>
-                            <li>Other</li>
-                        </ul>
+                    <div className="btn-toolbar list-inline" role="toolbar">
+                        <div className="btn-group mr-2">
+                                <Link to="/">
+                                    <button type="button" className="btn btn-default">
+                                        Home
+                                    </button>
+                                </Link>
+                                <Link to="/manage/users">
+                                    <button type="button" className="btn btn-default">
+                                        Manage Users
+                                    </button>
+                                </Link>
+                                <Link to="/manage/users/new">
+                                    <button type="button" className="btn btn-default">
+                                        Create User
+                                    </button>
+                                </Link>
+                                <Link to="/">
+                                    <button type="button" className="btn btn-default">
+                                        Vote
+                                    </button>
+                                </Link>
+                            </div>
+                        </div>
                     </div>
                 </nav>
             </header>
