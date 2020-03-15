@@ -3,8 +3,22 @@ html, body, #root {
   height: 100%;
 }
 
-.cv-nav {
-    border-top: 1px solid $border-red;
-    border-bottom: 1px solid $border-red;
-    margin: 20px 0;
+h3 {
+  font-size: 20px;
 }
+
+p {
+  font-size: 16px;
+}
+
+#breadcrumbs {
+  border-top: 1px solid $border-red;
+  margin-top: 16px;
+  .container {
+    padding-top: 12px;
+      ol {
+        margin-bottom: 0;
+      }
+  }
+}
+

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './ResetPassword.scss';
 import me from '../../../api/me';
 

@@ -1,9 +1,7 @@
 import './ActivateAccount.scss';
 
-import React, { Component } from 'react';
+import React from 'react';
 import me from '../../../api/me';
-
-// import {  retrieve, resetPassword, activateAccount } from '../../../api/me'
 
 
 interface Props {}

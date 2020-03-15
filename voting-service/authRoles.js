@@ -11,7 +11,12 @@ const resolverToRole = {
     'addVote', 'addBallot',
   ],
   externalViewer: [
-    'getBallot', 'getBallotByCandidate', 'getBallots',
+    'addDistrict', 'getPoliticalParties', 'getPoliticalPartyCandidates', 'addBallot',
+    'addPoliticalParty', 'addPoliticalPartyCandidate', 'addVoter', 'deletePoliticalParty',
+    'deletePoliticalPartyCandidate', 'getBallotByCandidate', 'getBallots', 'getDistrict',
+    'getDistrictByName', 'getDistricts', 'getPoliticalParty', 'getPoliticalPartyByName',
+    'getPoliticalPartyCandidate', 'getVoter', 'getVoterByEmail', 'getVoters',
+    'updatePoliticalParty', 'updatePoliticalPartyCandidate', 'addVote', 'getBallot',
   ],
 };
 

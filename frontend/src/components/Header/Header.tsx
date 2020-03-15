@@ -1,11 +1,11 @@
 import * as React from "react";
 import {Link} from "react-router-dom";
 import {connect} from "react-redux";
-import {User} from "../interfaces/user";
-import authApi from '../api/auth';
+import {User} from "../../interfaces/user";
+import authApi from '../../api/auth';
 import Logo from './Logo.png';
 import './Header.scss';
-import {AuthActionType} from "../enums/actions/auth.types";
+import {AuthActionType} from "../../enums/actions/auth.types";
 
 const mapStateToProps = state => {
     return ({currentUser: state.authReducer.user});
@@ -22,9 +22,6 @@ interface Props {
 }
 
 class Header extends React.Component<Props, {}> {
-    constructor(props) {
-        super(props);
-    }
 
     logout = (): void => {
         authApi.logout().finally(() => {
@@ -59,36 +56,16 @@ class Header extends React.Component<Props, {}> {
                         </div>
                     </div>
                 </div>
-                <nav className="cv-nav">
+                <div id="breadcrumbs">
                     <div className="container">
-                    <div className="btn-toolbar list-inline" role="toolbar">
-                        <div className="btn-group mr-2">
-                                <Link to="/">
-                                    <button type="button" className="btn btn-default">
-                                        Home
-                                    </button>
-                                </Link>
-                                <Link to="/manage/users">
-                                    <button type="button" className="btn btn-default">
-                                        Manage Users
-                                    </button>
-                                </Link>
-                                <Link to="/manage/users/new">
-                                    <button type="button" className="btn btn-default">
-                                        Create User
-                                    </button>
-                                </Link>
-                                <Link to="/">
-                                    <button type="button" className="btn btn-default">
-                                        Vote
-                                    </button>
-                                </Link>
-                            </div>
-                        </div>
+                        {/* TODO */}
+                        <ol className="breadcrumb">
+                            <li><Link to="/">Home</Link></li>
+                        </ol>
                     </div>
-                </nav>
+                </div>
             </header>
-        );
+        )
     }
 }
 

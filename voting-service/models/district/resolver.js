@@ -29,8 +29,9 @@ const getDistrict = (parent, args, context) => new Promise((resolve, reject) => 
 
 const getDistrictByName = (parent, args, context) => new Promise((resolve, reject) => {
   if (!authRoles[context.payload.role].includes('getDistrictByName')) throw new Error(`User ${context.payload.role} cannot access resolver getDistrictByName`);
-
+console.log("in dist")
   District.find({ name: args.name }, (err, res) => {
+    console.log(res);
     if (err || res.length === 0) { return reject(err); }
     return resolve(res);
   });

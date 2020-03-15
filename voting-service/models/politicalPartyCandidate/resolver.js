@@ -42,12 +42,13 @@ const addPoliticalPartyCandidate = (parent, args, context) => {
 
   return new Promise((resolve, reject) => {
     // check political party exists
-    PoliticalPartyResolver.getPoliticalParty(null, { id: args.political_party })
+    PoliticalPartyResolver.getPoliticalPartyByName(null, { name: args.political_party }, context)
       .then((e) => {
+
         if (e == null) { return reject(new ApolloError('The political party does not exist')); }
 
         // check district exists
-        DistrictResolver.getDistrict(null, { id: args.district })
+        DistrictResolver.getDistrictByName(null, { name: args.district }, context)
           .then((e) => {
             if (e == null) { return reject(new ApolloError('The district does not exist')); }
 
@@ -57,7 +58,9 @@ const addPoliticalPartyCandidate = (parent, args, context) => {
             });
           })
           .catch((e) => {
-            return reject(new ApolloError('The political party does not exist'));
+            console.log(e)
+
+            return reject(new ApolloError('The district does not exist'));
           });
       })
       .catch((e) => {
@@ -69,7 +72,7 @@ const addPoliticalPartyCandidate = (parent, args, context) => {
 const updatePoliticalPartyCandidate = (parent, args, context) => new Promise((resolve, reject) => {
   if (!authRoles[context.payload.role].includes('updatePoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver updatePoliticalPartyCandidate`);
 
-  PoliticalPartyResolver.getPoliticalParty(null, { id: args.political_party })
+  PoliticalPartyResolver.getPoliticalPartyByName(null, { name: args.political_party }, context)
     .then((e) => {
       // check district is good
       DistrictResolver.getDistrict(null, { id: args.district })
