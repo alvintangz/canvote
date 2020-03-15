@@ -40,30 +40,22 @@ export default function PoliticalPartyCreate(props) {
 
     const [politicalPartyName, setPoliticalPartyName] = useState("");
     const [colour, setColour] = useState("fff");
-    const [addPoliticalParty, { data }] = useMutation(CREATE_POLITICAL_PARTY);
-
+    const [addPoliticalParty] = useMutation(CREATE_POLITICAL_PARTY, {errorPolicy: 'all'});
 
     function handlePoliticalPartyChange(event: React.FormEvent<HTMLInputElement>): void {
         setPoliticalPartyName(event.currentTarget.value)
-        // this.setState({politicalPartyName: event.currentTarget.value});
     }
 
     function handleColourChange(event: any): void {
         setColour(event.hex)
-        // this.setState({politicalPartyName: event.currentTarget.value});
     }
 
     function handleSubmit(event: React.SyntheticEvent): void {
         event.preventDefault();
-        // const [createPoliticalParty] = useMutation(CREATE_POLITICAL_PARTY);
-
-        addPoliticalParty({ variables: { name: politicalPartyName, colour: "red" }}).then((res) => {
-            console.log("good");
-            console.log(res);
-        }).catch(err => {
-            console.log("err occured")
-            console.log(err);
-        });
+        
+        addPoliticalParty({ variables: { name: politicalPartyName, colour: colour }})
+            .then((a) => console.log(a))
+            .catch((a) => console.log(a))
     }
 
     

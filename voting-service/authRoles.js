@@ -15,6 +15,18 @@ const resolverToRole = {
   ],
 };
 
+// replace externalViewer with the following to give it access to all methods, ONLY FOR TESTING
+/*
+externalViewer: [
+  'addDistrict', 'getPoliticalParties', 'getPoliticalPartyCandidates', 'addBallot',
+  'addPoliticalParty', 'addPoliticalPartyCandidate', 'addVoter', 'deletePoliticalParty',
+  'deletePoliticalPartyCandidate', 'getBallotByCandidate', 'getBallots', 'getDistrict',
+  'getDistrictByName', 'getDistricts', 'getPoliticalParty', 'getPoliticalPartyByName',
+  'getPoliticalPartyCandidate', 'getVoter', 'getVoterByEmail', 'getVoters',
+  'updatePoliticalParty', 'updatePoliticalPartyCandidate', 'addVote', 'getBallot',
+],
+*/
+
 module.exports = { resolverToRole };
 
 

@@ -28,7 +28,7 @@ const server = new ApolloServer({
   schema,
   introspection: prod,
   playground: prod,
-  formatError: (err) => err.message,
+  formatError: (err) => new Error(err.originalError),
   context: ({ req }) => {
 
     let payload = { role: 'externalViewer' };

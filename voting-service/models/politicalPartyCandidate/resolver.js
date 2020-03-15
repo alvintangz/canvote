@@ -2,6 +2,9 @@ const PoliticalPartyCandidate = require('./schema').PoliticalPartyCandidates;
 const PoliticalPartyResolver = require('../politicalParty/resolver');
 const DistrictResolver = require('../district/resolver');
 const authRoles = require('../../authRoles').resolverToRole;
+const {
+  ApolloError,
+} = require('apollo-server-express');
 
 
 const getPoliticalPartyCandidates = (parent, args, context) => {
@@ -29,7 +32,7 @@ const getPoliticalPartyForCandidate = (parent, args, context) => new Promise((re
 });
 
 const addPoliticalPartyCandidate = (parent, args, context) => {
-  if (!authRoles[context.payload.role].includes('addPoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver addPoliticalPartyCandidate`);
+  if (!authRoles[context.payload.role].includes('addPoliticalPartyCandidate')) throw new ApolloError(`User ${context.payload.role} cannot access resolver addPoliticalPartyCandidate`);
 
   const newPoliticalPartyCandidate = new PoliticalPartyCandidate({
     name: args.name,
@@ -41,12 +44,12 @@ const addPoliticalPartyCandidate = (parent, args, context) => {
     // check political party exists
     PoliticalPartyResolver.getPoliticalParty(null, { id: args.political_party })
       .then((e) => {
-        if (e == null) { return reject(new Error('The political party does not exist')); }
+        if (e == null) { return reject(new ApolloError('The political party does not exist')); }
 
         // check district exists
         DistrictResolver.getDistrict(null, { id: args.district })
           .then((e) => {
-            if (e == null) { return reject(new Error('The district does not exist')); }
+            if (e == null) { return reject(new ApolloError('The district does not exist')); }
 
             // we can add
             newPoliticalPartyCandidate.save((err, res) => {
@@ -54,11 +57,11 @@ const addPoliticalPartyCandidate = (parent, args, context) => {
             });
           })
           .catch((e) => {
-            return reject(new Error('The political party does not exist'));
+            return reject(new ApolloError('The political party does not exist'));
           });
       })
       .catch((e) => {
-        reject(new Error('The political party does not exist'));
+        reject(new ApolloError('The political party does not exist'));
       });
   });
 };
