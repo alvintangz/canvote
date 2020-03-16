@@ -39,13 +39,11 @@ export class UserUpdate extends Component<Props, State> {
     }
 
     componentDidMount() {
-        console.log(this.props.currentUser.role)
 
         this.setState({userId: this.props.match.params.userId}, () => {
             users.retrieveByRole(this.props.currentUser.role === UserRole.voter ? UserRole.election_officer : UserRole.voter
                 , this.state.userId)
             .then((e) => {
-                console.log(e.data)
                 this.setState({
                     email: e.data.email,
                     firstName: e.data.firstName,
@@ -83,8 +81,6 @@ export class UserUpdate extends Component<Props, State> {
 
     handleSubmit(event: React.SyntheticEvent): void {
         event.preventDefault();
-        console.log("submitted")
-        console.log(this.state)
 
         const toUpdate : User = {
             email: this.state.email,
@@ -97,40 +93,6 @@ export class UserUpdate extends Component<Props, State> {
         users.updateByRole(this.state.role, this.state.userId, toUpdate)
             .then((e) => console.log(e))
             .catch((e) => console.log(e))
-
-
-        // id?: number;
-        // email: string;
-        // firstName: string;
-        // lastName: string;
-        // role?: UserRole;
-        // isActivated?: boolean;
-        // isActive?: boolean;
-
-
-        // users.
-
-        // realistically I have to see if the role is admin or election offer
-        // if admin, I create election officer
-        // if election offer, I create voter
-        // const jsonObj : User = {
-        //     email: this.state.email,
-        //     firstName: this.state.firstName,
-        //     lastName: this.state.lastName
-        // }
-        
-        // users.createByRole(UserRole.election_officer, jsonObj)
-        //     .then((result) => {
-        //         console.log(result);
-        //     }).catch((err) => {
-        //         console.log(err);                
-        //     });
-
-        // auth.loginFirst(this.state.email, this.state.password).then(() => {
-        //     this.props.dispatch({ type: AuthActionType.LOGIN_SUCCESS })
-        // }).catch((error: AxiosError) => {
-
-        // });
     }
 
     render() {

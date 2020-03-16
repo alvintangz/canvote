@@ -23,19 +23,11 @@ export class ResetPassword extends React.Component<Props, State> {
 
     handleSubmit(event: React.SyntheticEvent): void {
         event.preventDefault();
-        console.log("submitted req");
 
         me.resetPassword(this.state.pwd, this.state.pwdConfirm)
             .then((e) => console.log(e))
             .catch((e) => console.log(e))
-        // const jsonObj = {
-        //     token: this.state.tkn,
-        //     passwordOne: this.state.pwd,
-        //     passwordTwo: this.state.pwdConfirm
-        // }
-        // me.activateAccount(this.state.tkn, this.state.pwd, this.state.pwdConfirm)
-        //     .then((e) => { console.log(e)})
-        //     .catch((err) => console.log(err))
+
     }
 
     handlePwdChange(event: React.FormEvent<HTMLInputElement>): void {

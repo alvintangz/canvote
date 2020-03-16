@@ -71,12 +71,7 @@ export default function PoliticalPartyCreate(props) {
 
     function handleSubmit(event: React.SyntheticEvent): void {
         event.preventDefault();
-        // candidateName === "" ? setCandidateName(props.match.params.name) : null
-        // district === "" ? handleDistrictChange(props.match.params.district) : null
-        // political_party === "" ? handlePoliticalPartyChange(props.match.params.political_party) : null
-        console.log(politicalPartyName)
-        console.log(props.match.params.political_party)
-        console.log(props)
+
         updatePoliticalPartyCandidate({ variables: { 
             political_party: politicalPartyName === "" ? data['getPoliticalPartyCandidate'].political_party : politicalPartyName,
             name: candidateName === "" ? data['getPoliticalPartyCandidate'].name : candidateName,

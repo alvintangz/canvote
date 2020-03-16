@@ -131,7 +131,6 @@ export class UserCreate extends Component<Props, State> {
 
     render() {
         if (!this.state.loaded) return (<div>Loading...</div>);
-        console.log(this.state)
         const roleForCreation = this.roleForCreation === UserRole.voter ? 'Voter' : 'Election Officer';
         return (
             <div>

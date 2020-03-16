@@ -53,7 +53,6 @@ export default function UpdatePoliticalParty(props) {
     }
 
     function handlePoliticalPartyChange(event: React.FormEvent<HTMLInputElement>): void {
-        console.log(data);
         setPoliticalPartyName(event.currentTarget.value)
     }
 

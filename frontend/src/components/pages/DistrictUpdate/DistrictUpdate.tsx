@@ -26,7 +26,6 @@ export default function DistrictUpdate(props) {
 
     const [name, setName] = useState("");
     const [updateDistrict] = useMutation(UPDATE_DISTRICT, {errorPolicy: 'all'});
-console.log(props)
     const {loading, error, data} = useQuery(GET_DISTRICT, {errorPolicy: 'all', variables: {id: props.match.params.districtId}});
 
     if (data) {
