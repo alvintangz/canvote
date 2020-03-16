@@ -1,0 +1,30 @@
+{
+  "name": "canvote-voting-service",
+  "version": "1.0.0",
+  "description": "Voting microservice for CanVote, a CSCC09 Project.",
+  "main": "app.js",
+  "scripts": {
+    "serve": "PORT=3002 node ./app.js",
+    "serve:dev": "PORT=3002 nodemon ./app.js",
+    "eslint": "./node_modules/.bin/eslint ./app.js",
+    "docker-build": "docker build ."
+  },
+  "author": "Dharmik Shah; Alvin Tang; Mikhail Makarov",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.1"
+  },
+  "dependencies": {
+    "apollo-server-express": "^2.11.0",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-graphql": "^0.9.0",
+    "graphql": "^14.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.3"
+  }
+}

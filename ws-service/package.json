@@ -1,0 +1,21 @@
+{
+  "name": "canvote-ws-service",
+  "version": "1.0.0",
+  "description": "WebSocket microservice for CanVote, a CSCC09 Project.",
+  "main": "app.js",
+  "scripts": {
+    "serve": "PORT=3003 node ./app.js",
+    "serve:dev": "PORT=3003 nodemon ./app.js",
+    "eslint": "./node_modules/.bin/eslint ./app.js",
+    "docker-build": "docker build ."
+  },
+  "author": "Dharmik Shah; Alvin Tang; Mikhail Makarov",
+  "dependencies": {
+    "ws": "^7.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.1"
+  }
+}

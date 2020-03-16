@@ -1,0 +1,47 @@
+/*
+ Global variables for GCWeb
+ */
+
+$wbGray: #e1e4e7;
+$button-blue: #284162;
+$wbGrayLight: #eaebed;
+$accent-blue: #26374a;
+$border-red: #af3c43;
+$active-blue: #243850;
+$search-gray: #e0e0e0;
+$profile-gray: #eaebed;
+$gray-light: #6f6f6f; // Light grey colour (Bootstrap override).
+
+// Body
+$body-bg: #fff; // Body element's background colour (WET-BOEW override).
+$font-family-base: "Noto Sans", sans-serif; // (Bootstrap override), "Noto Sans" is a Google font but it is not loaded yet
+
+// Exclude temporary the form element from the font update, keep same style as before
+$input-height-base: 37px;
+
+// Button - Ensure we have a target touch of 44px x 44px, the following value was set based on the top right search button.
+$padding-base-vertical: 10px;
+$padding-base-horizontal: 14px;
+
+//Breadcrumb
+$breadcrumb-bg: transparent; // Inner background colour (Bootstrap override).
+$wb-bc-separator-content: ">"; // GCWeb v5
+$wb-bc-separator-content-rtl: "<"; // GCWeb v5
+$wb-bc-separator-font-size: .7em; // GCWeb v5
+
+//Heading links on landing components
+$heading-link: 20px; // same as h5
+$heading-link-mrgn-tp: 23px;
+
+// "About this site" footer links
+$footer-about-li-horizontal-spacing: .7em;
+
+/*
+Left menu variables
+*/
+$menu-background: #fff;
+$menu-colour: #555;
+
+$input-color-placeholder: #5c5c5c !important;
+
+@import "../wet-boew/variables";

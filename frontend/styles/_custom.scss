@@ -1,0 +1,34 @@
+html, body, #root {
+  width: 100%;
+  height: 100%;
+}
+
+h1 {
+  margin-bottom: 26px;
+}
+
+.alert {
+  h2 {
+    font-size: 1.2em;
+  }
+}
+
+h3 {
+  font-size: 20px;
+}
+
+p {
+  font-size: 16px;
+}
+
+#breadcrumbs {
+  border-top: 1px solid $border-red;
+  margin-top: 16px;
+  .container {
+    padding-top: 12px;
+      ol {
+        margin-bottom: 0;
+      }
+  }
+}
+
