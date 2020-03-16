@@ -4,11 +4,11 @@ const resolverToRole = {
     'getPoliticalParties', 'getPoliticalParty', 'getPoliticalPartyByName', 'addPoliticalParty', 'updatePoliticalParty', 'deletePoliticalParty',
     'addDistrict', 'getDistrict', 'getDistricts', 'getDistrictByName', 'updateDistrict', 'deleteDistrict',
   ],
-  electionOfficer: [
-    'addVoter', 'getVoters', 'getVoter', 'getVoterByEmail',
+  election_officer: [
+    'addVoter', 'getVoters', 'getVoter', 'getVoterByEmail', 'getDistricts',
   ],
   voter: [
-    'addVote', 'addBallot',
+    'addVote', 'addBallot', 'getPoliticalPartyCandidates', 'getVoterByEmail'
   ],
   externalViewer: [
     'addDistrict', 'getPoliticalParties', 'getPoliticalPartyCandidates', 'addBallot',

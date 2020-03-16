@@ -15,7 +15,7 @@ const getPoliticalPartyCandidates = (parent, args, context) => {
 
 const getPoliticalPartyCandidate = (parent, args, context) => new Promise((resolve, reject) => {
   if (!authRoles[context.payload.role].includes('getPoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver getPoliticalPartyCandidate`);
-
+  console.log("on this func")
   PoliticalPartyCandidate.findById(args.id, (err, res) => {
     err ? reject(err) : resolve(res);
   });

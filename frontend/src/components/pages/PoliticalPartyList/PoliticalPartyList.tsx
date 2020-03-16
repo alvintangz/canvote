@@ -73,9 +73,7 @@ export default function PoliticalPartyCreate(props) {
                                             </td>
                                             <td>
                                                 <button type="button" className="btn btn-danger" onClick={() => deleteRow(row.id)}>Delete</button>
-                                            
                                             </td>
-
                                         </tr>
                                     )
                                 })

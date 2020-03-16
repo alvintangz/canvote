@@ -4,6 +4,8 @@ import users from '../../../api/users';
 import {UserRole} from '../../../enums/role';
 import {User} from "../../../interfaces/user";
 import {connect} from "react-redux";
+import gql from 'graphql-tag';
+import client from "../../../api/apolloClient";
 
 
 const mapStateToProps = (state) => {
@@ -19,7 +21,32 @@ interface State {
     firstName: string,
     lastName: string,
     created: User,
+    loaded: boolean,
+    districtChosen: string,
+    districts: {
+        id: string,
+        name: string
+    }[],
 }
+
+const GET_DISTRICTS = gql`
+    query {
+        getDistricts {
+            id
+            name
+        }
+    }
+`;
+
+const ADD_VOTER = gql`
+    mutation addVoter($email: String!, $district: String!) {
+        addVoter(email: $email, district: $district) {
+            email
+            district
+        }
+    }
+`;
+
 
 export class UserCreate extends Component<Props, State> {
     private roleForCreation;
@@ -32,23 +59,45 @@ export class UserCreate extends Component<Props, State> {
             email: '',
             firstName: '',
             lastName: '',
-            created: null
+            loaded: false,
+            created: null,
+            districts: [],
+            districtChosen: ''
         };
     }
 
+    componentDidMount() {
+        client.query({
+            query: GET_DISTRICTS,
+        }).then(data => {
+            this.setState({
+                districts: data.data.getDistricts
+            });
+        }).catch(error => console.error(error))
+            .finally(() => {
+                this.setState({ loaded: true });
+            });
+    }
+
     handleEmailChange = (event: React.FormEvent<HTMLInputElement>): void => {
-        this.setState({email: event.currentTarget.value});
+        this.setState({ email: event.currentTarget.value });
     };
 
     handleFirstNameChange = (event: React.FormEvent<HTMLInputElement>): void => {
-        this.setState({firstName: event.currentTarget.value});
+        this.setState({ firstName: event.currentTarget.value });
     };
 
     handleLastNameChange = (event: React.FormEvent<HTMLInputElement>): void => {
-        this.setState({lastName: event.currentTarget.value});
+        this.setState({ lastName: event.currentTarget.value });
+    };
+
+    handleDistrictChange = (event: React.FormEvent<HTMLSelectElement>): void => {
+        this.setState({ districtChosen: event.currentTarget.value });
     };
 
     handleSubmit = (event: React.SyntheticEvent): void => {
+        if (!this.state.districtChosen) { this.setState({districtChosen: this.state.districts[0].name}) }
+        console.log(this.state);
         event.preventDefault();
         users.createByRole(
             this.props.currentUser.role === UserRole.administrator ? UserRole.election_officer : UserRole.voter,
@@ -57,7 +106,13 @@ export class UserCreate extends Component<Props, State> {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName
             }).then((res) => {
-                this.setState({ created: res.data, email: '', firstName: '', lastName: '' });
+                // TODO: Put this server side
+                client.mutate({
+                    variables: { email: this.state.email, district: this.state.districtChosen },
+                    mutation: ADD_VOTER
+                }).then(() => {
+                    this.setState({ created: res.data, email: '', firstName: '', lastName: '' });
+                });
             }).catch((err) => {
                 this.setState({ created: null });
                 console.log(err);
@@ -65,6 +120,7 @@ export class UserCreate extends Component<Props, State> {
     };
 
     render() {
+        if (!this.state.loaded) return (<div>Loading...</div>);
         const roleForCreation = this.roleForCreation === UserRole.voter ? 'Voter' : 'Election Officer';
         return (
             <div>
@@ -108,6 +164,24 @@ export class UserCreate extends Component<Props, State> {
                                    required />
                         </label>
                     </div>
+                    {
+                        roleForCreation === 'Voter' ?
+
+                        <div className="form-group">
+                            <label className="required">
+                                District:
+                                <select className="form-control"
+                                        value={this.state.districtChosen ? this.state.districtChosen : ''}
+                                        onChange={this.handleDistrictChange}>
+                                    {
+                                        this.state.districts.map((district) =>
+                                            <option key={district.id} value={district.id}>{district.name}</option>)
+                                    }
+                                </select>
+                            </label>
+                        </div>
+                        : null
+                    }
                     <input type="submit" className="btn btn-primary" value="Submit" />
                 </form>
             </div>

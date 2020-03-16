@@ -11,16 +11,22 @@ const addBallot = (parent, args, context) => {
   });
   return new Promise((resolve, reject) => {
     // check political party exists
-    PoliticalPartyCandidateResolver.getPoliticalPartyCandidate(null, { id: args.candidate })
+    PoliticalPartyCandidateResolver.getPoliticalPartyCandidate(null, { id: args.candidate }, context)
       .then((e) => {
         if (e == null) { return reject(new Error('The candidate does not exist')); }
         // check district exists
         // we can add
+        console.log("will add new ballot")
         newBallot.save((err, res) => {
-          err ? reject(err) : resolve(res);
+          if (err) { console.log("err occ, here"); console.log(err); console.log("end err"); return reject(err);}
+          console.log(res);
+          console.log("returning res", JSON.stringify(res))
+          return resolve(res);
         });
       })
       .catch((e) => {
+        console.log('here')
+        console.log(e)
         reject(new Error('The candidate does not exist'));
       });
   });

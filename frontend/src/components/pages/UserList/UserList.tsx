@@ -113,25 +113,12 @@ class UserList extends React.Component<Props, State> {
                         )}
                     </tbody>
                 </table>
-                <ul className="pager well well-sm">
-                    <li className="previous">
-                        <button className="btn btn-default pull-left" onClick={() => this.handlePrevPageChange} disabled={this.state.page === 1}> Previous Page </button>
-                    </li>
-                    Current page: {this.state.page}
-                    <li className="next">
-                        <button className="btn btn-default pull-right" onClick={() => this.handleNextPageChange} disabled={this.state.page >= this.state.maxPage}> Next Page </button>
-                    </li>
-                </ul>
-                {
-                    /*
-                                    <ul className="pagination pagination-sm">
+            {/* <ul className="pagination pagination-sm">
                     <li><a href="#" rel="prev">Previous</a></li>
                     <li><a href="#">1 <span className="wb-inv">Go to Page 1</span></a></li>
                     <li><a href="#" rel="next">Next</a></li>
                 </ul>
-                     */
-                }
-
+                     */}
             </div>
         )
     }

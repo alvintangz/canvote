@@ -21,10 +21,21 @@ interface Props {
     onLoggedOut: () => void;
 }
 
-class Header extends React.Component<Props, {}> {
+interface State {
+    loggedOut: boolean;
+}
+
+class Header extends React.Component<Props, State> {
+    constructor(props) {
+        super(props);
+        this.state = {
+            loggedOut: false
+        };
+    }
 
     logout = (): void => {
         authApi.logout().finally(() => {
+            // this.setState
             this.props.onLoggedOut();
         });
     };

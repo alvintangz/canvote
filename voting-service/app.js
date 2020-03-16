@@ -28,9 +28,8 @@ const server = new ApolloServer({
   schema,
   introspection: prod,
   playground: prod,
-  formatError: (err) => new Error(err.originalError),
+  // formatError: (err) => new Error(err.originalError),
   context: ({ req }) => {
-
     let payload = { role: 'externalViewer' };
     // some endpoints don't need cookies
     if (!req.cookies['cv.token']) return { payload };
@@ -40,7 +39,6 @@ const server = new ApolloServer({
         if (err) throw new AuthenticationError('The jwt token is not valid');
         if (decoded) payload = decoded;
       });
-
     return { payload };
   },
 });

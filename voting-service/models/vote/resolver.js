@@ -1,5 +1,9 @@
 const Vote = require('./schema').Votes;
 const VoterResolver = require('../voter/resolver');
+const BallotResolver = require('../ballot/resolver');
+const PoliticalPartyCandidateResolver = require('../politicalPartyCandidate/resolver');
+
+
 const authRoles = require('../../authRoles').resolverToRole;
 
 const addVote = (parent, args, context) => {
@@ -7,28 +11,55 @@ const addVote = (parent, args, context) => {
 
   const newVote = new Vote({
     voter: args.voter,
+    candidate: args.candidate,
   });
 
   return new Promise((resolve, reject) => {
-    // check email exists
-    VoterResolver.getVoterByEmail(null, { email: args.voter })
-      .then((e) => {
-        if (e == null) { return reject(new Error('A voter does not exist with this email')); }
+    let p1 = VoterResolver.getVoterByEmail(null, {email: args.voter}, context);
+    let p2 = getVoteByEmail(null, {email: args.voter});
+    let p3 = PoliticalPartyCandidateResolver.getPoliticalPartyCandidate(null, {id: args.candidate}, context);
 
-        // make sure this voter hasn't already voted
-        getVoteByEmail(null, { email: args.voter })
-          .then((e) => {
-            // we can add
-            newVote.save((err, res) => {
-              err ? reject(err) : resolve(res);
-            });
+    Promise.all([p1, p2, p3])
+      .then((values) => {
+        newVote.save()
+          .then((a) => {
+            // add to ballot
+            console.log("i get here")
+            BallotResolver.addBallot(null, {candidate: args.candidate}, context)
+              .then((a) => { a["voter"] = args.voter; return resolve(a) })
+              .catch((a) =>  reject(a))
           })
-          .catch((e) => reject(new Error('This voter has already voted')));
+          .catch((a) => {
+             reject(a)
+          })
       })
+      .catch((err) => {
+        console.log("err occ")
+        reject(new Error(err))
+      })
+    // check email exists
+    // VoterResolver.getVoterByEmail(null, { email: args.voter }, context)
+    //   .then((e) => {
+    //     if (e == null) { return reject(new Error('A voter does not exist with this email')); }
 
-      .catch((e) => {
-        reject(new Error('The voter does not exist with this email'));
-      });
+    //     // make sure this voter hasn't already voted
+    //     getVoteByEmail(null, { email: args.voter })
+    //       .then((e) => {
+    //         // we can add
+    //         newVote.save()
+    //           .then((a) => console.log(a))
+    //           .catch((b) => console.log(err,b))
+    //         // newVote.save((err, res) => {
+    //         //   err ? reject(err) : resolve(res);
+    //         // });
+    //       })
+    //       .catch((e) => reject(new Error('This voter has already voted')));
+    //   })
+
+    //   .catch((e) => {
+    //     console.log("error", e);
+    //     reject(new Error('The voter does not exist with this email'));
+    //   });
   });
 };
 
@@ -48,9 +79,10 @@ const getVote = (parent, args, context) => new Promise((resolve, reject) => {
 
 const getVoteByEmail = (parent, args, context) => new Promise((resolve, reject) => {
   Vote.find({ voter: args.email }, (err, res) => {
+    console.log("reslength is", res.length)
     if (err) { return reject(err); }
     if (res.length === 0) { return resolve(res); }
-    return reject(res);
+    return reject("This voter has already voted");
   });
 });
 

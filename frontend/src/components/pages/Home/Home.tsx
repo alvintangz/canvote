@@ -3,6 +3,7 @@ import './Home.scss';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import LinksByUserRole from './HomeLinks';
+import Banner from '../../../cover.jpg';
 
 const mapStateToProps = (state) => {
     return ({currentUser: state.authReducer.user});
@@ -13,7 +14,7 @@ const Home = (props) => {
         const { firstName, lastName, role } = props.currentUser;
         return (
             <div className="container">
-                <p>Hi, {firstName + ' ' + lastName}.</p>
+                <img src={Banner} alt="Your vote is our vote." className="img-fluid" />
                 <hr/>
                 <h2>Shortcuts</h2>
                 <div className="row">

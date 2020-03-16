@@ -1,5 +1,6 @@
 const Voter = require('./schema').Voters;
 const authRoles = require('../../authRoles').resolverToRole;
+const DistrictResolver = require('../district/resolver');
 
 
 // https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
@@ -8,17 +9,31 @@ function validateEmail(email) {
   return re.test(String(email).toLowerCase());
 }
 
+// UPDATED
 const addVoter = (parent, args, context) => {
-  if (!authRoles[context.payload.role].includes('addVoter')) throw new Error(`User ${context.payload.role} cannot access resolver addVoter`)
+  if (!authRoles[context.payload.role].includes('addVoter')) throw new Error(`User ${context.payload.role} cannot access resolver addVoter`);
 
   const newVoter = new Voter({
     email: args.email,
+    district: args.district
   });
+
   return new Promise((resolve, reject) => {
     if (!validateEmail(args.email)) throw new Error('Email is not valid');
-    newVoter.save((err, res) => {
-      err ? reject(err) : resolve(res);
+
+    DistrictResolver.getDistrict(null, { id: args.district }, context)
+    .then((e) => {
+      // we can add
+      newVoter.save((err, res) => {
+        err ? reject(err) : resolve(res);
+      });
+    }
+      
+    )
+    .catch((e) => {
+      reject(new Error('The district does not exist'));
     });
+
   });
 };
 
@@ -36,10 +51,13 @@ const getVoter = (parent, args, context) => new Promise((resolve, reject) => {
 });
 
 const getVoterByEmail = (parent, args, context) => new Promise((resolve, reject) => {
-  if (!authRoles[context.payload.role].includes('getVoterByEmail')) throw new Error(`User ${context.payload.role} cannot access resolver getVoterByEmail`);
+  console.log("finding email")
 
-  Voter.find({ email: args.email }, (err, res) => {
-    if (err || res.length === 0) { return reject(err); }
+  if (!authRoles[context.payload.role].includes('getVoterByEmail')) throw new Error(`User ${context.payload.role} cannot access resolver getVoterByEmail`);
+  console.log("finding email")
+  Voter.findOne({ email: args.email }, (err, res) => {
+    console.log("res is ", JSON.stringify(res))
+    if (err || res.length === 0) { return reject("This voter email does not exist"); }
     return resolve(res);
   });
 });

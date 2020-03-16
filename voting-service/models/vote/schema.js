@@ -9,10 +9,15 @@ const voteSchema = new Schema(
       required: true,
       unique: true,
     },
+    candidate: {
+      type: String,
+      required: true,
+    },
     timestamp: {
       type: Date,
       default: Date.now,
     },
+
   },
 );
 

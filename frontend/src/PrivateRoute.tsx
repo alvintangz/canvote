@@ -17,7 +17,7 @@ const PrivateRoute = ({ component: Component, canAccess, ...rest }) => {
             return (<Route {...rest} render={props => <Component {...props} />} />);
     }
     // TODO: Log user out 
-    return <Redirect to="/auth/login?denied=1" />
+    return <Redirect to="/" />
 };
 
 export default connect(mapStateToProps)(PrivateRoute);

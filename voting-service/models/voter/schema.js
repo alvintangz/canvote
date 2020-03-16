@@ -9,9 +9,12 @@ const voterSchema = new Schema(
       required: true,
       unique: true,
     },
+    district: {
+      type: String,
+      required: true,
+    },
   },
 );
-
 
 const Voters = mongoose.model('Voter', voterSchema);
 module.exports = { Voters, voterSchema };

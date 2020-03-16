@@ -18,6 +18,7 @@ const typeDefs = gql`
   type District {
     id: ID!
     name: String!
+    candidates: [PoliticalPartyCandidate]
   }
 
   type PoliticalPartyCandidate {
@@ -30,6 +31,7 @@ const typeDefs = gql`
   type Voter {
     id: ID!
     email: String!
+    district: String!
   }
 
   type Ballot {
@@ -41,7 +43,8 @@ const typeDefs = gql`
   type Vote {
     id: ID!
     voter: String!
-    timestamp: String
+    timestamp: String,
+    candidate: String!
   }
 
   type Query {
@@ -57,6 +60,7 @@ const typeDefs = gql`
 
     getVoters: [Voter]
     getVoter(id: ID!): Voter
+    getVoterByEmail(email: String!) : Voter
 
     getBallots: [Ballot]
     getBallot(id: ID!): Ballot
@@ -81,11 +85,11 @@ const typeDefs = gql`
     updatePoliticalPartyCandidate(id: ID!, name: String!, political_party: String!, district: String!): PoliticalPartyCandidate
     deletePoliticalPartyCandidate(id: ID!): PoliticalPartyCandidate
 
-    addVoter(email: String!): Voter
+    addVoter(email: String!, district: String!): Voter
 
     addBallot(candidate: String!): Ballot
 
-    addVote(voter: String!): Vote
+    addVote(voter: String!, candidate: String!): Vote
   }
 `;
 
@@ -102,6 +106,7 @@ const resolvers = {
 
     getVoters: VoterResolver.getVoters,
     getVoter: VoterResolver.getVoter,
+    getVoterByEmail: VoterResolver.getVoterByEmail,
 
     getBallots: BallotResolver.getBallots,
     getBallot: BallotResolver.getBallot,
