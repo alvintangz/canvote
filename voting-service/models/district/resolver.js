@@ -10,7 +10,8 @@ const addDistrict = (parent, args, context) => {
   });
   return new Promise((resolve, reject) => {
     newDistrict.save((err, res) => {
-      err ? reject(err) : resolve(res);
+      if (err) return reject(err);
+      return resolve(res);
     });
   });
 };
@@ -21,15 +22,15 @@ const getDistricts = (parent, args, context) => {
   return District.find({});
 };
 
-const getDistrict = (parent, args, context) => new Promise((resolve, reject) => {
+const getDistrict = (parent, args) => new Promise((resolve, reject) => {
   District.findById(args.id, (err, res) => {
-    err ? reject(err) : resolve(res);
+    if (err) return reject(err);
+    return resolve(res);
   });
 });
 
 const getDistrictByName = (parent, args, context) => new Promise((resolve, reject) => {
   if (!authRoles[context.payload.role].includes('getDistrictByName')) throw new Error(`User ${context.payload.role} cannot access resolver getDistrictByName`);
-console.log("in dist")
   District.find({ name: args.name }, (err, res) => {
     console.log(res);
     if (err || res.length === 0) { return reject(err); }
@@ -43,7 +44,8 @@ const updateDistrict = (parent, args, context) => new Promise((resolve, reject) 
   District.findOneAndUpdate({ _id: args.id },
     { $set: { name: args.name } }, { new: true },
     (err, res) => {
-      err ? reject(err) : resolve(res);
+      if (err) return reject(err);
+      return resolve(res);
     });
 });
 
@@ -51,7 +53,8 @@ const deleteDistrict = (parent, args, context) => new Promise((resolve, reject) 
   if (!authRoles[context.payload.role].includes('deleteDistrict')) throw new Error(`User ${context.payload.role} cannot access resolver deleteDistrict`);
 
   District.findByIdAndRemove({ _id: args.id }, (err, res) => {
-    err ? reject(err) : resolve(res);
+    if (err) return reject(err);
+    return resolve(res);
   });
 });
 

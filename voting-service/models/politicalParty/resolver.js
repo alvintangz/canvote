@@ -11,9 +11,10 @@ const getPoliticalParties = (parent, args, context) => {
 const getPoliticalParty = (parent, args, context) => new Promise((resolve, reject) => {
   if (!authRoles[context.payload.role].includes('getPoliticalParty')) throw new Error(`User ${context.payload.role} cannot access resolver getPoliticalParty`);
 
-  console.log("here", args.id)
+  console.log('here', args.id);
   PoliticalParty.findById(args.id, (err, res) => {
-    err ? reject(err) : resolve(res);
+    if (err) return reject(err);
+    return resolve(res);
   });
 });
 
@@ -21,7 +22,7 @@ const getPoliticalPartyByName = (parent, args, context) => new Promise((resolve,
   if (!authRoles[context.payload.role].includes('getPoliticalPartyByName')) throw new Error(`User ${context.payload.role} cannot access resolver getPoliticalPartyByName`);
 
   PoliticalParty.find({ name: args.name }, (err, res) => {
-    if (err || res.length == 0) { return reject(res); }
+    if (err || res.length === 0) { return reject(res); }
     return resolve(res);
   });
 });
@@ -35,7 +36,8 @@ const addPoliticalParty = (parent, args, context) => {
   });
   return new Promise((resolve, reject) => {
     newPoliticalParty.save((err, res) => {
-      err ? reject(err) : resolve(res);
+      if (err) return reject(err);
+      return resolve(res);
     });
   });
 };
@@ -46,7 +48,8 @@ const updatePoliticalParty = (parent, args, context) => new Promise((resolve, re
   PoliticalParty.findOneAndUpdate({ _id: args.id },
     { $set: { name: args.name, colour: args.colour } }, { new: true },
     (err, res) => {
-      err ? reject(err) : resolve(res);
+      if (err) return reject(err);
+      return resolve(res);
     });
 });
 
@@ -54,7 +57,8 @@ const deletePoliticalParty = (parent, args, context) => new Promise((resolve, re
   if (!authRoles[context.payload.role].includes('deletePoliticalParty')) throw new Error(`User ${context.payload.role} cannot access resolver deletePoliticalParty`);
 
   PoliticalParty.findByIdAndRemove({ _id: args.id }, (err, res) => {
-    err ? reject(err) : resolve(res);
+    if (err) return reject(err);
+    return resolve(res);
   });
 });
 

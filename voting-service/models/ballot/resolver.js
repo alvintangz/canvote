@@ -16,17 +16,17 @@ const addBallot = (parent, args, context) => {
         if (e == null) { return reject(new Error('The candidate does not exist')); }
         // check district exists
         // we can add
-        console.log("will add new ballot")
+        console.log('will add new ballot');
         newBallot.save((err, res) => {
-          if (err) { console.log("err occ, here"); console.log(err); console.log("end err"); return reject(err);}
+          if (err) { console.log('err occ, here'); console.log(err); console.log('end err'); return reject(err); }
           console.log(res);
-          console.log("returning res", JSON.stringify(res))
+          console.log('returning res', JSON.stringify(res));
           return resolve(res);
         });
       })
       .catch((e) => {
-        console.log('here')
-        console.log(e)
+        console.log('here');
+        console.log(e);
         reject(new Error('The candidate does not exist'));
       });
   });
@@ -42,7 +42,8 @@ const getBallot = (parent, args, context) => new Promise((resolve, reject) => {
   if (!authRoles[context.payload.role].includes('getBallot')) throw new Error(`User ${context.payload.role} cannot access resolver getBallot`);
 
   Ballot.findById(args.id, (err, res) => {
-    err ? reject(err) : resolve(res);
+    if (err) return reject(err);
+    return resolve(res);
   });
 });
 
@@ -67,10 +68,10 @@ const getBallotByPoliticalParty = (parent, args, context) => new Promise((resolv
       // find political party
       PoliticalPartyCandidateResolver.getPoliticalPartyForCandidate(null, { id: ballot.candidate })
         .then((e) => {
-          if (e.political_party == args.political_party) { result.push(ballot); }
+          if (e.political_party === args.political_party) { result.push(ballot); }
           if (index === a.length - 1) { return resolve(result); }
         })
-        .catch((e) => {
+        .catch(() => {
           reject(new Error('The candidate does not exist'));
         });
     });

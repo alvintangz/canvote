@@ -2,13 +2,13 @@ const resolverToRole = {
   administrator: [
     'getPoliticalPartyCandidates', 'getPoliticalPartyCandidate', 'addPoliticalPartyCandidate', 'updatePoliticalPartyCandidate', 'deletePoliticalPartyCandidate',
     'getPoliticalParties', 'getPoliticalParty', 'getPoliticalPartyByName', 'addPoliticalParty', 'updatePoliticalParty', 'deletePoliticalParty',
-    'addDistrict', 'getDistrict', 'getDistricts', 'getDistrictByName', 'updateDistrict', 'deleteDistrict',
+    'addDistrict', 'getDistrict', 'getDistricts', 'getDistrictByName', 'updateDistrict', 'deleteDistrict', 'addVoter',
   ],
   election_officer: [
     'addVoter', 'getVoters', 'getVoter', 'getVoterByEmail', 'getDistricts',
   ],
   voter: [
-    'addVote', 'addBallot', 'getPoliticalPartyCandidates', 'getVoterByEmail'
+    'addVote', 'addBallot', 'getPoliticalPartyCandidates', 'getVoterByEmail', 'getDistricts', 'getPoliticalPartyCandidate'
   ],
   externalViewer: [
     'addDistrict', 'getPoliticalParties', 'getPoliticalPartyCandidates', 'addBallot',

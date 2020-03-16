@@ -15,25 +15,23 @@ const addVoter = (parent, args, context) => {
 
   const newVoter = new Voter({
     email: args.email,
-    district: args.district
+    district: args.district,
   });
 
   return new Promise((resolve, reject) => {
     if (!validateEmail(args.email)) throw new Error('Email is not valid');
 
     DistrictResolver.getDistrict(null, { id: args.district }, context)
-    .then((e) => {
+      .then(() => {
       // we can add
-      newVoter.save((err, res) => {
-        err ? reject(err) : resolve(res);
+        newVoter.save((err, res) => {
+          if (err) return reject(err);
+          return resolve(res);
+        });
+      })
+      .catch(() => {
+        reject(new Error('The district does not exist'));
       });
-    }
-      
-    )
-    .catch((e) => {
-      reject(new Error('The district does not exist'));
-    });
-
   });
 };
 
@@ -46,18 +44,19 @@ const getVoter = (parent, args, context) => new Promise((resolve, reject) => {
   if (!authRoles[context.payload.role].includes('getVoter')) throw new Error(`User ${context.payload.role} cannot access resolver getVoter`);
 
   Voter.findById(args.id, (err, res) => {
-    err ? reject(err) : resolve(res);
+    if (err) return reject(err);
+    return resolve(res);
   });
 });
 
 const getVoterByEmail = (parent, args, context) => new Promise((resolve, reject) => {
-  console.log("finding email")
+  console.log('finding email');
 
   if (!authRoles[context.payload.role].includes('getVoterByEmail')) throw new Error(`User ${context.payload.role} cannot access resolver getVoterByEmail`);
-  console.log("finding email")
+  console.log('finding email');
   Voter.findOne({ email: args.email }, (err, res) => {
-    console.log("res is ", JSON.stringify(res))
-    if (err || res.length === 0) { return reject("This voter email does not exist"); }
+    console.log('res is ', JSON.stringify(res));
+    if (err || res.length === 0) { reject(new Error('This voter email does not exist')); }
     return resolve(res);
   });
 });

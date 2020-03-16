@@ -1,10 +1,8 @@
+const { ApolloError } = require('apollo-server-express');
 const PoliticalPartyCandidate = require('./schema').PoliticalPartyCandidates;
 const PoliticalPartyResolver = require('../politicalParty/resolver');
 const DistrictResolver = require('../district/resolver');
 const authRoles = require('../../authRoles').resolverToRole;
-const {
-  ApolloError,
-} = require('apollo-server-express');
 
 
 const getPoliticalPartyCandidates = (parent, args, context) => {
@@ -15,9 +13,10 @@ const getPoliticalPartyCandidates = (parent, args, context) => {
 
 const getPoliticalPartyCandidate = (parent, args, context) => new Promise((resolve, reject) => {
   if (!authRoles[context.payload.role].includes('getPoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver getPoliticalPartyCandidate`);
-  console.log("on this func")
+  console.log('on this func');
   PoliticalPartyCandidate.findById(args.id, (err, res) => {
-    err ? reject(err) : resolve(res);
+    if (err) return reject(err);
+    return resolve(res);
   });
 });
 
@@ -25,9 +24,10 @@ const getPoliticalPartyForCandidate = (parent, args, context) => new Promise((re
   if (!authRoles[context.payload.role].includes('getPoliticalPartyForCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver getPoliticalPartyForCandidate`);
 
   PoliticalPartyCandidate.find({ _id: args.id }, (err, res) => {
-    // console.log(res[0])
-    err ? reject(err) : resolve({ political_party: res[0].political_party });
-    if (err == null) { return reject(); }
+    if (err) return reject(err);
+    return resolve({ political_party: res[0].political_party });
+    // err ? reject(err) : resolve({ political_party: res[0].political_party });
+    // if (err == null) return reject();
   });
 });
 
@@ -44,26 +44,24 @@ const addPoliticalPartyCandidate = (parent, args, context) => {
     // check political party exists
     PoliticalPartyResolver.getPoliticalPartyByName(null, { name: args.political_party }, context)
       .then((e) => {
-
         if (e == null) { return reject(new ApolloError('The political party does not exist')); }
 
         // check district exists
         DistrictResolver.getDistrictByName(null, { name: args.district }, context)
           .then((e) => {
-            if (e == null) { return reject(new ApolloError('The district does not exist')); }
+            if (e == null) {
+              return reject(new ApolloError('The district does not exist'));
+            }
 
             // we can add
             newPoliticalPartyCandidate.save((err, res) => {
-              err ? reject(err) : resolve(res);
+              if (err) return reject(err);
+              return resolve(res);
             });
           })
-          .catch((e) => {
-            console.log(e)
-
-            return reject(new ApolloError('The district does not exist'));
-          });
+          .catch(() => reject(new ApolloError('The district does not exist')));
       })
-      .catch((e) => {
+      .catch(() => {
         reject(new ApolloError('The political party does not exist'));
       });
   });
@@ -73,9 +71,9 @@ const updatePoliticalPartyCandidate = (parent, args, context) => new Promise((re
   if (!authRoles[context.payload.role].includes('updatePoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver updatePoliticalPartyCandidate`);
 
   PoliticalPartyResolver.getPoliticalPartyByName(null, { name: args.political_party }, context)
-    .then((e) => {
+    .then(() => {
       // check district is good
-      console.log(`78 - ${args.district}`)
+      console.log(`78 - ${args.district}`);
       DistrictResolver.getDistrictByName(null, { name: args.district }, context)
         .then(
           // we can add
@@ -85,14 +83,15 @@ const updatePoliticalPartyCandidate = (parent, args, context) => new Promise((re
               { name: args.name, political_party: args.political_party, district: args.district },
             }, { new: true },
             (err, res) => {
-              err ? reject(err) : resolve(res);
+              if (err) return reject(err);
+              return resolve(res);
             }),
         )
-        .catch((e) => {
+        .catch(() => {
           reject(new Error('The district does not exist'));
         });
     })
-    .catch((e) => {
+    .catch(() => {
       reject(new Error('The political party does not exist'));
     });
 });
@@ -101,7 +100,8 @@ const deletePoliticalPartyCandidate = (parent, args, context) => new Promise((re
   if (!authRoles[context.payload.role].includes('deletePoliticalPartyCandidate')) throw new Error(`User ${context.payload.role} cannot access resolver deletePoliticalPartyCandidate`);
 
   PoliticalPartyCandidate.findByIdAndRemove({ _id: args.id }, (err, res) => {
-    err ? reject(err) : resolve(res);
+    if (err) return reject(err);
+    return resolve(res);
   });
 });
 
