@@ -30,6 +30,9 @@ export default function PoliticalPartyCreate(props) {
     const [politicalPartyName, setPoliticalPartyName] = useState("");
     const [colour, setColour] = useState("#ffffff");
     const [addPoliticalParty] = useMutation(CREATE_POLITICAL_PARTY, {errorPolicy: 'all'});
+    const [errors, setErrors] = useState([]);
+    const [created, setCreated] = useState(null);
+
 
     function handlePoliticalPartyChange(event: React.FormEvent<HTMLInputElement>): void {
         setPoliticalPartyName(event.currentTarget.value)
@@ -43,14 +46,37 @@ export default function PoliticalPartyCreate(props) {
         event.preventDefault();
 
         addPoliticalParty({ variables: { name: politicalPartyName, colour: colour }})
-            .then((res) => console.log(res))
-            .catch((err) => console.log(err))
-    }
-
+            .then(() => {
+                setCreated({ politicalPartyName: politicalPartyName });
+                setPoliticalPartyName('');
+                setErrors([]);
+            })
+            .catch((err) => {
+                console.log(err.graphQLErrors);
+                setCreated(null);
+                setErrors(err.graphQLErrors.map((e) => e.message));
+            });
+        }
 
     return (
         <div>
             <h1>Create Political Party</h1>
+            {
+                errors.length > 0 ?
+                <div className="alert alert-danger">
+                    <h2>Problem Creating Party</h2>
+                    { errors.map((err) => <p>{err}</p>) }
+                </div>
+                : null
+            }
+            {
+                created ?
+                <div className="alert alert-success">
+                    <h2>Political Party Created</h2>
+                    <p>A political party by the name of { created.politicalPartyName } has been created. </p>
+                </div>
+                : null
+            }
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>
