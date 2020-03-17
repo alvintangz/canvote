@@ -33,6 +33,8 @@ export default function PoliticalPartyCreate(props) {
     const [politicalPartyName, setPoliticalPartyName] = useState("");
     const [district, setDistrict] = useState("");
     const [candidateName, setCandidateName] = useState("");
+    const [errors, setErrors] = useState([]);
+    const [created, setCreated] = useState(null);
 
     const [addPoliticalPartyCandidate] = useMutation(CREATE_POLITICAL_PARTY_CANDIDATE, {errorPolicy: 'all'});
 
@@ -52,14 +54,40 @@ export default function PoliticalPartyCreate(props) {
         event.preventDefault();
 
         addPoliticalPartyCandidate({ variables: { name: candidateName, political_party: politicalPartyName, district: district}})
-            .then((res) => console.log(res))
-            .catch((err) => console.log(err))
-    }
+            .then(() => {
+                setCreated({ name: candidateName, party: politicalPartyName, district: district });
+                setPoliticalPartyName('');
+                setDistrict('');
+                setCandidateName('');
+                setErrors([]);
+            })
+            .catch((err) => {
+                console.log(err.graphQLErrors);
+                setCreated(null);
+                setErrors(err.graphQLErrors.map((e) => e.message));
+            });
+        }
 
 
     return (
         <div>
             <h1>Create Political Party Candidate</h1>
+            {
+                errors.length > 0 ?
+                <div className="alert alert-danger">
+                    <h2>Problem Creating Candidate</h2>
+                    { errors.map((err) => <p>{err}</p>) }
+                </div>
+                : null
+            }
+            {
+                created ?
+                <div className="alert alert-success">
+                    <h2>Candidate Created</h2>
+                    <p>A candidate by the name of { created.name }, representing the party { created.party } in the district { created.district } has been created. </p>
+                </div>
+                : null
+            }
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>

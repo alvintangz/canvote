@@ -16,6 +16,8 @@ export default function DistrictCreate(props) {
 
     const [name, setName] = useState("");
     const [addDistrict] = useMutation(CREATE_DISTRICT, {errorPolicy: 'all'});
+    const [errors, setErrors] = useState([]);
+    const [created, setCreated] = useState(null);
 
     function handleNameChange(event: React.FormEvent<HTMLInputElement>): void {
         setName(event.currentTarget.value)
@@ -25,13 +27,37 @@ export default function DistrictCreate(props) {
         event.preventDefault();
 
         addDistrict({ variables: { name: name}})
-            .then((res) => console.log(res))
-            .catch((err) => console.log(err))
+            .then(() => {
+                setCreated({ name: name });
+                setName('');
+                setErrors([]);
+            })
+            .catch((err) => {
+                console.log(err.graphQLErrors);
+                setCreated(null);
+                setErrors(err.graphQLErrors.map((e) => e.message));
+            });
     }
 
     return (
         <div>
             <h1>Create District</h1>
+            {
+                errors.length > 0 ?
+                <div className="alert alert-danger">
+                    <h2>Problem Creating District</h2>
+                    { errors.map((err) => <p>{err}</p>) }
+                </div>
+                : null
+            }
+            {
+                created ?
+                <div className="alert alert-success">
+                    <h2>District Created</h2>
+                    <p>A district by the name of { created.name } has been created. </p>
+                </div>
+                : null
+            }
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>
