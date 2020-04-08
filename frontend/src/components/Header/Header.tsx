@@ -1,15 +1,16 @@
 import * as React from "react";
-import {Link} from "react-router-dom";
+import {NavLink, Link} from "react-router-dom";
 import {connect} from "react-redux";
 import {User} from "../../interfaces/user";
 import authApi from '../../api/auth';
 import Logo from './Logo.png';
-import './Header.scss';
 import {AuthActionType} from "../../enums/actions/auth.types";
+import LinksByUserRole from './NavLinks';
+import {UserRole} from "../../enums/role";
 
 const mapStateToProps = state => {
     return ({currentUser: state.authReducer.user});
-};;
+};
 
 const mapDispatchToProps = dispatch => ({
     onLoggedOut: () =>
@@ -21,10 +22,21 @@ interface Props {
     onLoggedOut: () => void;
 }
 
-class Header extends React.Component<Props, {}> {
+interface State {
+    loggedOut: boolean;
+}
+
+class Header extends React.Component<Props, State> {
+    constructor(props) {
+        super(props);
+        this.state = {
+            loggedOut: false
+        };
+    }
 
     logout = (): void => {
         authApi.logout().finally(() => {
+            // this.setState
             this.props.onLoggedOut();
         });
     };
@@ -56,14 +68,23 @@ class Header extends React.Component<Props, {}> {
                         </div>
                     </div>
                 </div>
-                <div id="breadcrumbs">
+                <nav id="mainNav">
                     <div className="container">
-                        {/* TODO */}
-                        <ol className="breadcrumb">
-                            <li><Link to="/">Home</Link></li>
-                        </ol>
+                        <ul>
+                            <li><NavLink to="/" exact={true} activeClassName="active">Home</NavLink></li>
+                            {
+                                this.props.currentUser ?
+                                    LinksByUserRole[
+                                        LinksByUserRole.findIndex(item => item.role === this.props.currentUser.role)
+                                        ].links.map(link => (
+                                        <li key={link.title}><NavLink to={link.linkTo} activeClassName="active">{link.title}</NavLink></li>
+                                    )) : LinksByUserRole[LinksByUserRole.findIndex(item => UserRole.anonymous === item.role)].links.map(link => (
+                                        <li key={link.title}><NavLink to={link.linkTo} activeClassName="active">{link.title}</NavLink></li>
+                                    ))
+                            }
+                        </ul>
                     </div>
-                </div>
+                </nav>
             </header>
         )
     }

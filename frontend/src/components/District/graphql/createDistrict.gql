@@ -1,0 +1,7 @@
+mutation createDistrict($name: String!, $geoJson: GeoJSONPolygon!) {
+    createDistrict(name: $name, geoJson: $geoJson) {
+        id
+        name
+        geoJson
+    }
+}

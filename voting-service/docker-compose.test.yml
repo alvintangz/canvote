@@ -1,0 +1,17 @@
+version: "3.7"
+services:
+  voting-service:
+    build:
+      context: .
+    env_file:
+      - .env
+    ports:
+    - 3002:3002
+  mongodb-voting-service:
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
+    ports:
+    - ${MONGO_PORT}:27017

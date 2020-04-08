@@ -1,0 +1,23 @@
+Meeting - April 6 Notes
+
+- Reuse frontend components, for instance when listing out candidates/parties
+/disctricts
+
+- Change the frontend graphql queries to match new voting service
+
+- Create a page to list results in form of a chart or something (for now we can just have h1 tags showing the results)
+
+
+
+src/components
+- List, Create, Update for each of them as individual components
+src/components/pages
+- 
+
+What's reusable?
+- Listing candidates
+- Listing districts
+
+
+
+- FIGURE OUT DEPLOYMENT

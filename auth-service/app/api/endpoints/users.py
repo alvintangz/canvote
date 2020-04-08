@@ -153,11 +153,12 @@ def update_election_officer(
     '/voters',
     response_model=UserPaginatedList,
     tags=["Users Resource - Voters"],
-    description="Lists voters with pagination and filtering, <em>only if authenticated as an election officer</em>.",
+    description="Lists voters with pagination and filtering, <em>if authenticated as an election officer</em>, or "
+                "if the request uses a special key in the Authorization Header.</em>.",
 )
 def list_voters(
     db: Session = Depends(get_db),
-    current_user=Depends(CanVoteAuthorizedUser(check_roles=[RoleEnum.election_officer])),
+    current_user=Depends(CanVoteAuthorizedUser(check_roles=[RoleEnum.election_officer], allow_internal_use=True)),
     page: int = Query(1, description="Page number. Default is 1.", gt=0),
     size: int = Query(
         config.PAGE_SIZE_DEFAULT,
@@ -177,7 +178,8 @@ def list_voters(
     '/voters/{user_id}',
     response_model=UserRead,
     tags=["Users Resource - Voters"],
-    description="Retrieve a voter, <em>only if authenticated as an election officer</em>.",
+    description="Retrieve a voter, <em>if authenticated as an election officer</em>, or if the request uses a special "
+                "key in the Authorization Header.</em>.",
     responses={
         HTTP_404_NOT_FOUND: {
             'description': 'The voter with the specified id could not be found.'
@@ -187,7 +189,7 @@ def list_voters(
 def retrieve_voter(
     user_id: int,
     db: Session = Depends(get_db),
-    current_user=Depends(CanVoteAuthorizedUser(check_roles=[RoleEnum.election_officer]))
+    current_user=Depends(CanVoteAuthorizedUser(check_roles=[RoleEnum.election_officer], allow_internal_use=True))
 ):
     return __retrieve_user_by_role(db, user_id, RoleEnum.voter)
 

@@ -1,0 +1,51 @@
+// Inspiration: https://gist.github.com/lazabogdan/6878954076420348fb4f
+
+$spacer: 1rem;
+
+$spacers: ();
+
+@for $i from 0 through 5 {
+  $spacers: map-merge($spacers, (
+    $i: (
+      x: $spacer * $i,
+      y: $spacer * $i
+    )
+  ))
+}
+
+@each $prop, $abbrev in (margin: m, padding: p) {
+  @each $size, $lens in $spacers {
+    $len-x: map-get($lens, x);
+    $len-y: map-get($lens, y);
+
+    .#{$abbrev}-#{$size} {
+        #{$prop}: $len-y $len-x !important;
+    }
+
+    .#{$abbrev}t-#{$size} {
+        #{$prop}-top: $len-y !important;
+    }
+
+    .#{$abbrev}r-#{$size} {
+        #{$prop}-right: $len-x !important;
+    }
+
+    .#{$abbrev}b-#{$size} {
+        #{$prop}-bottom: $len-y !important;
+    }
+
+    .#{$abbrev}l-#{$size} {
+        #{$prop}-left: $len-x !important;
+    }
+
+    .#{$abbrev}x-#{$size} {
+      #{$prop}-right: $len-x !important;
+      #{$prop}-left: $len-x !important;
+    }
+
+    .#{$abbrev}y-#{$size} {
+      #{$prop}-top: $len-y !important;
+      #{$prop}-bottom: $len-y !important;
+    }
+  }
+}

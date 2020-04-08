@@ -1,0 +1,12 @@
+type CanVote {
+    flag: Boolean!
+    info: String
+}
+
+extend type Query {
+    canVote: Boolean!
+}
+
+extend type Mutation {
+    vote(candidiate: ID!): Boolean!
+}

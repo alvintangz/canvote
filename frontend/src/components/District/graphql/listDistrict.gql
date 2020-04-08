@@ -1,0 +1,14 @@
+query Districts {
+    districts {
+        id
+        name
+        candidates {
+            id
+            name
+            politicalParty {
+                id
+            }
+        }
+        geoJson
+    }
+}
