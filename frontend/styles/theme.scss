@@ -20,5 +20,14 @@
 // GCWeb Theme
 @import "gc-web/defaults";
 
-// Import custom SCSS for CanVote
+// Spacing Utilities
+@import "spacing-utils";
+
+// Font awesome custom CSS
+@import "fa";
+
+// Reset some CSS
+@import "resets";
+
+// Custom CSS for specific pages
 @import "custom";

@@ -1,24 +1,24 @@
 import React from 'react';
 import './App.scss';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Home from "./components/pages/Home/Home";
-import Login from "./components/pages/Login/Login";
-import ResetPassword from "./components/pages/ResetPassword/ResetPassword";
-import ActivateAccount from "./components/pages/ActivateAccount/ActivateAccount";
+import Home from "./pages/Home/Home";
+import Login from "./pages/Login";
+import ResetPassword from "./pages/ResetPassword";
+import ActivateAccount from "./pages/ActivateAccount";
 import LiveResults from "./components/pages/LiveResults/LiveResults";
-import Credits from "./components/pages/Credits/Credits";
-import UserList from "./components/pages/UserList/UserList";
-import UserCreate from "./components/pages/UserCreate/UserCreate";
-import PoliticalPartyList from "./components/pages/PoliticalPartyList/PoliticalPartyList";
-import PoliticalPartyCreate from "./components/pages/PoliticalPartyCreate/PoliticalPartyCreate";
-import PoliticalPartyUpdate from "./components/pages/PoliticalPartyUpdate/PoliticalPartyUpdate";
-import PPCandidateList from "./components/pages/PPCandidateList/PPCandidateList";
-import PPCandidateCreate from "./components/pages/PPCandidateCreate/PPCandidateCreate";
-import PPCandidateUpdate from "./components/pages/PPCandidateUpdate/PPCandidateUpdate";
-import DistrictCreate from "./components/pages/DistrictCreate/DistrictCreate";
-import UserUpdate from "./components/pages/UserUpdate/UserUpdate";
-import Vote from "./components/pages/Vote/Vote";
-import NotFound from "./components/pages/NotFound/NotFound";
+import Credits from "./pages/Credits";
+import UserList from "./pages/UserList";
+import UserCreate from "./pages/UserCreate";
+import PoliticalPartyList from "./components/pages/PoliticalPartyList";
+import PoliticalPartyCreate from "./components/PoliticalPartyCreate";
+import PoliticalPartyUpdate from "./components/pages/PoliticalPartyUpdate";
+import PPCandidateList from "./components/pages/PPCandidateList";
+import PPCandidateCreate from "./components/pages/PPCandidateCreate";
+import PPCandidateUpdate from "./components/pages/PPCandidateUpdate";
+import DistrictCreate from "./components/pages/DistrictCreate";
+import UserUpdate from "./pages/UserUpdate";
+import Vote from "./components/pages/Vote";
+import NotFound from "./pages/NotFound";
 import meApi from './api/me';
 import {AxiosResponse} from "axios";
 import {User} from "./interfaces/user";
@@ -29,8 +29,9 @@ import {UserRole} from "./enums/role";
 import Header from "./components/Header/Header";
 import baseApi from './api/base';
 import { onNetworkError } from './api/apolloClient';
-import DistrictList from './components/pages/DistrictList/DistrictList';
-import DistrictUpdate from './components/pages/DistrictUpdate/DistrictUpdate';
+import DistrictList from './components/pages/DistrictList';
+import DistrictUpdate from './components/pages/DistrictUpdate';
+import { Election } from './pages/Election';
 
 
 const mapStateToProps = state => {
@@ -91,7 +92,7 @@ class App extends React.Component<Props, State> {
                 <Route exact path="/auth/login" component={Login} />
                 <Route exact path="/activate" component={ActivateAccount} />
                 <Route exact path="/live-results" component={LiveResults} />
-                <PrivateRoute exact
+                {/* <PrivateRoute exact
                               path="/reset-password"
                               canAccess={[UserRole.voter, UserRole.election_officer, UserRole.administrator]}
                               component={ResetPassword} />
@@ -118,16 +119,12 @@ class App extends React.Component<Props, State> {
                 <PrivateRoute exact
                               path="/manage/parties/:userId"
                               canAccess={[UserRole.administrator]}
-                              component={PoliticalPartyUpdate} />
+                              component={PoliticalPartyUpdate} /> */}
                 <PrivateRoute exact
-                              path="/manage/districts"
-                              canAccess={[UserRole.administrator]}
-                              component={DistrictList} />
-                <PrivateRoute exact
-                              path="/manage/districts/new"
-                              canAccess={[UserRole.administrator]}
-                              component={DistrictCreate} />
-                <PrivateRoute exact
+                              path="/manage/election"
+                              canAccess={[UserRole.administrator, UserRole.anonymous]}
+                              component={Election} />
+                {/* <PrivateRoute exact
                               path="/manage/districts/:districtId"
                               canAccess={[UserRole.administrator]}
                               component={DistrictUpdate} />
@@ -146,13 +143,13 @@ class App extends React.Component<Props, State> {
                 <PrivateRoute exact
                               path="/vote"
                               canAccess={[UserRole.voter]}
-                              component={Vote} />
+                              component={Vote} /> */}
                 <Route path="*" component={NotFound} />
               </Switch>
             </main>
             <footer className="container">
               <hr />
-              Footer
+              CSCC69 Project
             </footer>
           </Router>
       );

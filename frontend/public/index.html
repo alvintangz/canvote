@@ -14,14 +14,18 @@
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <link rel="stylesheet" href="%PUBLIC_URL%/styles/theme.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin="" />
   </head>
   <body>
-    <noscript>
-      <div class="alert alert-warning">
-        <p><strong>Please enable JavaScript.</strong></p>
-        <p>Please enable JavaScript.</p>
-      </div>
-    </noscript>
-    <div id="root"></div>
+    <div id="root">
+      <noscript>
+        <div class="container">
+          <div class="alert alert-warning my-3">
+            <p><strong>Please enable JavaScript</strong></p>
+            <p>Learn more <a href="https://www.enable-javascript.com/" target="_blank">about how to enable it here</a>.</p>
+          </div>
+        </div>
+      </noscript>
+    </div>
   </body>
 </html>

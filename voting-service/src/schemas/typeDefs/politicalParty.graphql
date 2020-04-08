@@ -1,0 +1,18 @@
+type PoliticalParty {
+    id: ID!
+    name: String!
+    colour: String!
+    logo: File!
+    candidates: [PoliticalPartyCandidate!]
+}
+
+extend type Query {
+    politicalParties: [PoliticalParty!]
+    politicalParty(id: ID!): PoliticalParty
+}
+
+extend type Mutation {
+    createPoliticalParty(name: String!, colour: String!): PoliticalParty!
+    updatePoliticalParty(id: ID!, name: String!, colour: String!): PoliticalParty!
+    deletePoliticalParty(id: ID!): PoliticalParty!
+}
