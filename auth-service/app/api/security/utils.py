@@ -20,7 +20,7 @@ class CanVoteAuthorizedUser(APIKeyHeader):
         check_active: bool = False,
         allow_internal_use: bool = False
     ):
-        super().__init__(name="Bearer", auto_error=False)
+        super().__init__(name="internal_auth", auto_error=False)
         self.check_roles = check_roles
         # TODO
         self.check_active = check_active
@@ -37,7 +37,7 @@ class CanVoteAuthorizedUser(APIKeyHeader):
             raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="You are not authenticated.")
 
         # If the key was an internal API key, then return None (no specific user is making the request)
-        if api_key == INTERNAL_API_KEY and self.allow_internal_use:
+        if api_key == INTERNAL_API_KEY and len(INTERNAL_API_KEY) > 0 and self.allow_internal_use:
             return None
 
         try:

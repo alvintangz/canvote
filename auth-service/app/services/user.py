@@ -63,11 +63,11 @@ def list_users(
     if role:
         res = res.filter(User.role == role)
     if first_name:
-        res = res.filter(literal(first_name).contains(User.first_name))
+        res = res.filter(User.first_name.ilike(f"%{first_name}%"))
     if last_name:
-        res = res.filter(literal(last_name).contains(User.last_name))
+        res = res.filter(User.last_name.ilike(f"%{last_name}%"))
     if email:
-        res = res.filter(literal(email).contains(User.email))
+        res = res.filter(User.email.ilike(f"%{email}%"))
     # Quickly use paginate to calculate limit w/ offset part of sqlalchemy
     return paginate(res, page, page_size)
 
@@ -92,11 +92,11 @@ def count_users(
     if role:
         res = res.filter(User.role == role)
     if first_name:
-        res = res.filter(literal(first_name).contains(User.first_name))
+        res = res.filter(User.first_name.ilike(f"%{first_name}%"))
     if last_name:
-        res = res.filter(literal(last_name).contains(User.last_name))
+        res = res.filter(User.last_name.ilike(f"%{last_name}%"))
     if email:
-        res = res.filter(literal(email).contains(User.email))
+        res = res.filter(User.email.ilike(f"%{email}%"))
     return res.count()
 
 

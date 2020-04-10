@@ -29,7 +29,7 @@ def __list_users_by_role(
     db_users = list_users(db, page, size, role, first_name, last_name, email)
     if not db_users:
         raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="Page does not exist.")
-    db_users_count = count_users(db, role=role)
+    db_users_count = count_users(db, role, first_name, last_name, email)
     return UserPaginatedList(
         results=[UserRead(**user.__dict__) for user in db_users.items],
         current=CurrentPaginatedObject(page=page, size=size),
@@ -59,6 +59,12 @@ def __update_user_by_role(db: Session, user: UserUpdate, user_id: int, role: Rol
     db_user = retrieve_user(db, user_id, role)
     if not db_user:
         raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="The user could not be found.")
+    # If user with email already exists.
+    if retrieve_user_by_email(db, user.email).id != user_id:
+        raise HTTPException(
+            status_code=HTTP_409_CONFLICT,
+            detail="A user with the specified email address already exists."
+        )
     db_user = update_user(db, user_id, user)
     return db_user
 
