@@ -10,13 +10,13 @@ export default mongoose.model('Voter', new mongoose.Schema(
   {
     authId: {
       type: String,
-      required: true,
+      required: [true, 'Please provide the auth id for the voter'],
       unique: true,
     },
     district: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'District',
-      required: true
+      required: [true, 'Please provide the district for the voter']
     },
   },
 ));

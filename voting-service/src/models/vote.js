@@ -7,7 +7,7 @@ export default mongoose.model('Vote', new mongoose.Schema(
   {
     voter: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
+      required: [true, 'Please provide a voter for the vote'],
       unique: true,
     },
     timestamp: {
