@@ -1,0 +1,16 @@
+query PoliticalPartyCandidates {
+    politicalPartyCandidates {
+        id
+        name
+        politicalParty {
+            id
+            name
+            colour
+        }
+        picture {
+            filename
+            location
+            mimetype
+        }
+    }
+}

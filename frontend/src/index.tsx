@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { Provider } from 'react-redux';
-import { store } from './store';
+import {Provider} from 'react-redux';
 import apolloClient from './api/apolloClient';
-import { ApolloProvider } from '@apollo/react-components';
+import {ApolloProvider} from '@apollo/react-hooks';
+import {createStore} from 'redux';
+import rootReducers from './reducers';
+
+// Redux store
+const store = createStore(rootReducers);
 
 ReactDOM.render(
     <Provider store={store}>

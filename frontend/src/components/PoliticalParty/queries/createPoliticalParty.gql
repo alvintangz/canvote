@@ -1,0 +1,12 @@
+mutation createPoliticalParty($name: String!, $colour: String!, $logo: Upload!) {
+    createPoliticalParty(name: $name, colour: $colour, logo: $logo) {
+        id
+        name
+        colour
+        logo {
+            filename
+            location
+            mimetype
+        }
+    }
+}

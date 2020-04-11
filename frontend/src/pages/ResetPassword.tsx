@@ -42,17 +42,26 @@ export class ResetPassword extends React.Component<{}, State> {
                 <h1>Reset Password</h1>
                 <form onSubmit={this.handleSubmit}>
                     <div className="form-group">
-                        <label>
+                        <label className="required">
                             New Password:
-                            <input type="password" className="form-control"
-                            placeholder="New Password" value={this.state.pwd} onChange={this.handlePwdChange} required/>
+                            <input type="password"
+                                   className="form-control"
+                                   placeholder="New Password"
+                                   minLength={8}
+                                   value={this.state.pwd}
+                                   onChange={this.handlePwdChange} required/>
                         </label>
                     </div>
                     <div className="form-group">
-                        <label>
+                        <label className="required">
                             Confirm Password:
-                            <input type="password" className="form-control"
-                            placeholder="Confirm Password" value={this.state.pwdConfirm} onChange={this.handlePwdConfirmChange} required/>
+                            <input type="password"
+                                   className="form-control"
+                                   minLength={8}
+                                   placeholder="Confirm Password"
+                                   value={this.state.pwdConfirm}
+                                   onChange={this.handlePwdConfirmChange}
+                                   required />
                         </label>
                     </div>
                     <input type="submit" className="btn btn-primary" value="Submit" />

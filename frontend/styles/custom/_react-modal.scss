@@ -1,0 +1,40 @@
+.ReactModal__Overlay {
+    background-color: rgba(255, 255, 255, 0.5) !important;
+    z-index: 1000 !important;
+}
+
+.rmodal-content {
+    padding: 0;
+    border: 1px solid rgb(204, 204, 204);
+    background-color: #fff;
+    border-radius: 4px;
+    position: absolute;
+    top: 40px;
+    bottom: 40px;
+    outline: none;
+    overflow-y: auto;
+
+    &.rmodal-md {
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        left: 0;
+        right: 0;
+    }
+
+    .rmodal-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid rgb(204, 204, 204);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .rmodal-header-title {
+            margin: 0;
+        }
+    }
+
+    .rmodal-body {
+        padding: 1.5rem;
+    }
+}

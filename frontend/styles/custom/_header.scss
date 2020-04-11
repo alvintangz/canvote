@@ -1,0 +1,52 @@
+header {
+    padding-top: 20px;
+
+    .cv-brand-logo {
+        max-width: 200px;
+    }
+
+    .cv-current-user {
+        padding-bottom: 12px;
+
+        .cv-role {
+            text-transform: uppercase;
+        }
+    }
+
+    #mainNav {
+        border-top: 1px solid $wbGrayLight;
+        border-bottom: 1px solid $wbGrayLight;
+        margin-top: 1.5rem;
+        margin-bottom: 2rem;
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+
+            li {
+                display: flex;
+
+                a {
+                    color: $button-blue;
+                    text-decoration: none;
+                    text-transform: uppercase;
+                    padding: 12px 38px;
+                    font-size: 1.1rem;
+
+                    &:hover {
+                        background-color: $gray-light;
+                        color: #fff;
+                    }
+
+                    &:active,
+                    &.active {
+                        background-color: $active-blue;
+                        color: #fff;
+                    }
+                }
+            }
+        }
+    }
+}

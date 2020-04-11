@@ -1,0 +1,14 @@
+label.file-picker {
+  margin: 0;
+
+  input[type="file"] {
+    opacity: 0;
+    height: 0;
+    width: 0;
+  }
+
+  .btn.btn-default {
+    display: block;
+    margin-top: 8px;
+  }
+}

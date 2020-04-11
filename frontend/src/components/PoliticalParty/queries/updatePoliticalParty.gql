@@ -1,0 +1,12 @@
+mutation updatePoliticalParty($id: ID!, $name: String!, $colour: String!, $logo: Upload!) {
+    updatePoliticalParty(id: $id, name: $name, colour: $colour, logo: $logo) {
+        id
+        name
+        colour
+        logo {
+            filename
+            location
+            mimetype
+        }
+    }
+}

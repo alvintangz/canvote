@@ -1,0 +1,5 @@
+mutation deletePoliticalParty($id: ID!) {
+    deletePoliticalParty(id: $id) {
+        id
+    }
+}

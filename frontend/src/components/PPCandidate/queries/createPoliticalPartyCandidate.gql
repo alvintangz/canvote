@@ -1,0 +1,16 @@
+mutation createPoliticalPartyCandidate($name: String!, $politicalParty: String!, $picture: Upload!, $district: String!) {
+    createPoliticalPartyCandidate(name: $name, political_party: $politicalParty, picture: $picture, district: $district) {
+        id
+        name
+        politicalParty {
+            id
+            name
+            colour
+        }
+        picture {
+            filename
+            location
+            mimetype
+        }
+    }
+}

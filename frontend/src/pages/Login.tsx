@@ -4,11 +4,11 @@ import meApi from '../api/me';
 import {AxiosError, AxiosResponse} from 'axios';
 import {AuthActionType} from '../enums/actions/auth.types'
 import {connect} from "react-redux";
-import {User} from "../interfaces/user";
-import { Redirect } from "react-router";
+import {User} from "../interfaces/models";
+import {Redirect} from "react-router";
+import UnauthenticatedErrorInterceptor from '../interceptors/unauthenticated';
 
-interface Props {}
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
     onLoggedIn: (user) =>
         dispatch({ type: AuthActionType.LOGIN_SUCCESS, user }),
 });
@@ -54,12 +54,14 @@ class Login extends React.Component<Props, State> {
         authApi.loginFirst(this.state.email, this.state.password).then(() => {
             meApi.retrieve().then((res: AxiosResponse<User>) => {
                 this.props.onLoggedIn(res.data);
+                UnauthenticatedErrorInterceptor();
                 this.setState({ success: true });
             });
         }).catch((error: AxiosError) => {
-            if (error.code === "401")
+            console.log(error.response.status === 422);
+            if (error.response.status === 401)
                 this.setState({ errorDetails: [error.response.data.detail] });
-            else if (error.code === "422")
+            else if (error.response.status === 422)
                 this.setState({ errorDetails: error.response.data.detail.map((err) => err.msg) });
             else
                 this.setState({ errorDetails: [error.response.data.detail.toString()] });
@@ -83,7 +85,7 @@ class Login extends React.Component<Props, State> {
                     <div className="alert alert-warning">
                         <p>Issue logging in</p>
                         <ul>
-                            {this.state.errorDetails.map(error => <li>{error}</li>)}
+                            {this.state.errorDetails.map((error) => <li key={error}>{error}</li>)}
                         </ul>
                     </div>
                 ) : (
@@ -95,7 +97,7 @@ class Login extends React.Component<Props, State> {
                     ) : (this.alertState === AlertState.ACCESS_DENIED && (
                         <div className="alert alert-danger">
                             <h2>Access Denied</h2>
-                            <p>You were trying to access a page that you do not have access to.</p>
+                            <p>You were trying to access a page or resource that you do not have access to. Please log in again.</p>
                         </div>
                     ))
                 )}
@@ -118,11 +120,12 @@ class Login extends React.Component<Props, State> {
                                    className="form-control"
                                    placeholder="Password"
                                    onChange={this.handlePasswordChange}
+                                   minLength={8}
                                    autoComplete="password"
                                    required />
                         </label>
                     </div>
-                    <input type="submit" className="btn btn-primary" value="Submit" />
+                    <input type="submit" className="btn btn-primary" value="Log in" />
                 </form>
             </div>
         );

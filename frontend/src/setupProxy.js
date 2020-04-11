@@ -3,6 +3,7 @@ const conditional = require('express-conditional-middleware');
 const chalk = require('chalk');
 const proxyThese = require('../proxy.config');
 
+// This was never really used in code because of localhost domain issues and cookies
 // react-scripts (create-react-app) utilizes Webpack Dev Server
 // https://webpack.js.org/configuration/dev-server/
 // https://create-react-app.dev/docs/proxying-api-requests-in-development/
@@ -13,7 +14,7 @@ module.exports = function(app) {
     }, createProxyMiddleware({
       target: config.proxyTo,
       changeOrigin: true,
-      ws: false, // TODO: Enable for WebSocket service
+      ws: true,
       logLevel: 'silent',
       onProxyRes(proxyRes, req, res) {
         const proxyResStatusMsg = `(${proxyRes.statusCode} ${proxyRes.statusMessage})`;

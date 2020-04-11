@@ -1,0 +1,37 @@
+ul.pp-list {
+    padding: 0;
+    list-style: none;
+    margin: -0.7rem;
+    display: grid;
+    grid-template-columns: auto auto;
+
+    li {
+        min-width: 200px;
+        margin: 0.7rem;
+    }
+}
+
+ul.pp-list li,
+.pp-item {
+    border-radius: 3px;
+    border: 1px solid #ddd;
+
+    &.clickable {
+        cursor: pointer;
+    }
+
+    .pp-item--logo {
+        border-bottom: 1px solid #ddd;
+        text-align: center;
+        padding: 1rem;
+
+        img {
+            height: 80px;
+        }
+    }
+
+    .pp-item--info {
+        padding: 0.6rem 1rem;
+        text-align: center;
+    }
+}

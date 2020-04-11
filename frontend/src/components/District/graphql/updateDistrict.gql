@@ -1,7 +1,0 @@
-mutation updateDistrict($id: String!, $name: String!, $geoJson: GeoJSONPolygon!) {
-    updateDistrict(id: $id, name: $name, geoJson: $geoJson) {
-        id
-        name
-        geoJson
-    }
-}

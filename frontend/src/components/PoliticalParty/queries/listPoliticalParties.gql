@@ -1,0 +1,12 @@
+query PoliticalParties {
+    politicalParties {
+        id
+        name
+        colour
+        logo {
+            filename
+            location
+            mimetype
+        }
+    }
+}

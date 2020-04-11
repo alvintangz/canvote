@@ -1,0 +1,26 @@
+mutation updateDistrict($id: ID!, $name: String!, $geoJson: GeoJSONMultiPolygon!) {
+    updateDistrict(id: $id, name: $name, geoJson: $geoJson) {
+        id
+        name
+        candidates {
+            id
+            name
+            picture {
+                filename
+                location
+                mimetype
+            }
+            politicalParty {
+                id
+                name
+                colour
+                logo {
+                    filename
+                    location
+                    mimetype
+                }
+            }
+        }
+        geoJson
+    }
+}

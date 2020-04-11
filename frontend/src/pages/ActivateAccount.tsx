@@ -82,6 +82,7 @@ export class ActivateAccount extends React.Component<Props, State> {
                                            className="form-control"
                                            placeholder="New Password"
                                            value={this.state.pwd}
+                                           minLength={8}
                                            onChange={this.handlePwdChange}
                                            autoComplete="new-password"
                                            required />
@@ -94,6 +95,7 @@ export class ActivateAccount extends React.Component<Props, State> {
                                            className="form-control"
                                            placeholder="Confirm Password"
                                            value={this.state.pwdConfirm}
+                                           minLength={8}
                                            onChange={this.handlePwdConfirmChange}
                                            autoComplete="new-password"
                                            required />

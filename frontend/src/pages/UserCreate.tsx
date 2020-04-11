@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
 import users from '../api/users';
 import {UserRole} from '../enums/role';
-import {User} from "../interfaces/user";
+import {User} from "../interfaces/models/user";
 import {connect} from "react-redux";
 import gql from 'graphql-tag';
 import client from "../api/apolloClient";
+import { Link } from 'react-router-dom';
+import { District } from "../interfaces/models/";
 
 
 const mapStateToProps = (state) => {
@@ -16,35 +18,34 @@ interface Props {
 }
 
 interface State {
-    email: string,
-    firstName: string,
-    lastName: string,
+    currentUser: User,
     created: User,
+    error: string,
     loaded: boolean,
     districtChosen: {
         id: string,
         name: string
     },
-    districts: {
-        id: string,
-        name: string
-    }[],
+    districts: District[]
 }
 
 const GET_DISTRICTS = gql`
     query {
-        getDistricts {
+        districts {
             id
             name
         }
     }
 `;
 
-const ADD_VOTER = gql`
-    mutation addVoter($email: String!, $district: String!) {
-        addVoter(email: $email, district: $district) {
-            email
-            district
+const UPDATE_VOTER = gql`
+    mutation updateVoter($authId: String!, $district: String!) {
+        updateVoter(authId: $authId, district: $district) {
+            authId
+            district {
+                id
+                name
+            }
         }
     }
 `;
@@ -58,11 +59,10 @@ export class UserCreate extends Component<Props, State> {
 
         this.roleForCreation = this.props.currentUser.role === UserRole.administrator ? UserRole.election_officer : UserRole.voter;
         this.state = {
-            email: '',
-            firstName: '',
-            lastName: '',
+            currentUser: { email: '', firstName: '', lastName: ''},
             loaded: false,
             created: null,
+            error: null,
             districts: [],
             districtChosen: { id: '', name: '' }
         };
@@ -73,7 +73,7 @@ export class UserCreate extends Component<Props, State> {
             query: GET_DISTRICTS,
         }).then(data => {
             this.setState({
-                districts: data.data.getDistricts
+                districts: data.data.districts
             });
         }).catch(error => console.error(error))
             .finally(() => {
@@ -82,48 +82,60 @@ export class UserCreate extends Component<Props, State> {
     }
 
     handleEmailChange = (event: React.FormEvent<HTMLInputElement>): void => {
-        this.setState({ email: event.currentTarget.value });
+        let clone = this.state.currentUser
+        clone.email = event.currentTarget.value
+        this.setState({ currentUser: clone });
+
     };
 
     handleFirstNameChange = (event: React.FormEvent<HTMLInputElement>): void => {
-        this.setState({ firstName: event.currentTarget.value });
+        let clone = this.state.currentUser
+        clone.firstName = event.currentTarget.value
+        this.setState({ currentUser: clone });    
     };
 
     handleLastNameChange = (event: React.FormEvent<HTMLInputElement>): void => {
-        this.setState({ lastName: event.currentTarget.value });
+        let clone = this.state.currentUser
+        clone.lastName = event.currentTarget.value
+        this.setState({ currentUser: clone });
     };
 
     handleDistrictChange = (event: React.FormEvent<HTMLInputElement>): void => {
         let id = event.currentTarget.value;
-        let name = this.state.districts.filter((d) => d.id === event.currentTarget.value)[0].name;
-        this.setState({ districtChosen: { id: id, name: name}})
+        let obj = this.state.districts.find((d: District) => d.id === event.target.value);
+        this.setState({ districtChosen: obj }, () => console.log(this.state.districtChosen) )
     };
 
     handleSubmit = (event: React.SyntheticEvent): void => {
-        if (this.state.districtChosen.name === '') {
-            this.setState({ districtChosen: {
-                id: this.state.districts[0].id,
-                name: this.state.districts[0].name
-            }});
-        }
-
         event.preventDefault();
-        users.createByRole(
+        users.createByRole( 
             this.props.currentUser.role === UserRole.administrator ? UserRole.election_officer : UserRole.voter,
-            {
-                email: this.state.email,
-                firstName: this.state.firstName,
-                lastName: this.state.lastName
-            }).then((res) => {
+            this.state.currentUser).then((res) => {
+                // res.data
+                // email: "e@alvintang.me"
+                // firstName: "asda"
+                // id: 6
+                // isActivated: false
+                // isActive: false
+                // lastName: "asd"
+                // role: "voter"
+
                 // TODO: Put this server side
+
+                // if we created an election officer, then there is no voting service here, so update state and leave
+                if (this.props.currentUser.role === UserRole.administrator) {
+                    this.setState({ created: res.data, currentUser: {email: '', firstName: '', lastName: '' } })
+                    return
+                }
+             
                 client.mutate({
-                    variables: { email: this.state.email, district: this.state.districtChosen.id },
-                    mutation: ADD_VOTER
+                    variables: { authId: `${res.data.id}`, district: this.state.districtChosen.id ? this.state.districtChosen.id : this.state.districts[0].id },
+                    mutation: UPDATE_VOTER
                 }).then(() => {
-                    this.setState({ created: res.data, email: '', firstName: '', lastName: '' });
+                    this.setState({ created: res.data, currentUser: {email: '', firstName: '', lastName: '' } });
                 });
             }).catch((err) => {
-                this.setState({ created: null });
+                this.setState({ created: null, error: err.response.data.detail });
                 console.log(err);
             });
     };
@@ -131,6 +143,7 @@ export class UserCreate extends Component<Props, State> {
     render() {
         if (!this.state.loaded) return (<div>Loading...</div>);
         const roleForCreation = this.roleForCreation === UserRole.voter ? 'Voter' : 'Election Officer';
+
         return (
             <div>
                 <h1>Create User: {roleForCreation}</h1>
@@ -139,6 +152,16 @@ export class UserCreate extends Component<Props, State> {
                         <div className="alert alert-success">
                             <h2>User Account Created</h2>
                             <p>A {roleForCreation} user account for {this.state.created.firstName} {this.state.created.lastName} has been created. They should expect an e-mail in their inbox shortly.</p>
+                            <Link to="/manage/users">Back</Link>
+                        </div>
+                    )
+                }
+
+                {
+                    this.state.error && (
+                        <div className="alert alert-danger">
+                            <h2>User Account Error</h2>
+                            <p>{this.state.error}</p>
                         </div>
                     )
                 }
@@ -148,7 +171,7 @@ export class UserCreate extends Component<Props, State> {
                             E-mail address:
                             <input type="email"
                                    className="form-control"
-                                   value={this.state.email}
+                                   value={this.state.currentUser.email}
                                    onChange={this.handleEmailChange}
                                    required />
                         </label>
@@ -158,7 +181,7 @@ export class UserCreate extends Component<Props, State> {
                             First Name:
                             <input type="text"
                                    className="form-control"
-                                   value={this.state.firstName}
+                                   value={this.state.currentUser.firstName}
                                    onChange={this.handleFirstNameChange}
                                    required />
                         </label>
@@ -168,7 +191,7 @@ export class UserCreate extends Component<Props, State> {
                             Last Name:
                             <input type="text"
                                    className="form-control"
-                                   value={this.state.lastName}
+                                   value={this.state.currentUser.lastName}
                                    onChange={this.handleLastNameChange}
                                    required />
                         </label>
@@ -178,15 +201,19 @@ export class UserCreate extends Component<Props, State> {
 
                         <div className="form-group">
                             <label className="required">
-                                District:
-                                <select className="form-control"
-                                        value={this.state.districtChosen.name ? this.state.districtChosen.name : ''}
-                                        onChange={this.handleDistrictChange}>
+                              District
+                              <select className="form-control"
+                                    value={this.state.districtChosen ? this.state.districtChosen.id : null}
+                                    onChange={this.handleDistrictChange}>
                                     {
-                                        this.state.districts.map((district) =>
-                                            <option key={district.id} value={district.id}>{district.name}</option>)
+                                    this.state.districts.map(district => (
+                                        <option key={district.id}
+                                                value={district.id}>
+                                            { district.name }
+                                        </option>
+                                    ))
                                     }
-                                </select>
+                              </select>
                             </label>
                         </div>
                         : null

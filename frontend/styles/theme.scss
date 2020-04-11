@@ -20,14 +20,5 @@
 // GCWeb Theme
 @import "gc-web/defaults";
 
-// Spacing Utilities
-@import "spacing-utils";
-
-// Font awesome custom CSS
-@import "fa";
-
-// Reset some CSS
-@import "resets";
-
-// Custom CSS for specific pages
-@import "custom";
+// Custom SCSS for this project
+@import "custom/all";

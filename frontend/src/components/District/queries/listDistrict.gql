@@ -1,0 +1,26 @@
+query Districts {
+    districts {
+        id
+        name
+        candidates {
+            id
+            name
+            picture {
+                filename
+                location
+                mimetype
+            }
+            politicalParty {
+                id
+                name
+                colour
+                logo {
+                    filename
+                    location
+                    mimetype
+                }
+            }
+        }
+        geoJson
+    }
+}

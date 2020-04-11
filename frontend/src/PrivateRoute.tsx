@@ -2,12 +2,18 @@ import React from 'react';
 import {Redirect, Route} from 'react-router-dom';
 import {UserRole} from "./enums/role";
 import {connect} from "react-redux";
+import {AuthActionType} from "./enums/actions/auth.types";
+import authApi from "./api/auth";
 
-const mapStateToProps = state => {
-    return ({currentUser: state.authReducer.user});
-};
+const mapStateToProps = state => ({
+    currentUser: state.authReducer.user,
+});
 
-const PrivateRoute = ({ component: Component, canAccess, ...rest }) => {
+const mapDispatchToProps = dispatch => ({
+    handleLogout: () => dispatch({ type: AuthActionType.LOGOUT_FOR_USER, user: null })
+});
+
+const PrivateRoute = ({ component: Component, canAccess, handleLogout, ...rest }) => {
     if (canAccess && canAccess.length > 0) {
         if ((rest.currentUser && rest.currentUser.role
             && ((rest.currentUser.role === UserRole.administrator && canAccess.includes(UserRole.administrator))
@@ -16,8 +22,13 @@ const PrivateRoute = ({ component: Component, canAccess, ...rest }) => {
             (!rest.currentUser && canAccess.includes(UserRole.anonymous)))
             return (<Route {...rest} render={props => <Component {...props} />} />);
     }
-    // TODO: Log user out 
-    return <Redirect to="/" />
+
+    // Log user out (first by resetting the state in redux)
+    handleLogout();
+    // Second, log out user in auth service
+    authApi.logout();
+    // Redirect user to login page
+    return <Redirect to="/auth/login?denied=1" />;
 };
 
-export default connect(mapStateToProps)(PrivateRoute);
+export default connect(mapStateToProps, mapDispatchToProps)(PrivateRoute);
