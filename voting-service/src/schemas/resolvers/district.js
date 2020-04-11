@@ -1,13 +1,23 @@
 import { combineResolvers } from 'graphql-resolvers';
 import GeoJsonValidation from 'geojson-validation';
 import { ValidationError } from 'apollo-server-express';
-import { isAdministrator } from './auth';
+import { hardVerify, isAdministrator } from './auth';
 import { District } from '../../models';
 import {
   rejectErrorIfNeeded,
   rejectNotFoundIfNeeded,
   validationErrorToApolloUserInputError,
 } from './helpers';
+import sanitizeHTML from 'sanitize-html';
+
+const validateJSON = (json) => {
+  try {
+    JSON.parse(json)
+  } catch(e) {
+    return e;
+  }
+  return null;
+};
 
 export default {
   getDistricts: () => District.find({}),
@@ -20,6 +30,7 @@ export default {
       })
     ))
   ),
+  // TODO: Test this and also fix security issue
   getDistrictByCandidate: (candidate) => (
     new Promise(((resolve, reject) => (
       District.findById(candidate.district, (err, res) => {
@@ -29,12 +40,22 @@ export default {
       })
     )))
   ),
-  createDistrict: combineResolvers((parent, args) => (
+  getDistrictByVoter: (voter) => (
+    new Promise(((resolve, reject) => (
+      District.findById(voter.district, (err, res) => {
+        if (rejectErrorIfNeeded(err, reject)) return;
+        if (rejectNotFoundIfNeeded(res, reject, 'District', voter.district)) return;
+        resolve(res);
+      })
+    )))
+  ),
+  createDistrict: combineResolvers(hardVerify, (parent, args) => (
     new Promise((resolve, reject) => {
-      GeoJsonValidation.isPolygon(JSON.parse(args.geoJson), (valid, geoJsonErrs) => {
+      if (validateJSON(args.geoJson)) return reject(new ValidationError(`GeoJSON not valid: ${validateJSON(args.geoJson)}`));
+      GeoJsonValidation.isMultiPolygon(JSON.parse(args.geoJson), (valid, geoJsonErrs) => {
         if (!valid) return reject(new ValidationError(`GeoJSON not valid: ${geoJsonErrs.join('; ')}`));
         const district = new District({
-          name: args.name,
+          name: sanitizeHTML(args.name), // Sanitize
           geoJson: JSON.parse(args.geoJson),
         });
 
@@ -49,11 +70,12 @@ export default {
   )),
   updateDistrict: combineResolvers(isAdministrator, (parent, args) => (
     new Promise((resolve, reject) => {
-      GeoJsonValidation.isPolygon(JSON.parse(args.geoJson), (valid, geoJsonErrs) => {
+      if (validateJSON(args.geoJson)) return reject(new ValidationError(`GeoJSON not valid: ${validateJSON(args.geoJson)}`));
+      GeoJsonValidation.isMultiPolygon(JSON.parse(args.geoJson), (valid, geoJsonErrs) => {
         if (!valid) return reject(new ValidationError(`GeoJSON not valid: ${geoJsonErrs.join('; ')}`));
-        return District.findOneAndUpdate(args.id, {
+        return District.findOneAndUpdate({ _id: args.id }, {
           $set: {
-            name: args.name,
+            name: sanitizeHTML(args.name), // Sanitize
             geoJson: JSON.parse(args.geoJson),
           },
         }, {

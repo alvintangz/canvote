@@ -5,7 +5,7 @@ import fs from 'fs';
 // TODO
 import { rejectErrorIfNeeded } from '../schemas/resolvers/helpers';
 
-const mediaSchema = new mongoose.Schema(
+const Media = mongoose.model('Media', new mongoose.Schema(
   {
     filename: {
       type: String,
@@ -20,43 +20,60 @@ const mediaSchema = new mongoose.Schema(
       required: true,
     },
   },
-);
+));
 
-mediaSchema.methods.upload = (file) => new Promise((resolve, reject) => {
-  const { createReadStream, filename, mimetype } = file;
-  const fsFilename = uuidv4();
-  const uploadTo = path.join(__dirname, '../../media', fsFilename);
+const uploadToFolder = path.join(__dirname, '../../media');
+export const MediaUtility = {
+  upload(file) {
+    return new Promise((resolve, reject) => {
+      const { createReadStream, filename, mimetype } = file;
+      const fsFilename = uuidv4();
+      const uploadTo = path.join(uploadToFolder, fsFilename);
+      const upload = () => {
+        const writeStream = createReadStream()
+          .pipe(fs.createWriteStream(uploadTo));
 
-  const writeStream = createReadStream()
-    .pipe(fs.createWriteStream(uploadTo));
+        writeStream.on('finish', () => {
+          const toCreate = new Media();
+          toCreate.fsFilename = fsFilename;
+          toCreate.filename = filename;
+          toCreate.mimetype = mimetype;
+          toCreate.save((err, res) => {
+            // TODO
+            if (rejectErrorIfNeeded(err, reject)) {
+              fs.unlink(uploadTo, () => {});
+            }
+            resolve(res);
+          });
+        });
 
-  writeStream.on('finish', () => {
-    this.model('Media').fsFilename = fsFilename;
-    this.model('Media').filename = filename;
-    this.model('Media').mimetype = mimetype;
-    this.model('Media').save((err, res) => {
-      if (rejectErrorIfNeeded(err, reject)) {
-        fs.unlink(uploadTo, () => {});
+        writeStream.on('error', (error) => {
+          fs.unlink(uploadTo, () => {
+            reject(error);
+          });
+        });
+      };
+
+      fs.access(uploadToFolder, fs.constants.F_OK, (err) => {
+        !err ? upload() : fs.mkdir(uploadToFolder, { recursive: true }, (err) => {
+          if (err) reject(err);
+          upload();
+        });
+      });
+    });
+  },
+  delete(mediaId) {
+    Media.findByIdAndRemove(mediaId, (err, res) => {
+      if (res) {
+        const unlinkFrom = path.join(uploadToFolder, res.fsFilename);
+        fs.unlink(unlinkFrom, () => {});
       }
-      resolve(res);
+      return res;
     });
-  });
-
-  writeStream.on('error', (error) => {
-    fs.unlink(uploadTo, () => {
-      reject(error);
-    });
-  });
-});
-
-mediaSchema.method.cleanAndRemoveById = (id) => {
-  this.model('Media').findByIdAndRemove(id, (err, res) => {
-    if (res) {
-      const unlinkFrom = path.join(__dirname, '../../media', res.fsFilename);
-      fs.unlink(unlinkFrom, () => {});
-    }
-    return res;
-  });
+  },
+  getPath(media) {
+    return path.join(uploadToFolder, media.fsFilename);
+  }
 };
 
-export default mongoose.model('Media', mediaSchema);
+export default Media;

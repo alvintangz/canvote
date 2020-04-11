@@ -1,6 +1,12 @@
 import mongoose from 'mongoose';
 
-const voterSchema = new mongoose.Schema(
+/**
+ * Voter collection ensures a voter is binded with a district.
+ *
+ * This record is held independently from the authentication service's voter records. It is not
+ * to be used to validate if a voter exists or if a voter is active.
+ */
+export default mongoose.model('Voter', new mongoose.Schema(
   {
     authId: {
       type: String,
@@ -8,11 +14,9 @@ const voterSchema = new mongoose.Schema(
       unique: true,
     },
     district: {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'District',
+      required: true
     },
-    // TODO: Disable?
   },
-);
-
-export default mongoose.model('Voter', voterSchema);
+));

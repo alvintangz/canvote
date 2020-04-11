@@ -16,13 +16,19 @@ app.use(cookieParser());
 const server = new ApolloServer({
   schema,
   introspection: !IN_PRODUCTION,
-  playground: !IN_PRODUCTION,
+  // playground: {
+  //   settings: {
+  //     "request.credentials": "include"
+  //   },
+  // },
+  playground: true,
   debug: !IN_PRODUCTION,
   context: ({ req }) => {
-    if (!req.cookies['cv.token']) return null;
-    return jwt.verify(req.cookies['cv.token'], JWT_SECRET_KEY, (err, me) => {
+    const token = req.cookies['cv.token'];
+    if (!token) return null;
+    return jwt.verify(token, JWT_SECRET_KEY, (err, me) => {
       if (err) throw new AuthenticationError('The JWT provided is not valid or no longer valid.');
-      return { me };
+      return { me, jwt: token };
     });
   },
 });

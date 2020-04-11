@@ -1,7 +1,7 @@
 type District {
     id: ID!
     name: String!
-    candidates: [PoliticalPartyCandidate!]
+    candidates: [PoliticalPartyCandidate]
     geoJson: GeoJSONMultiPolygon!
 }
 

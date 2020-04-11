@@ -2,7 +2,7 @@ import env from 'dotenv';
 
 env.config();
 
-const IN_PRODUCTION = parseInt(process.env.PRODUCTION, 10) === 1 || 1;
+const IN_PRODUCTION = process.env.PRODUCTION ? parseInt(process.env.PRODUCTION, 10) === 1 : 1;
 const PORT = process.env.PORT || 3002;
 const { JWT_SECRET_KEY } = process.env;
 const DB_HOST = process.env.MONGO_HOST || 'localhost';

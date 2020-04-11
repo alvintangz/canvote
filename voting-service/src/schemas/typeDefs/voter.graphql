@@ -4,11 +4,10 @@ type Voter {
 }
 
 extend type Query {
-    meAsVoter: [District!]
+    meAsVoter: Voter
+    voter(id: ID!): Voter
 }
 
 extend type Mutation {
-    createDistrict(name: String!, geoJson: GeoJSONMultiPolygon!): District!
-    updateDistrict(id: ID!, name: String!, geoJson: GeoJSONMultiPolygon!): District!
-    deleteDistrict(id: ID!): District!
+    updateVoter(authId: String!, district: String): Voter!
 }

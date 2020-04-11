@@ -3,7 +3,8 @@ import district from './district.graphql';
 import politicalParty from './politicalParty.graphql';
 import politicalPartyCandidate from './politicalPartyCandidate.graphql';
 import vote from './vote.graphql';
-import file from './file.graphql';
+import file from './media.graphql';
+import voter from './voter.graphql';
 
 const root = gql`
   scalar Upload
@@ -25,4 +26,5 @@ export default [
   politicalPartyCandidate,
   vote,
   file,
+  voter,
 ];

@@ -1,23 +1,25 @@
 import { combineResolvers } from 'graphql-resolvers';
 import { isAdministrator } from './auth';
 import { PoliticalParty, Media } from '../../models';
+import { MediaUtility } from '../../models/media';
 import {
   rejectErrorIfNeeded,
   rejectNotFoundIfNeeded,
   validationErrorToApolloUserInputError,
 } from './helpers';
+import sanitizeHTML from 'sanitize-html';
 
 export default {
-  getPoliticalParties: () => PoliticalParty.find({}),
+  getPoliticalParties: () => PoliticalParty.find({}).populate('logo').exec(),
   getPoliticalParty: (parent, args) => new Promise((resolve, reject) => (
-    PoliticalParty.findById(args.id, (err, res) => {
+    PoliticalParty.findById(args.id).populate('logo').exec((err, res) => {
       if (rejectErrorIfNeeded(err, reject)) return;
       if (rejectNotFoundIfNeeded(res, reject, 'Political Party', args.id)) return;
       resolve(res);
     })
   )),
   getPoliticalPartyByCandidate: (candidate) => new Promise(((resolve, reject) => (
-    PoliticalParty.findById(candidate.politicalParty, (err, res) => {
+    PoliticalParty.findById(candidate.political_party).populate('logo').exec((err, res) => {
       if (rejectErrorIfNeeded(err, reject)) return;
       if (rejectNotFoundIfNeeded(res, reject, 'Political Party', candidate.politicalParty)) return;
       resolve(res);
@@ -25,19 +27,28 @@ export default {
   ))),
   createPoliticalParty: combineResolvers(isAdministrator, (parent, args) => (
     new Promise((resolve, reject) => {
-      const politicalParty = new PoliticalParty({ name: args.name, colour: args.colour });
-      politicalParty.validate().then(() => args.file.then((file) => (
-        new Media().upload(file).then((media) => {
-          politicalParty.logo = media;
-          politicalParty.save((err, res) => {
-            // TODO
-            if (rejectErrorIfNeeded(err, reject)) {
-              media.cleanAndRemoveById(media.id);
-            }
-            resolve(res);
+      return args.logo.then(file => {
+        MediaUtility.upload(file).then((media) => {
+          const politicalParty = new PoliticalParty({
+            name: sanitizeHTML(args.name), // Sanitize
+            colour: sanitizeHTML(args.colour), // Sanitize
+            logo: media
+          });
+
+          politicalParty.validate().then(() => {
+            politicalParty.save((err, res) => {
+              // TODO
+              if (rejectErrorIfNeeded(err, reject)) {
+                MediaUtility.delete(media.id);
+              }
+              resolve(res);
+            });
+          }).catch((err) => {
+            reject(validationErrorToApolloUserInputError(err));
+            MediaUtility.delete(media.id);
           });
         })
-      ))).catch((err) => reject(validationErrorToApolloUserInputError(err)));
+      });
     })
   )),
   updatePoliticalParty: combineResolvers(isAdministrator, ((parent, args) => (

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const ballotCountSchema = new mongoose.Schema(
+export default mongoose.model('BallotCount', new mongoose.Schema(
   {
     candidate: {
       type: mongoose.Schema.Types.ObjectId,
@@ -13,6 +13,4 @@ const ballotCountSchema = new mongoose.Schema(
       default: Date.now,
     },
   },
-);
-
-export default mongoose.model('BallotCount', ballotCountSchema);
+));

@@ -1,13 +1,15 @@
 import { CastError } from 'mongoose';
 import { ValidationError, ApolloError, UserInputError } from 'apollo-server-express';
 
-export const validationErrorToApolloUserInputError = (err) => new UserInputError(err, {
-  invalidArgs: Object.keys(err.errors).map((arg) => ({
-    argument: arg,
-    message: err.errors[arg].message,
-    valueProvided: err.errors[arg].value,
-  })),
-});
+export const validationErrorToApolloUserInputError = (err) => {
+  return new UserInputError(Object.keys(err.errors).map((arg) => (err.errors[arg].message)).join('; '), {
+    invalidArgs: Object.keys(err.errors).map((arg) => ({
+      argument: arg,
+      message: err.errors[arg].message,
+      valueProvided: err.errors[arg].value,
+    })),
+  });
+};
 
 export const rejectErrorIfNeeded = (error, reject) => {
   if (error) {
@@ -18,7 +20,13 @@ export const rejectErrorIfNeeded = (error, reject) => {
     } else if (error.name === 'MongoError') {
       switch (error.code) {
         case 11000:
-          reject(new UserInputError(`There is already another resource with the value for "${Object.keys(error.keyValue)[0]}": "${error.keyValue[Object.keys(error.keyValue)[0]]}". This must be unique however.`));
+          const msg = `There is already another resource with the value for "${Object.keys(error.keyValue)[0]}": "${error.keyValue[Object.keys(error.keyValue)[0]]}". This must be unique however.`;
+          reject(new UserInputError(msg, {
+              argument: Object.keys(error.keyValue)[0],
+              message: msg,
+              valueProvided: error.keyValue[Object.keys(error.keyValue)[0]]
+            }
+          ));
           break;
         default:
           reject(new ApolloError(error.errmsg));

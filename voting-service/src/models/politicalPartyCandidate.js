@@ -19,7 +19,7 @@ const politicalPartyCandidateSchema = new mongoose.Schema(
     picture: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Media',
-      required: false,
+      required: true,
     },
   },
 );

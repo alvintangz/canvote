@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
 
-const voteSchema = new mongoose.Schema(
+/**
+ * Collection to ensure a voter has voted once.
+ */
+export default mongoose.model('Vote', new mongoose.Schema(
   {
     voter: {
       type: mongoose.Schema.Types.ObjectId,
@@ -12,6 +15,4 @@ const voteSchema = new mongoose.Schema(
       default: Date.now,
     },
   },
-);
-
-export default mongoose.model('Vote', voteSchema);
+));

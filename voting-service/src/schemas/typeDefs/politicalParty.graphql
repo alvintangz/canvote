@@ -2,7 +2,7 @@ type PoliticalParty {
     id: ID!
     name: String!
     colour: String!
-    logo: File!
+    logo: MediaFile!
     candidates: [PoliticalPartyCandidate!]
 }
 
@@ -12,7 +12,7 @@ extend type Query {
 }
 
 extend type Mutation {
-    createPoliticalParty(name: String!, colour: String!): PoliticalParty!
-    updatePoliticalParty(id: ID!, name: String!, colour: String!): PoliticalParty!
+    createPoliticalParty(name: String!, colour: String!, logo: Upload!): PoliticalParty!
+    updatePoliticalParty(id: ID!, name: String!, colour: String!, logo: Upload!): PoliticalParty!
     deletePoliticalParty(id: ID!): PoliticalParty!
 }

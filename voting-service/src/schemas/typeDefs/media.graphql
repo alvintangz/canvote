@@ -1,6 +1,5 @@
-type File {
+type MediaFile {
     filename: String!
     mimetype: String!
-    encoding: String!
     location: String!
 }

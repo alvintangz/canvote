@@ -2,7 +2,14 @@ import { MultiPolygonObject } from 'graphql-geojson';
 import DistrictResolvers from './district';
 import PoliticalPartyResolvers from './politicalParty';
 import PoliticalPartyCandidateResolvers from './politicalPartyCandidate';
-import VoteResolver from './vote';
+import VoterResolvers from './voter';
+import VoteResolvers from './vote';
+
+const buildMediaFileObj = (media) => ({
+  filename: media.filename,
+  mimetype: media.mimetype,
+  location: `/media/${media._id}`
+});
 
 export default {
   District: {
@@ -10,10 +17,15 @@ export default {
   },
   PoliticalParty: {
     candidates: PoliticalPartyCandidateResolvers.getPoliticalPartyCandidatesByPoliticalParty,
+    logo: ({ logo }) => new Promise ((resolve) => resolve(buildMediaFileObj(logo))),
   },
   PoliticalPartyCandidate: {
     politicalParty: PoliticalPartyResolvers.getPoliticalPartyByCandidate,
     district: DistrictResolvers.getDistrictByCandidate,
+    picture: ({ picture }) => new Promise ((resolve) => resolve(buildMediaFileObj(picture))),
+  },
+  Voter: {
+    district: DistrictResolvers.getDistrictByVoter,
   },
   Query: {
     district: DistrictResolvers.getDistrict,
@@ -22,6 +34,8 @@ export default {
     politicalParties: PoliticalPartyResolvers.getPoliticalParties,
     politicalPartyCandidate: PoliticalPartyCandidateResolvers.getPoliticalPartyCandidate,
     politicalPartyCandidates: PoliticalPartyCandidateResolvers.getPoliticalPartyCandidates,
+    meAsVoter: VoterResolvers.meAsVoter,
+    voter: VoterResolvers.getVoter,
   },
   Mutation: {
     createDistrict: DistrictResolvers.createDistrict,
@@ -33,7 +47,8 @@ export default {
     createPoliticalPartyCandidate: PoliticalPartyCandidateResolvers.createPoliticalPartyCandidate,
     updatePoliticalPartyCandidate: PoliticalPartyCandidateResolvers.updatePoliticalPartyCandidate,
     deletePoliticalPartyCandidate: PoliticalPartyCandidateResolvers.deletePoliticalPartyCandidate,
-    vote: VoteResolver.vote,
+    vote: VoteResolvers.vote,
+    updateVoter: VoterResolvers.updateVoter,
   },
   GeoJSONMultiPolygon: MultiPolygonObject,
 };

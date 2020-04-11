@@ -26,15 +26,14 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
-    "@google-cloud/pubsub": "^1.6.0",
     "apollo-server-express": "^2.11.0",
+    "axios": "^0.19.2",
     "cookie-parser": "^1.4.4",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "geojson-validation": "^0.2.1",
     "graphql": "^14.6.0",
     "graphql-geojson": "^1.0.0",
-    "graphql-geojson-scalar-types": "0.0.5",
     "graphql-resolvers": "^0.4.2",
     "graphql-tools": "^4.0.7",
     "graphql-upload": "^10.0.0",
@@ -42,6 +41,7 @@
     "mongoose": "^5.9.3",
     "mongoose-geojson-schema": "^2.1.5",
     "mongoose-transactions": "^1.1.4",
+    "sanitize-html": "^1.23.0",
     "uuid": "^7.0.2"
   }
 }
