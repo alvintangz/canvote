@@ -1,20 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import {loader} from 'graphql.macro';
 import {useQuery, useMutation} from "@apollo/react-hooks";
-import {District, PoliticalParty} from '../../interfaces/models';
+import {District, PoliticalParty} from '../interfaces/models';
 import { Map, TileLayer, GeoJSON } from 'react-leaflet';
-import {AlertType} from '../../enums/alert-type';
+import {AlertType} from '../enums/alert-type';
 import { ApolloError } from 'apollo-client';
-import {ApolloErrorAlert, GenericAlert, Loading } from "../shared";
+import {ApolloErrorAlert, GenericAlert, Loading } from "./shared";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faTrash, faSave} from '@fortawesome/free-solid-svg-icons';
 
 // GraphQL Queries
 
-const LIST_DISTRICT = loader('./queries/listDistrict.gql');
-const CREATE_DISTRICT = loader('./queries/createDistrict.gql');
-const UPDATE_DISTRICT = loader('./queries/updateDistrict.gql');
-const DELETE_DISTRICT = loader('./queries/deleteDistrict.gql');
+const LIST_DISTRICT = loader('../queries/listDistrict.gql');
+const CREATE_DISTRICT = loader('../queries/createDistrict.gql');
+const UPDATE_DISTRICT = loader('../queries/updateDistrict.gql');
+const DELETE_DISTRICT = loader('../queries/deleteDistrict.gql');
 
 // Interfaces
 
@@ -56,16 +56,18 @@ export const ListDistricts = (props: ListDistrictsProps) => {
     // State to store the search term when searching
     const [searchTerm, setSearchTerm] = useState<string>("");
 
-    const { loading, error, data } = useQuery<{ districts: District[] }>(LIST_DISTRICT, { skip: !!props.districts });
+    const { loading, error, data } = useQuery<{ districts: District[] }>(LIST_DISTRICT);
 
     // Handle specific cases
     if (loading) return (<Loading />);
     if (error) return (<GenericAlert message="There was an error loading districts. If this error persists, please contact support."
                                      type={ AlertType.danger } />);
-    if ((data && data.districts.length === 0) || (props.districts && props.districts.length === 0))
+    if (data && data.districts.length === 0)
         return (<GenericAlert message="There are no districts at the moment." type={ AlertType.info } />);
 
-    const districts: Array<District | null> = data ? data.districts : (props.districts ? props.districts : null);
+    // Districts must be from Apollo client to retrieve cache changes
+    const districts: Array<District> = !props.districts ? data.districts : 
+        data.districts.filter((district) => props.districts.findIndex(propsDistrict => propsDistrict.id === district.id) !== -1);
 
     return (
         <div>
@@ -95,7 +97,7 @@ export const ListDistricts = (props: ListDistrictsProps) => {
  * Component that displays districts on a map via each district's GeoJson data.
  */
 export const DisplayDistricts = (props: DisplayDistrictsProps) => {
-    const MAPBOX_API_KEY: string = process.env.REACT_APP_MAPBOX_API_KEY + "hi";
+    const MAPBOX_API_KEY: string = process.env.REACT_APP_MAPBOX_API_KEY;
     const MAPBOX_STYLE = process.env.REACT_APP_MAPBOX_MAP_STYLE;
     const DEFAULT_POS: { lat: number, lng: number, zoom: number } = {
         lat: parseFloat(process.env.REACT_APP_MAP_DEFAULT_POS_LAT),
@@ -173,7 +175,16 @@ export const UpdateDistrict = (props: UpdateDistrictProps) => {
                     }
                 }).catch(error => setErrorUpdate(error));
         } else {
-            createDistrict({ variables: { name, geoJson }})
+            // Function to update the in-memory cache
+            const updateCache = (proxy, { data: { createDistrict }}) => {
+                const data = proxy.readQuery({ query: LIST_DISTRICT });
+                if (data) {
+                    data.districts.push(createDistrict);
+                    proxy.writeQuery({ query: LIST_DISTRICT, data });
+                }
+            };
+
+            createDistrict({ variables: { name, geoJson }, update: updateCache })
                 .then((data) => {
                     if (props.onUpdateSuccess) {
                         props.onUpdateSuccess(data.createDistrict as District, {
@@ -190,11 +201,13 @@ export const UpdateDistrict = (props: UpdateDistrictProps) => {
             // Function to update the in-memory cache
             const updateCache = (client) => {
                 const data = client.readQuery({ query: LIST_DISTRICT });
-                const newData = { districts: data.districts.filter((i) => i.id !== props.toUpdate.id) };
-                client.writeQuery({
-                    query: LIST_DISTRICT,
-                    data: newData,
-                });
+                if (data) {
+                    const newData = { districts: data.districts.filter((i) => i.id !== props.toUpdate.id) };
+                    client.writeQuery({
+                        query: LIST_DISTRICT,
+                        data: newData,
+                    });
+                }
             };
 
             deleteDistrict({ variables: { id: props.toUpdate.id }, update: updateCache })

@@ -20,7 +20,7 @@ const GenericAlert = (props: GenericAlertProps) => (
     props.shouldShow !== false ? (
         <div className={ "alert " + (AlertType.success === props.type ? "alert-success" : (AlertType.danger === props.type ? "alert-danger" : "alert-info") )}>
             { props.title && <h2>{ props.title }</h2> }
-            <p>{ props.message } </p>
+            { props.message }
         </div>
     ) : null
 );
@@ -39,7 +39,7 @@ const ApolloErrorAlert = (props: ErrorAlertProps) => {
                     }
                     { props.error.networkError && <li>{ props.error.networkError }</li> }
                 </ul>
-            ) : (props.error.graphQLErrors.length === 1 ?
+            ) : (props.error.graphQLErrors && props.error.graphQLErrors.length === 1 ?
                     props.error.graphQLErrors[0].message :
                     ( props.error.networkError ? props.error.networkError : props.error.message)
                 )

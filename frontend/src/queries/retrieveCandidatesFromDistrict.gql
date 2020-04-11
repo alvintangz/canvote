@@ -1,0 +1,19 @@
+query District($id: ID!) {
+    district(id: $id) {
+        id
+        candidates {
+            id
+            name
+            politicalParty {
+                id
+                name
+                colour
+            }
+            picture {
+                filename
+                location
+                mimetype
+            }
+        }
+    }
+}

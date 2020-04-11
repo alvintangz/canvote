@@ -12,6 +12,8 @@ import {ListPoliticalParties, UpdatePoliticalParty} from "../components/Politica
 
 Modal.setAppElement('#root');
 
+// GraphQL Queries
+
 interface State {
     // Whether or not to list the districts on the side
     listingDistricts: boolean;
@@ -75,7 +77,7 @@ export default class Election extends React.Component<{}, State> {
 
         const handleActionToViewDistrict = (district: District) => {
             this.setState({
-                currentDistrict: district,
+                currentDistrict: {...district},
                 listingDistricts: false,
                 updateCurrentDistrict: false,
                 updateCandidateModalIsOpen: false,
@@ -103,7 +105,7 @@ export default class Election extends React.Component<{}, State> {
 
         const handleBtnClickToEditDistrict = (district: District) => {
             this.setState({
-                currentDistrict: district,
+                currentDistrict: {...district},
                 listingDistricts: false,
                 updateCurrentDistrict: true,
                 updateCandidateModalIsOpen: false,
@@ -294,7 +296,7 @@ export default class Election extends React.Component<{}, State> {
                             <div className="panel-body">
                             {
                                 this.state.listingDistricts ?
-                                    <ListDistricts onClickDistrict={handleActionToViewDistrict} /> :
+                                    <ListDistricts onClickDistrict={ handleActionToViewDistrict } /> :
                                     this.state.updateCurrentDistrict ?
                                         <UpdateDistrict toUpdate={ this.state.currentDistrict } onDeleteSuccess={ handleDistrictDeleted } /> :
                                         (
@@ -309,14 +311,14 @@ export default class Election extends React.Component<{}, State> {
                                                 <div className="clearfix">
                                                     <h3 className="h4 pull-left">Candidates in District</h3>
                                                     <button className="btn btn-sm pull-right"
-                                                            onClick={handleActionToCreateCandidate}
+                                                            onClick={ handleActionToCreateCandidate }
                                                             title="Create candidate">
                                                         <FontAwesomeIcon icon={ faPlus } className="fa-left" />Candidate
                                                     </button>
                                                 </div>
                                                 {
                                                     this.state.currentDistrict.candidates.length > 0 ?
-                                                        <ListCandidates candidates={ this.state.currentDistrict.candidates } 
+                                                        <ListCandidates district={ this.state.currentDistrict }
                                                                         clickable={ true } 
                                                                         onClickCandidate={ handleActionToUpdateCandidate } /> :
                                                         <GenericAlert message="Currently, there are no candidates for this district." type={ AlertType.info } />
@@ -343,6 +345,7 @@ export default class Election extends React.Component<{}, State> {
                     <div className="rmodal-body">
                         <UpdateCandidate district={ this.state.currentDistrict } 
                                          onDeleteSuccess={ handleCandidateDeleted }
+                                         onCreateSuccess={ () => { this.setState({ listingDistricts: true }) } }
                                          toUpdate={ this.state.candidateToUpdateInModal } />
                     </div>
                 </Modal>

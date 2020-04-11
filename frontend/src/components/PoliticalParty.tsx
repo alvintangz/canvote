@@ -1,9 +1,9 @@
 import React,{useState, useEffect} from 'react';
 import {loader} from "graphql.macro";
-import {PoliticalParty} from "../../interfaces/models";
+import {PoliticalParty} from "../interfaces/models";
 import {useQuery, useMutation} from "@apollo/react-hooks";
-import {AlertType} from "../../enums/alert-type";
-import {ApolloErrorAlert, GenericAlert, FilePicker, Loading } from "../shared";
+import {AlertType} from "../enums/alert-type";
+import {ApolloErrorAlert, GenericAlert, FilePicker, Loading } from "./shared";
 import {SketchPicker} from 'react-color';
 import { ApolloError } from 'apollo-client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,10 +11,10 @@ import {faTrash, faSave} from '@fortawesome/free-solid-svg-icons';
 
 // GraphQL Queries
 
-const LIST_POLITICAL_PARTIES = loader('./queries/listPoliticalParties.gql');
-const CREATE_POLITICAL_PARTY = loader('./queries/createPoliticalParty.gql');
-const UPDATE_POLITICAL_PARTY = loader('./queries/updatePoliticalParty.gql');
-const DELETE_POLITICAL_PARTY = loader('./queries/deletePoliticalParty.gql');
+const LIST_POLITICAL_PARTIES = loader('../queries/listPoliticalParties.gql');
+const CREATE_POLITICAL_PARTY = loader('../queries/createPoliticalParty.gql');
+const UPDATE_POLITICAL_PARTY = loader('../queries/updatePoliticalParty.gql');
+const DELETE_POLITICAL_PARTY = loader('../queries/deletePoliticalParty.gql');
 
 // Interfaces
 
@@ -32,8 +32,6 @@ interface ListPoliticalPartiesProps {
 interface UpdatePoliticalPartyProps {
     // The political party to update. If no party is provided, creates a new one.
     toUpdate?: PoliticalParty;
-    // When the political party has been updated successfully, call this
-    onUpdateSuccess?: (party: PoliticalParty, message: { jsx: React.ReactNode, plain: string }) => void;
     // When the political party has been deleted successfully, call this
     onDeleteSuccess?: () => void;
 }
@@ -44,16 +42,18 @@ interface UpdatePoliticalPartyProps {
  * Component that lists out the political parties.
  */
 export const ListPoliticalParties = (props: ListPoliticalPartiesProps) => {
-    const { loading, error, data } = useQuery<{ politicalParties: PoliticalParty[] }>(LIST_POLITICAL_PARTIES, { skip: !!props.politicalParties });
+    const { loading, error, data } = useQuery<{ politicalParties: PoliticalParty[] }>(LIST_POLITICAL_PARTIES);
 
     // Handle specific cases
     if (loading) return (<Loading />);
     if (error) return (<GenericAlert message="There was an error loading political parties. If this error persists, please contact support."
                                      type={ AlertType.danger } />);
-    if ((data && data.politicalParties.length === 0) || (props.politicalParties && props.politicalParties.length === 0))
+    if (data && data.politicalParties.length === 0)
                                      return (<GenericAlert message="There are no political parties at the moment." type={ AlertType.info } />);
 
-    const politicalParties: Array<PoliticalParty | null> = data ? data.politicalParties : (props.politicalParties ? props.politicalParties : null);
+    // Political Parties must be from Apollo client to retrieve cache changes
+    const politicalParties: Array<PoliticalParty> = !props.politicalParties ? data.politicalParties : 
+        data.politicalParties.filter((party) => props.politicalParties.findIndex(propsParty => propsParty.id === party.id) !== -1);
 
     return (
         <ul className="pp-list">
@@ -116,25 +116,24 @@ export const UpdatePoliticalParty = (props: UpdatePoliticalPartyProps) => {
     const handleSubmit = (event: React.SyntheticEvent): void => {
         event.preventDefault();
         if (props.toUpdate) {
-            updatePP({ variables: { id: props.toUpdate.id, name, colour, logo } })
-                .then((data) => {
-                    if (props.onUpdateSuccess) {
-                        props.onUpdateSuccess(data.updatePoliticalParty as PoliticalParty, {
-                            jsx: (<span>The political party, <strong>{ (data.updatePoliticalParty as PoliticalParty).name}</strong>, has been updated in the election.</span>),
-                            plain: `The political party, ${(data.updatePoliticalParty as PoliticalParty).name}, has been updated in the election.`
-                        })
-                    }
-                }).catch(error => setErrorUpdate(error));
+            // Only update when necessary
+            let toUpdate = { id: props.toUpdate.id };
+            if (name) Object.assign(toUpdate, { name });
+            if (colour !== props.toUpdate.colour) Object.assign(toUpdate, { colour });
+            if (logo) Object.assign(toUpdate, { logo });
+
+            updatePP({ variables: toUpdate }).catch(error => setErrorUpdate(error));
         } else {
-            createPP({ variables: { name, colour, logo } })
-                .then((data) => {
-                    if (props.onUpdateSuccess) {
-                        props.onUpdateSuccess(data.createPoliticalParty as PoliticalParty, {
-                            jsx: (<span>The political party, <strong>{ (data.createPoliticalParty as PoliticalParty).name}</strong>, has been added to the election.</span>),
-                            plain: `The political party, ${(data.createPoliticalParty as PoliticalParty).name}, has been added to the election.`
-                        })
-                    }
-                }).catch(error => setErrorCreate(error));
+            // Function to update the in-memory cache
+            const updateCache = (proxy, { data: { createPoliticalParty }}) => {
+                const data = proxy.readQuery({ query: LIST_POLITICAL_PARTIES });
+                if (data) {
+                    data.politicalParties.push(createPoliticalParty);
+                    proxy.writeQuery({ query: LIST_POLITICAL_PARTIES, data });
+                }
+            };
+            
+            createPP({ variables: { name, colour, logo }, update: updateCache }).catch(error => setErrorCreate(error));
         }
     };
 
@@ -201,7 +200,7 @@ export const UpdatePoliticalParty = (props: UpdatePoliticalPartyProps) => {
                             </label>
                         </div>
                         <FilePicker label="Logo"
-                                    required
+                                    required={ !toUpdate }
                                     presetFile={ toUpdate ? toUpdate.logo : null }
                                     accept="image/jpg,image/png,image/jpeg,image/gif"
                                     onFileSelected={ (file) => setLogo(file) } />

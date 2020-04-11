@@ -1,26 +1,29 @@
 import React, {useState, useEffect} from 'react';
-import {Candidate, District, PoliticalParty} from "../../interfaces/models";
+import {Candidate, District, PoliticalParty} from "../interfaces/models";
 import {loader} from "graphql.macro";
-import {useMutation, useQuery} from "@apollo/react-hooks";
-import {ApolloErrorAlert, GenericAlert, FilePicker, Loading } from "../shared";
-import {AlertType} from "../../enums/alert-type";
+import {useMutation, useQuery, useApolloClient} from "@apollo/react-hooks";
+import {ApolloErrorAlert, GenericAlert, FilePicker, Loading } from "./shared";
+import {AlertType} from "../enums/alert-type";
 import {ApolloError} from "apollo-client";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faTrash, faSave} from '@fortawesome/free-solid-svg-icons';
 
 // GraphQL Queries
 
-const LIST_POLITICAL_PARTIES = loader('./queries/listPoliticalParties.gql');
-const LIST_CANDIDATES = loader('./queries/listPoliticalPartyCandidates.gql');
-const CREATE_CANDIDATE = loader('./queries/createPoliticalPartyCandidate.gql');
-const UPDATE_CANDIDATE = loader('./queries/updatePoliticalPartyCandidate.gql');
-const DELETE_CANDIDATE = loader('./queries/deletePoliticalPartyCandidate.gql');
+const LIST_POLITICAL_PARTIES = loader('../queries/listPoliticalParties.gql');
+const LIST_CANDIDATES = loader('../queries/listPoliticalPartyCandidates.gql');
+const CREATE_CANDIDATE = loader('../queries/createPoliticalPartyCandidate.gql');
+const UPDATE_CANDIDATE = loader('../queries/updatePoliticalPartyCandidate.gql');
+const DELETE_CANDIDATE = loader('../queries/deletePoliticalPartyCandidate.gql');
+const RETRIEVE_CANDIDATES_FROM_DISTRICT = loader('../queries/retrieveCandidatesFromDistrict.gql');
 
 // Interfaces
 
 interface ListCandidatesProps {
     // A list of candidates. If none provided, retrieves all candidates.
     candidates?: Candidate[];
+    // Optionally, get all the candidates from a district. If none provided, retrieves all candidates.
+    district?: District;
     // Make clickable (cursor pointer)
     clickable?: boolean;
     // Make selectable (when a candidate is clicked, a border shows); clickable must be true as well
@@ -36,8 +39,8 @@ interface UpdateCandidateProps {
     toUpdate?: Candidate;
     // Set district as this when updating always.
     district: District;
-    // When the candidate has been updated successfully, call this
-    onUpdateSuccess?: (district: District, message: { jsx: React.ReactNode, plain: string }) => void;
+    // When the candidate has been created successfully, call this
+    onCreateSuccess?: () => void;
     // When the candidate has been deleted successfully, call this
     onDeleteSuccess?: () => void;
 }
@@ -51,16 +54,32 @@ export const ListCandidates = (props: ListCandidatesProps) => {
     // State to store candidate if selected
     const [selectedCandidate, setSelectedCandidate] = useState<Candidate>(null);
 
-    const { loading, error, data } = useQuery(LIST_CANDIDATES, { skip: !!props.candidates });
+    const { loading: loadingRetrieve, error: errorRetrieve, data: dataRetrieve } = useQuery(
+        RETRIEVE_CANDIDATES_FROM_DISTRICT,
+        { variables: { id: props.district ? props.district.id : null }, 
+        skip: !(props.district && props.district.id && !props.candidates),
+        fetchPolicy: 'no-cache' });
+
+    const { loading, error, data } = useQuery(LIST_CANDIDATES, { variables: {
+        skip: (props.district && props.district.id && !props.candidates)
+    }});
 
     // Handle specific cases
-    if (loading && !props.candidates) return (<Loading />);
-    if (error && !props.candidates) return (<GenericAlert message="There was an error loading candidates. If this error persists, please contact support."
-                                                          type={ AlertType.danger } />);
-    if ((data && data.candidates.length === 0) || (props.candidates && props.candidates.length === 0))
+    if (loading || loadingRetrieve) return (<Loading />);
+    if (error || errorRetrieve) return (<GenericAlert message="There was an error loading candidates. If this error persists, please contact support."
+                                                        type={ AlertType.danger } />);
+    if ((data && data.candidates && data.candidates.length === 0) || 
+        (dataRetrieve && dataRetrieve.districts && dataRetrieve.districts.candidates.length === 0) || 
+        (props.candidates && props.candidates.length === 0))
         return (<GenericAlert message="There are no candidates at the moment." type={ AlertType.info } />);
 
-    const candidates: Array<Candidate | null> = props.candidates ? props.candidates : (data ? data.candidates : null);
+    let candidates: Array<Candidate> = null;
+    if (props.district && props.district.id && !props.candidates) {
+        candidates = dataRetrieve.district.candidates;
+    } else {
+        candidates = !props.candidates ? data.politicalPartyCandidates : 
+            data.politicalPartyCandidates.filter((candidate) => props.candidates.findIndex(propsCandidate => propsCandidate.id === candidate.id) !== -1);
+    }
 
     // Event to change candidate
     const handleOnClickCandidate = (candidate: Candidate) => {
@@ -127,7 +146,6 @@ export const UpdateCandidate = (props: UpdateCandidateProps) => {
     // Set states
     const [name, setName] = useState<string>('');
     const [politicalParty, setPoliticalParty] = useState<PoliticalParty>(null);
-    // TODO: Ensure that picture can be uploaded optionally when updating
     const [picture, setPicture] = useState<File>(null);
     const [toUpdate, setToUpdate] = useState<Candidate>(null);
 
@@ -138,7 +156,12 @@ export const UpdateCandidate = (props: UpdateCandidateProps) => {
     const [errorUpdate, setErrorUpdate] = useState<ApolloError | null>(null);
     const [deleteCandidate, { loading: loadingDelete, data: dataDelete }] = useMutation<{ deleteCandidate: Candidate }>(DELETE_CANDIDATE);
     const [errorDelete, setErrorDelete] = useState<ApolloError | null>(null);
-    const { loading: loadingPP, error: errorPP, data: dataPP } = useQuery(LIST_POLITICAL_PARTIES);
+    const { loading: loadingPP, error: errorPP, data: dataPP } = useQuery(LIST_POLITICAL_PARTIES, { onCompleted: (data) => {
+        if (data.politicalParties.length > 0) 
+            setPoliticalParty(toUpdate? data.politicalParties.find(party => party.id === props.toUpdate.politicalParty.id) : data.politicalParties[0]);
+    }});
+
+    const apolloClient = useApolloClient();
 
     // Set states, update location of picture, and reset error messages whenever props change
     useEffect(() => {
@@ -151,7 +174,6 @@ export const UpdateCandidate = (props: UpdateCandidateProps) => {
         }
 
         setName(props.toUpdate && props.toUpdate.name ? props.toUpdate.name : '');
-        setPoliticalParty(props.toUpdate && props.toUpdate.politicalParty ? props.toUpdate.politicalParty : null);
         setPicture(null);
         setErrorUpdate(null);
         setErrorCreate(null);
@@ -160,25 +182,30 @@ export const UpdateCandidate = (props: UpdateCandidateProps) => {
     const handleSubmit = (event: React.SyntheticEvent): void => {
         event.preventDefault();
         if (props.toUpdate) {
-            updateCandidate({ variables: { id: props.toUpdate.id, name, politicalParty: politicalParty.id, picture, district: props.district.id } })
-                .then((data) => {
-                    if (props.onUpdateSuccess) {
-                        props.onUpdateSuccess(data.updateCandidate as Candidate, {
-                            jsx: (<span>The candidate, <strong>{ (data.updateCandidate as Candidate).name}</strong>, has been updated in the election.</span>),
-                            plain: `The candidate, ${(data.updateCandidate as Candidate).name}, has been updated in the election.`
-                        })
-                    }
-                }).catch(error => setErrorUpdate(error));
+            // Only update when necessary
+            let toUpdate = { id: props.toUpdate.id };
+            if (picture) Object.assign(toUpdate, { picture });
+            if (name !== props.toUpdate.name) Object.assign(toUpdate, { name });
+            if (!!politicalParty && politicalParty.id !== props.toUpdate.politicalParty.id) Object.assign(toUpdate, { politicalParty: politicalParty.id });
+
+            updateCandidate({ variables: toUpdate }).catch(error => setErrorUpdate(error));
         } else {
-            createCandidate({ variables: { name, politicalParty: politicalParty.id, picture, district: props.district.id } })
-                .then((data) => {
-                    if (props.onUpdateSuccess) {
-                        props.onUpdateSuccess(data.updateCandidate as Candidate, {
-                            jsx: (<span>The candidate, <strong>{ (data.updateCandidate as Candidate).name}</strong>, has been added to the election.</span>),
-                            plain: `The candidate, ${(data.updateCandidate as Candidate).name}, has been added to the election.`
-                        })
-                    }
-                }).catch(error => setErrorCreate(error));
+            // Function to update the in-memory cache
+            const updateCache = (proxy, { data: { createPoliticalPartyCandidate }}) => {
+
+                // Update list candidates cache
+                const data = proxy.readQuery({ query: LIST_CANDIDATES });
+                if (data && data.politicalPartyCandidates) {
+                    data.politicalPartyCandidates.push(createPoliticalPartyCandidate);
+                    proxy.writeQuery({ query: LIST_CANDIDATES, data });
+                }
+
+                // Update retrieve candidates cache
+                apolloClient.query({ query: RETRIEVE_CANDIDATES_FROM_DISTRICT, variables: { id: props.district.id }});
+            };
+
+            createCandidate({ variables: { name, politicalParty: politicalParty.id, picture, district: props.district.id }, update: updateCache })
+                .then(() => { props.onCreateSuccess() }).catch(error => setErrorCreate(error));
         }
     };
 
@@ -186,12 +213,18 @@ export const UpdateCandidate = (props: UpdateCandidateProps) => {
         if (props.toUpdate) {
             // Function to update the in-memory cache
             const updateCache = (client) => {
-                const data = client.readQuery({ query: LIST_CANDIDATES });
-                const newData = { candidates: data.candidates.filter((i) => i.id !== props.toUpdate.id) };
-                client.writeQuery({
-                    query: LIST_CANDIDATES,
-                    data: newData,
-                });
+                // Update list cache
+                const dataList = client.readQuery({ query: LIST_CANDIDATES });
+                if (dataList && dataList.politicalPartyCandidates) {
+                    const newDataList = { politicalPartyCandidates: dataList.politicalPartyCandidates.filter((i) => i.id !== props.toUpdate.id) };
+                    client.writeQuery({
+                        query: LIST_CANDIDATES,
+                        data: newDataList,
+                    });
+                }
+
+                // Update retrieve candidates cache
+                apolloClient.query({ query: RETRIEVE_CANDIDATES_FROM_DISTRICT, variables: { id: props.district.id }});
             };
 
             deleteCandidate({ variables: { id: props.toUpdate.id }, update: updateCache })
@@ -234,7 +267,7 @@ export const UpdateCandidate = (props: UpdateCandidateProps) => {
                                 {
                                     loadingPP || !dataPP || !dataPP.politicalParties ? <Loading/> : (
                                         <select className="form-control"
-                                                value={ politicalParty ? politicalParty.id : null }
+                                                value={ politicalParty ? politicalParty.id : undefined }
                                                 onChange={ event => setPoliticalParty(dataPP.politicalParties.find((pp: PoliticalParty) => pp.id === event.target.value)) }>
                                             {
                                                 dataPP.politicalParties.map((party: PoliticalParty) => (
@@ -253,14 +286,14 @@ export const UpdateCandidate = (props: UpdateCandidateProps) => {
                             <label className="required">
                                 District
                                 <input type="text"
-                                    className="input-group"
+                                    className="form-control"
                                     readOnly
                                     disabled
                                     value={props.district.name} />
                             </label>
                         </div>
                         <FilePicker label="Picture of Candidate"
-                                    required
+                                    required={ !toUpdate }
                                     presetFile={ toUpdate ? toUpdate.picture : null }
                                     accept="image/jpg,image/png,image/jpeg,image/gif"
                                     onFileSelected={(file: File) => setPicture(file)} />
@@ -272,7 +305,7 @@ export const UpdateCandidate = (props: UpdateCandidateProps) => {
                                             disabled={ loadingCreate || loadingUpdate || loadingDelete }>
                                         <FontAwesomeIcon icon={ faSave } className="fa-left" /> Save
                                     </button>
-                                    <button className="btn btn-danger" onClick={ handleDelete } disabled={ loadingCreate || loadingUpdate || loadingDelete }>
+                                    <button className="btn btn-danger" type="button" onClick={ handleDelete } disabled={ loadingCreate || loadingUpdate || loadingDelete }>
                                         <FontAwesomeIcon icon={ faTrash } className="fa-left" />Delete
                                     </button>
                                 </div>

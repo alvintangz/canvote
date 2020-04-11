@@ -74,13 +74,13 @@ export class UserUpdate extends Component<Props, State> {
             users.retrieveByRole(this.props.currentUser.role === UserRole.administrator? UserRole.election_officer : UserRole.voter
                 , this.state.userId)
             .then((e) => {
-                let data = {
-                    email: e.data.email,
-                    firstName: e.data.firstName,
-                    lastName: e.data.lastName,
-                    isActive: e.data.isActive,
-                    role: e.data.role === 'election_officer' ? UserRole.election_officer : UserRole.voter
-                }
+                // let data = {
+                //     email: e.data.email,
+                //     firstName: e.data.firstName,
+                //     lastName: e.data.lastName,
+                //     isActive: e.data.isActive,
+                //     role: e.data.role === 'election_officer' ? UserRole.election_officer : UserRole.voter
+                // }
                 if (this.props.currentUser.role === UserRole.election_officer) {
                     client.query({
                         query: GET_DISTRICTS,
@@ -123,7 +123,6 @@ export class UserUpdate extends Component<Props, State> {
     }
 
     handleDistrictChange = (event: React.FormEvent<HTMLInputElement>): void => {
-        let id = event.currentTarget.value;
         let obj = this.state.districts.find((d: District) => d.id === event.target.value);
         this.setState({ districtChosen: obj })
     };

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {MediaFile} from "../../interfaces/models/media-file";
+import {MediaFile} from "../../../interfaces/models";
 import './FilePicker.scss';
 
 
@@ -30,7 +30,7 @@ export default (props: FilePickerProps) => {
                            accept={ props.accept }
                            onChange={ onFileChange }
                            multiple={ false }
-                           required />
+                           required={ props.required } />
                 </span>
             </label>
             <div className="file-picker-info">

@@ -26,7 +26,8 @@ ul.pp-list li,
         padding: 1rem;
 
         img {
-            height: 80px;
+            max-height: 80px;
+            max-width: 200px;
         }
     }
 

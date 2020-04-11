@@ -101,9 +101,8 @@ export class UserCreate extends Component<Props, State> {
     };
 
     handleDistrictChange = (event: React.FormEvent<HTMLInputElement>): void => {
-        let id = event.currentTarget.value;
         let obj = this.state.districts.find((d: District) => d.id === event.target.value);
-        this.setState({ districtChosen: obj }, () => console.log(this.state.districtChosen) )
+        this.setState({ districtChosen: obj })
     };
 
     handleSubmit = (event: React.SyntheticEvent): void => {

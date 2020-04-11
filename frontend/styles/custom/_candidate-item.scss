@@ -57,13 +57,13 @@ ul.candidate-list li,
         max-height: 70px;
 
         .candidate-party {
-            font-weight: normal;
+            font-weight: bold;
             font-size: 0.8rem;
         }
 
         .candidate-name {
-            font-weight: bold;
-            font-size: 1.1rem;
+            font-weight: normal;
+            font-size: 1rem;
         }
     }
 }
