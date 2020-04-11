@@ -9,7 +9,9 @@ export default mongoose.model('District', new mongoose.Schema(
       required: [true, 'Please provide a name for the district'],
       unique: true,
     },
-    geoJson: mongoose.Schema.Types.MultiPolygon,
-    required: [true, 'Please provide a MultiPolygon GeoJson object for the district']
+    geoJson: {
+      type: mongoose.Schema.Types.MultiPolygon,
+      required: [true, 'Please provide a MultiPolygon GeoJson object for the district']
+    },
   },
 ));
