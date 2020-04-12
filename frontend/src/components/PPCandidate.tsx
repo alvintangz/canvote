@@ -38,7 +38,7 @@ interface UpdateCandidateProps {
     // The candidate to update. If no candidate is provided, creates a new one.
     toUpdate?: Candidate;
     // Set district as this when updating always.
-    district: District;
+    district?: District;
     // When the candidate has been created successfully, call this
     onCreateSuccess?: () => void;
     // When the candidate has been deleted successfully, call this
@@ -89,47 +89,90 @@ export const ListCandidates = (props: ListCandidatesProps) => {
         }
     };
 
+    // Ordered by progress
+    const candidatesOrdered = () => {
+        if (props.mapCandidatesWithProgress) {
+            return candidates.sort((a, b) => {
+                // Don't change order if both not in map
+                if (!props.mapCandidatesWithProgress.has(a.id) && !props.mapCandidatesWithProgress.has(b.id)) return 0;
+                // If only one of them is in the map, they should be shorted first
+                if (!props.mapCandidatesWithProgress.has(b.id)) return -1;
+                if (!props.mapCandidatesWithProgress.has(a.id)) return 1;
+    
+                if (props.mapCandidatesWithProgress.get(a.id) > props.mapCandidatesWithProgress.get(b.id)) {
+                    return -1; // a has more progress than b; place a first
+                } else if (props.mapCandidatesWithProgress.get(a.id) < props.mapCandidatesWithProgress.get(b.id)) {
+                    return 1; // b has more progress than a; place b first
+                }
+    
+                return 0;
+            });
+        }
+
+        return candidates;
+    };
+
     return (
         <ul className="candidate-list">
             {
-                candidates && candidates.map(candidate => (
+                candidates && candidatesOrdered().map(candidate => (
                     <li key={candidate.id}
                         onClick={ () => handleOnClickCandidate(candidate)}
-                        title={ candidate.name + ( props.mapCandidatesWithProgress && props.mapCandidatesWithProgress.has(candidate.id) ? ` (${props.mapCandidatesWithProgress.get(candidate.id)}%)` : "" ) }
+                        title={ candidate.politicalParty.name + ": " + candidate.name + ( props.mapCandidatesWithProgress && props.mapCandidatesWithProgress.has(candidate.id) ? ` (${props.mapCandidatesWithProgress.get(candidate.id)}%)` : "" ) }
                         className={ (props.clickable ? ("clickable " + ((props.selectable && selectedCandidate && selectedCandidate.id === candidate.id) ? "selected" : "")) : "") }>
-                        <div className="candidate-party-bar">
-                            {
-                                props.mapCandidatesWithProgress && props.mapCandidatesWithProgress.has(candidate.id) ? (
+                        {
+                            props.mapCandidatesWithProgress && props.mapCandidatesWithProgress.has(candidate.id) ? (
+                                <div className="candidate-party-bar w-dynamic-progress">
                                     <div className="candidate-progress-bar"
-                                         style={{
-                                             width: `${props.mapCandidatesWithProgress.get(candidate.id)}%`,
-                                             backgroundColor: candidate.politicalParty.colour,
-                                             borderTopRightRadius: props.mapCandidatesWithProgress.get(candidate.id) === 100 ? '3px' : '0px'
-                                         }}>
+                                        style={{
+                                            width: `${props.mapCandidatesWithProgress.get(candidate.id)}%`,
+                                            backgroundColor: candidate.politicalParty.colour,
+                                            borderTopRightRadius: props.mapCandidatesWithProgress.get(candidate.id) === 100 ? '3px' : '0px'
+                                        }}>
                                     </div>
-                                ) : (
+                                </div>
+                            ) : (
+                                <div className={ !props.mapCandidatesWithProgress ? "candidate-party-bar" : "" }>
                                     <div className="candidate-progress-bar"
-                                         style={{
-                                             width: '100%',
-                                             backgroundColor: candidate.politicalParty.colour,
-                                             borderTopRightRadius: '3px'
-                                         }}>
+                                            style={{
+                                                width: '100%',
+                                                backgroundColor: candidate.politicalParty.colour,
+                                                borderTopRightRadius: '3px'
+                                            }}>
                                     </div>
-                                )
-                            }
-                        </div>
+                                </div>
+                            )
+                        }
                         <div className="candidate-item--avatar"
                              style={ { backgroundImage: `url(${process.env.REACT_APP_VOTING_SERVICE_BASE_URL}${candidate.picture.location})` } }>
                         </div>
                         <div className="candidate-item--info">
-                            <div className="candidate-party"
-                                 style={{ color: candidate.politicalParty.colour }}
-                                 title={"Political Party Affiliation: " + candidate.politicalParty.name}>
-                                { candidate.politicalParty.name }
+                            <div className="candidate-item-left">
+                                <div className="candidate-party"
+                                    style={{ color: candidate.politicalParty.colour }}>
+                                    { candidate.politicalParty.name }
+                                </div>
+                                <div className="candidate-name">
+                                    { candidate.name }
+                                </div>
                             </div>
-                            <div className="candidate-name">
-                                { candidate.name }
-                            </div>
+                            {
+                                props.mapCandidatesWithProgress && (
+                                    <div className="candidate-item-right">
+                                        {
+                                            props.mapCandidatesWithProgress.has(candidate.id) ? (
+                                                <div className="candidate-progress" 
+                                                     style={ { color: candidate.politicalParty.colour }}>
+                                                    { props.mapCandidatesWithProgress.get(candidate.id) }
+                                                </div>
+                                            ) : (
+                                                <div className="candidate-progress">---</div>
+                                            )
+                                        }
+                                        <div className="candidate-progress-title">% of votes</div>
+                                    </div>
+                                )
+                            }
                         </div>
                     </li>
                 ))

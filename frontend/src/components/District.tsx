@@ -8,6 +8,7 @@ import { ApolloError } from 'apollo-client';
 import {ApolloErrorAlert, GenericAlert, Loading } from "./shared";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faTrash, faSave} from '@fortawesome/free-solid-svg-icons';
+import { BroadcastDataDistrict } from '../interfaces/responses/broadcast-data';
 
 // GraphQL Queries
 
@@ -20,11 +21,13 @@ const DELETE_DISTRICT = loader('../queries/deleteDistrict.gql');
 
 interface ListDistrictsProps {
     // A list of districts. If none provided, retrieves all districts.
-    districts?: District[];
+    districts?: District[] | BroadcastDataDistrict[];
     // If a district is clicked on, call this
     onClickDistrict?: (district: District) => void;
     // Hide the search bar. By default set to false.
     hideSearchBar?: boolean;
+    // To retrieve all districts after successful query, call this
+    onRetrieveAllDistricts?: (districts: District[]) => void;
 }
 
 interface DisplayDistrictsProps {
@@ -56,7 +59,11 @@ export const ListDistricts = (props: ListDistrictsProps) => {
     // State to store the search term when searching
     const [searchTerm, setSearchTerm] = useState<string>("");
 
-    const { loading, error, data } = useQuery<{ districts: District[] }>(LIST_DISTRICT);
+    const { loading, error, data } = useQuery<{ districts: District[] }>(LIST_DISTRICT, { onCompleted: (data) => {
+        if (props.onRetrieveAllDistricts) {
+            props.onRetrieveAllDistricts(data.districts as District[]);
+        }
+    } });
 
     // Handle specific cases
     if (loading) return (<Loading />);
@@ -81,9 +88,9 @@ export const ListDistricts = (props: ListDistrictsProps) => {
                            style={{ width: "100%" }} />
                 )
             }
-            <div className="list-group">
+            <div className="list-group list-districts">
                 { districts && districts.filter((district: District) => district.name.indexOf(searchTerm) !== -1).map((district: District) => (
-                    <a key={district.id} href="#" className="list-group-item" onClick={() => props.onClickDistrict && props.onClickDistrict(district) }>{ district.name }</a>
+                    <button key={district.id} className="list-group-item" onClick={() => props.onClickDistrict && props.onClickDistrict(district) }>{ district.name }</button>
                 ))}
                 {
                     districts && districts.filter((district: District) => district.name.indexOf(searchTerm) !== -1).length === 0 && <GenericAlert message="There are no districts based off your search query." type={ AlertType.info } />

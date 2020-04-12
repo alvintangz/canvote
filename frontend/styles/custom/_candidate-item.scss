@@ -35,6 +35,10 @@ ul.candidate-list li,
         border-top-left-radius: 3px;
         border-top-right-radius: 3px;
 
+        &.w-dynamic-progress {
+            border-bottom: 1px solid #ddd;
+        }
+
         .candidate-progress-bar {
             height: 6px;
             border-top-left-radius: 3px;
@@ -55,15 +59,31 @@ ul.candidate-list li,
         overflow-y: auto;
         flex-grow: 1;
         max-height: 70px;
+        display: flex;
+        justify-content: space-between;
 
-        .candidate-party {
-            font-weight: bold;
-            font-size: 0.8rem;
+        .candidate-item-left {
+            .candidate-party {
+                font-weight: bold;
+                font-size: 0.8rem;
+            }
+    
+            .candidate-name {
+                font-weight: normal;
+                font-size: 1rem;
+            }
         }
 
-        .candidate-name {
-            font-weight: normal;
-            font-size: 1rem;
+        .candidate-item-right {
+            text-align: right;
+            .candidate-progress {
+                font-weight: bold;
+            }
+
+            .candidate-progress-title {
+                font-size: 0.7rem;
+            }
         }
+
     }
 }

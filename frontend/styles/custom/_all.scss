@@ -34,13 +34,45 @@ textarea.geojson-mp-ta {
   padding: 1.5rem 0.5rem;
 }
 
+.list-districts {
+  overflow-y: auto;
+  max-height: 200px;
+  margin-bottom: 0;
+}
+
+#connectionStatus {
+  color: #333;
+  font-size: 0.8rem;
+
+  .connect-status {
+    font-weight: bold;
+
+    .connect-status-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 20px 20px;
+      background-color: $brand-success;
+      display: inline-block;
+      margin-right: 4px;
+  
+      &.closed {
+        background-color: $brand-danger;
+      }
+  
+      &.error {
+        background-color: $brand-warning;
+      }
+    }
+  }
+}
+
 @import "header";
 
 // Overrides
 
 @import "resets"; // Reset typography
 
-.btn {
+.btn, button.list-group-item {
   &:focus, &:active:focus {
     outline: none;
   }
@@ -60,6 +92,10 @@ hr {
   .help-text {
     font-size: 0.75rem;
   }
+}
+
+.list-group-item-text {
+  font-size: 0.8rem;
 }
 
 // Custom Utilities (some inspiration from Bootstrap v4)
@@ -96,6 +132,12 @@ hr {
   width: 100%;
 }
 
+.btn-link-reg {
+  min-height: auto;
+  padding: 0;
+  text-decoration: underline !important;
+}
+
 @import "spacing-utils";
 @import "fa-utils";
 
@@ -107,3 +149,7 @@ hr {
 // SCSS for React Modal
 
 @import "react-modal";
+
+// SCSS for Charts
+
+@import "charts";

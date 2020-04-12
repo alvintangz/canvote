@@ -75,7 +75,7 @@ With create-react-app, [adding custom environment variables](https://create-reac
 - CanVote Services
     - `REACT_APP_AUTH_SERVICE_BASE_URL` - The full base url of the authentication service (and should end with /api/v1)
     - `REACT_APP_VOTING_SERVICE_BASE_URL` - The full base url of the voting service
-    - `REACT_APP_WS_SERVICE_BASE_URL` - The full base url of the websocket service
+    - `REACT_APP_WS_SERVICE_WS_URL` - The full url of the websocket in the service
 - Map: This app utilzes [Mapbox](https://www.mapbox.com/) to display map data
     - `REACT_APP_MAPBOX_API_KEY` - The API key from Mapbox
     - `REACT_APP_MAPBOX_MAP_STYLE` - Mapbox style which should be formatted as so: `<username>/<style-id>`; we recommend you use `alvintangz/ck8p1gfx445tp1jo0153rv86m`
@@ -88,7 +88,7 @@ You can create a [`.env` file](https://create-react-app.dev/docs/adding-custom-e
 ```
 REACT_APP_AUTH_SERVICE_BASE_URL=http://localhost:3001/api/v1
 REACT_APP_VOTING_SERVICE_BASE_URL=http://localhost:3002
-REACT_APP_WS_SERVICE_BASE_URL=http://localhost:3003
+REACT_APP_WS_SERVICE_WS_URL=ws://localhost:3003
 REACT_APP_MAPBOX_API_KEY=<REACT_APP_MAPBOX_API_KEY>
 REACT_APP_MAPBOX_MAP_STYLE=alvintangz/ck8p1gfx445tp1jo0153rv86m
 REACT_APP_MAP_DEFAULT_POS_LAT=56.1304

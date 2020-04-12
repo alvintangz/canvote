@@ -18,7 +18,7 @@ interface ErrorAlertProps {
 
 const GenericAlert = (props: GenericAlertProps) => (
     props.shouldShow !== false ? (
-        <div className={ "alert " + (AlertType.success === props.type ? "alert-success" : (AlertType.danger === props.type ? "alert-danger" : "alert-info") )}>
+        <div className={ "alert " + (AlertType.success === props.type ? "alert-success" : (AlertType.danger === props.type ? "alert-danger" : (AlertType.warning === props.type ? "alert-warning" : "alert-info")) )}>
             { props.title && <h2>{ props.title }</h2> }
             { props.message }
         </div>

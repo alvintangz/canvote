@@ -12,8 +12,6 @@ import {ListPoliticalParties, UpdatePoliticalParty} from "../components/Politica
 
 Modal.setAppElement('#root');
 
-// GraphQL Queries
-
 interface State {
     // Whether or not to list the districts on the side
     listingDistricts: boolean;

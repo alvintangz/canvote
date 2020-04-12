@@ -2,10 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 import apolloClient from './api/apolloClient';
-import {ApolloProvider} from '@apollo/react-hooks';
-import {createStore} from 'redux';
+import { ApolloProvider } from '@apollo/react-hooks';
+import { createStore } from 'redux';
 import rootReducers from './reducers';
 
 // Redux store

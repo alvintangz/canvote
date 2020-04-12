@@ -58,7 +58,6 @@ class Login extends React.Component<Props, State> {
                 this.setState({ success: true });
             });
         }).catch((error: AxiosError) => {
-            console.log(error.response.status === 422);
             if (error.response.status === 401)
                 this.setState({ errorDetails: [error.response.data.detail] });
             else if (error.response.status === 422)

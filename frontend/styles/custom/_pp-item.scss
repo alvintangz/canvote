@@ -6,7 +6,7 @@ ul.pp-list {
     grid-template-columns: auto auto;
 
     li {
-        min-width: 200px;
+        min-width: 215px;
         margin: 0.7rem;
     }
 }
@@ -15,24 +15,79 @@ ul.pp-list li,
 .pp-item {
     border-radius: 3px;
     border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 
     &.clickable {
         cursor: pointer;
     }
 
-    .pp-item--logo {
-        border-bottom: 1px solid #ddd;
-        text-align: center;
+    .pp-item--heading, .pp-item--info {
+        width: 100%;
         padding: 1rem;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .pp-item--logo {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2.25rem 1.5rem;
+        width: 100%;
 
         img {
             max-height: 80px;
             max-width: 200px;
         }
+
+        &.pp-item--logo-sm {
+            img {
+                max-height: 50px;
+                max-width: 150px;
+            }
+        }
     }
 
     .pp-item--info {
-        padding: 0.6rem 1rem;
-        text-align: center;
+        border-top: 1px solid #ddd;
+        align-self: flex-end;
+
+        &.w-stats {
+            text-align: left;
+
+            .stat-layout {
+                display: flex;
+                justify-content: space-between;
+
+                .stat-general-info {
+                    h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+                        margin-bottom: 0.5rem;
+                    }
+        
+                    .stat-item {
+                        font-size: 0.8rem;
+                    }
+                }
+
+                .stat-projected-seats {
+                    text-align: right;
+                    .stat-item {
+                        font-size: 1.25rem;
+                        font-weight: bold;
+                    }
+
+                    .stat-item-title {
+                        font-size: 0.7rem;
+                    }
+                }
+            }
+        }
+
+        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+            margin: 0;
+        }
     }
 }

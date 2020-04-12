@@ -68,14 +68,6 @@ function Vote(props: Props) {
     const candidResult = useQuery(GET_CANDIDATES, { errorPolicy: 'all', fetchPolicy: 'no-cache'})
 
     const [addVote] = useMutation(CREATE_VOTE, {errorPolicy: 'all'});
-  
-    if (data) {
-        console.log(data)
-    }
- 
-    if (candidResult.data) {
-        console.log(candidResult)
-    }
 
     function handleSubmit(event: React.SyntheticEvent): void {
         event.preventDefault();

@@ -1,0 +1,15 @@
+// Import Chartist defaults
+@import "../../node_modules/chartist/dist/scss/settings/chartist-settings";
+@import "../../node_modules/chartist/dist/scss/chartist.scss";
+
+.ct-label {
+    font-family: "Noto Sans", sans-serif;
+    color: black;
+    font-size: 15px;
+}
+
+.ct-chart .ct-grid {
+    stroke-dasharray: none;
+}
+
+

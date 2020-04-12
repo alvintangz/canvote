@@ -25,8 +25,13 @@ interface ListPoliticalPartiesProps {
     clickable?: boolean;
     // If a political party is clicked on, call this
     onClickPoliticalParty?: (politicalParty: PoliticalParty) => void;
-    // TODO
-    mapPoliticalPartyWithStatistics?: Map<string, number>;
+    // Map political parties with statistics for listing (key supposed to be id)
+    mapPoliticalPartyWithStatistics?: Map<string, { 
+        totalVoteCount: number,
+        projectedSeats: number
+    }>;
+    // To retrieve all political parties after successful query, call this
+    onRetrieveAllParties?: (parties: PoliticalParty[]) => void;
 }
 
 interface UpdatePoliticalPartyProps {
@@ -42,7 +47,11 @@ interface UpdatePoliticalPartyProps {
  * Component that lists out the political parties.
  */
 export const ListPoliticalParties = (props: ListPoliticalPartiesProps) => {
-    const { loading, error, data } = useQuery<{ politicalParties: PoliticalParty[] }>(LIST_POLITICAL_PARTIES);
+    const { loading, error, data } = useQuery<{ politicalParties: PoliticalParty[] }>(LIST_POLITICAL_PARTIES, { onCompleted: (data) => {
+        if (props.onRetrieveAllParties) {
+            props.onRetrieveAllParties(data.politicalParties as PoliticalParty[]);
+        }
+    }});
 
     // Handle specific cases
     if (loading) return (<Loading />);
@@ -52,24 +61,74 @@ export const ListPoliticalParties = (props: ListPoliticalPartiesProps) => {
                                      return (<GenericAlert message="There are no political parties at the moment." type={ AlertType.info } />);
 
     // Political Parties must be from Apollo client to retrieve cache changes
-    const politicalParties: Array<PoliticalParty> = !props.politicalParties ? data.politicalParties : 
+    let politicalParties: Array<PoliticalParty> = !props.politicalParties ? data.politicalParties : 
         data.politicalParties.filter((party) => props.politicalParties.findIndex(propsParty => propsParty.id === party.id) !== -1);
+
+    // Order by projected seat count
+    const politicalPartiesOrdered = () => {
+        if (props.mapPoliticalPartyWithStatistics) {
+            return politicalParties.sort((a, b) => {
+                // Don't change order if both not in map
+                if (!props.mapPoliticalPartyWithStatistics.has(a.id) && !props.mapPoliticalPartyWithStatistics.has(b.id)) return 0;
+                // If only one of them is in the map, they should be shorted first
+                if (!props.mapPoliticalPartyWithStatistics.has(b.id)) return -1;
+                if (!props.mapPoliticalPartyWithStatistics.has(a.id)) return 1;
+    
+                if (props.mapPoliticalPartyWithStatistics.get(a.id).projectedSeats > props.mapPoliticalPartyWithStatistics.get(b.id).projectedSeats) {
+                    return -1; // a has more seats than b; place a first
+                } else if (props.mapPoliticalPartyWithStatistics.get(a.id).projectedSeats < props.mapPoliticalPartyWithStatistics.get(b.id).projectedSeats) {
+                    return 1; // b has more seats than a; place b first
+                }
+    
+                return 0;
+            });
+        }
+
+        return politicalParties;
+    };
 
     return (
         <ul className="pp-list">
             {
-                politicalParties && politicalParties.map((party: PoliticalParty) => (
+                politicalParties && politicalPartiesOrdered().map((party: PoliticalParty) => (
                     <li key={party.id} 
                         title={ party.name }
                         className={ props.clickable ? "clickable" : "" }
                         onClick={ () => (props.onClickPoliticalParty && props.onClickPoliticalParty(party)) }
                         style={ { borderColor: party.colour } }>
-                        <div className="pp-item--logo" style={ { borderBottomColor: party.colour } }>
+                        <div className="pp-item--logo">
                             <img src={ process.env.REACT_APP_VOTING_SERVICE_BASE_URL + party.logo.location }
                                     alt={ party.name } />
                         </div>
-                        <div className="pp-item--info">
-                            <h3 className="h4" style={ { color: party.colour } }>{ party.name }</h3>
+                        <div className={ "pp-item--info" + (props.mapPoliticalPartyWithStatistics ? " w-stats" : '') } style={ { borderTopColor: party.colour } }>
+                            {
+                                props.mapPoliticalPartyWithStatistics ? (
+                                    <div className="stat-layout">
+                                        <div className="stat-general-info">
+                                            <h3 style={ { color: party.colour } }>{ party.name }</h3>
+                                            {
+                                                props.mapPoliticalPartyWithStatistics.has(party.id) ? (
+                                                    <div className="stat-item">Total # of votes: <strong>{ props.mapPoliticalPartyWithStatistics.get(party.id).totalVoteCount }</strong></div>
+                                                ) : (
+                                                    <div className="stat-item">Total # of votes: <strong>---</strong></div>
+                                                )
+                                            }
+                                        </div>
+                                        <div className="stat-projected-seats">
+                                        {
+                                            props.mapPoliticalPartyWithStatistics.has(party.id) ? (
+                                                <div className="stat-item">{ props.mapPoliticalPartyWithStatistics.get(party.id).projectedSeats }</div>
+                                            ) : (
+                                                <div className="stat-item">---</div>
+                                            )
+                                        }
+                                            <div className="stat-item-title">Projected Seats</div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <h3 className="m-0" style={ { color: party.colour } }>{ party.name }</h3>
+                                )
+                            }
                         </div>
                     </li>
                 ))

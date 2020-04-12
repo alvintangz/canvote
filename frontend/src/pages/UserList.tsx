@@ -73,7 +73,6 @@ class UserList extends React.Component<Props, State> {
     }
 
     handleSearchChange = (event: React.FormEvent<HTMLInputElement>, key): void => {
-        console.log(key)
         let clone = this.state.searchProper;
         clone[key] = event.currentTarget.value;
         clone.page = 1;
@@ -100,7 +99,6 @@ class UserList extends React.Component<Props, State> {
             let clone = this.state.searchProper
             clone.page += 1
             this.setState({searchProper: clone}, function() {
-                console.log(this.state.searchProper.page)
                 this.retrieveData();
             })
         }

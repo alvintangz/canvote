@@ -7,8 +7,8 @@ const proxyThese = require('../proxy.config');
 // react-scripts (create-react-app) utilizes Webpack Dev Server
 // https://webpack.js.org/configuration/dev-server/
 // https://create-react-app.dev/docs/proxying-api-requests-in-development/
-module.exports = function(app) {
-  proxyThese.forEach(config => {
+module.exports = function (app) {
+  proxyThese.forEach((config) => {
     app.use(conditional((req, res, next) => {
       return req.headers.host.startsWith(config.context);
     }, createProxyMiddleware({
@@ -25,8 +25,8 @@ module.exports = function(app) {
         const proxyDirectionMsg = `${req.protocol}://${req.headers.host}${req.originalUrl} -> ${config.proxyTo}${req.originalUrl}`;
         console.log(`${chalk.red('(Error)')} Proxying to ${chalk.bold(config.title)}: ${proxyDirectionMsg}`);
 
-        res.writeHead(500, { 'Content-Type': 'text/html' });
-        res.end(`
+        res.set({ 'Content-Type': 'text/html' });
+        res.status(500).end(`
           <!doctype html>
           <html lang="en-CA">
               <head>
