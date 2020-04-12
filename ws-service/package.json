@@ -2,15 +2,18 @@
   "name": "canvote-ws-service",
   "version": "1.0.0",
   "description": "WebSocket microservice for CanVote, a CSCC09 Project.",
-  "main": "app.js",
+  "main": "src/index.js",
   "scripts": {
-    "serve": "PORT=3003 node ./app.js",
-    "serve:dev": "PORT=3003 nodemon ./app.js",
-    "eslint": "./node_modules/.bin/eslint ./app.js",
+    "serve": "PORT=3003 node src/index.js",
+    "serve:dev": "PORT=3003 nodemon src/index.js",
+    "eslint": "./node_modules/.bin/eslint src/index.js",
     "docker-build": "docker build ."
   },
   "author": "Dharmik Shah; Alvin Tang; Mikhail Makarov",
   "dependencies": {
+    "dotenv": "^8.2.0",
+    "mongodb": "^3.5.5",
+    "mongoose": "^5.9.7",
     "ws": "^7.2.1"
   },
   "devDependencies": {
