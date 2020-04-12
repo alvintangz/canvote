@@ -2,8 +2,6 @@ import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import fs from 'fs';
-// TODO
-import { rejectErrorIfNeeded } from '../schemas/resolvers/helpers';
 
 const Media = mongoose.model('Media', new mongoose.Schema(
   {
@@ -39,8 +37,8 @@ export const MediaUtility = {
           toCreate.filename = filename;
           toCreate.mimetype = mimetype;
           toCreate.save((err, res) => {
-            // TODO
-            if (rejectErrorIfNeeded(err, reject)) {
+            if (err) {
+              reject(err);
               fs.unlink(uploadTo, () => {});
             }
             resolve(res);

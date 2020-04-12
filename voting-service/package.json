@@ -33,6 +33,7 @@
     "express": "^4.17.1",
     "geojson-validation": "^0.2.1",
     "graphql": "^14.6.0",
+    "graphql-depth-limit": "^1.1.0",
     "graphql-geojson": "^1.0.0",
     "graphql-resolvers": "^0.4.2",
     "graphql-tools": "^4.0.7",

@@ -1,6 +1,6 @@
 import { combineResolvers } from 'graphql-resolvers';
 import { isAdministrator } from './auth';
-import { PoliticalPartyCandidate, PoliticalParty, District } from '../../models';
+import { PoliticalPartyCandidate, PoliticalParty, District, BallotCount } from '../../models';
 import {
   rejectErrorIfNeeded,
   rejectNotFoundIfNeeded,
@@ -27,7 +27,7 @@ export default {
   ))),
   getPoliticalPartyCandidatesByPoliticalParty: (politicalParty) => (
     new Promise(((resolve, reject) => (
-      PoliticalPartyCandidate.find({ politicalParty: politicalParty._id }, (err, res) => {
+      PoliticalPartyCandidate.find({ political_party: politicalParty._id }, (err, res) => {
         if (rejectErrorIfNeeded(err, reject)) return;
         if (rejectNotFoundIfNeeded(res, reject, 'Political Party Candidate', politicalParty.id)) return;
         resolve(res);
@@ -37,6 +37,7 @@ export default {
   createPoliticalPartyCandidate: combineResolvers(isAdministrator, (parent, args, context) => (
     new Promise((resolve, reject) => {
       return args.picture.then(file => {
+        // Upload media and get its db instance back
         MediaUtility.upload(file).then((media) => {
           const politicalPartyCandidate = new PoliticalPartyCandidate({
             name: sanitizeHTML(args.name), // Sanitize
@@ -81,58 +82,114 @@ export default {
       });
     }
   ))),
-  updatePPCandidate: combineResolvers(isAdministrator, (parent, args, context) => (
+  updatePoliticalPartyCandidate: combineResolvers(isAdministrator, (parent, args, context) => (
     new Promise((resolve, reject) => {
-      const update = (media = null) => {
+      const findOneAndUpdate = (args, media) => {
+        // Update object as needed (like a PATCH instead of PUT in REST)
+        let toSave = {};
+        if (args.political_party) Object.assign(toSave, { political_party: args.political_party });
+        if (args.district) Object.assign(toSave, { district: args.district });
+        if (args.name) Object.assign(toSave, { name: sanitizeHTML(args.name) });
+        if (media) Object.assign(toSave, { picture: media });
 
+        return PoliticalPartyCandidate.findOneAndUpdate({ _id: args.id }, {
+          $set: toSave
+        }, {
+          new: true,
+          runValidators: true,
+        }).populate('picture').exec((err, res) => {
+          if (rejectErrorIfNeeded(err, reject)) {
+            if (media) MediaUtility.delete(media.id);
+            return;
+          }
+          if (rejectNotFoundIfNeeded(res, reject, 'Candidate', args.id)) return;
+          resolve(res);
+        });
+      };
+
+      const validateAndUpdate = (args, media = null) => {
+        // If the political party is in args
+        if (args.political_party) {
+          // Validate the political party exists
+          PoliticalParty.findById(args.political_party, (err, politicalParty) => {
+            // Delete the uploaded image if validation failed or error occurs
+            if (rejectErrorIfNeeded(err, reject)) {
+              if (media) MediaUtility.delete(media.id);
+              return;
+            }
+            if (!politicalParty) {
+              if (media) MediaUtility.delete(media.id);
+              return reject(new ValidationError(`Political party with id "${args.politicalParty}" does not exist.`));
+            }
+
+            // If the district is in args
+            if (args.district) {
+              // Validate the district exists
+              District.findById(args.district, (err, district) => {
+                // Delete the uploaded image if validation failed or error occurs
+                if (rejectErrorIfNeeded(err, reject)) {
+                  if (media) MediaUtility.delete(media.id);
+                  return;
+                }
+                if (!district) {
+                  if (media) MediaUtility.delete(media.id);
+                  return reject(new ValidationError(`District with id "${args.district}" does not exist.`));
+                }
+
+                // Finally save
+                findOneAndUpdate(args, media);
+              });
+            } else {
+              findOneAndUpdate(args, media);
+            }
+          });
+        } else {
+          // If the district is in args
+          if (args.district) {
+            // Validate the district exists
+            District.findById(args.district, (err, district) => {
+              // Delete the uploaded image if validation failed or error occurs
+              if (rejectErrorIfNeeded(err, reject)) {
+                if (media) MediaUtility.delete(media.id);
+                return;
+              }
+              if (!district) {
+                if (media) MediaUtility.delete(media.id);
+                return reject(new ValidationError(`District with id "${args.district}" does not exist.`));
+              }
+
+              // Finally save
+              findOneAndUpdate(args, media);
+            });
+          } else {
+            findOneAndUpdate(args, media);
+          }
+        }
       };
 
       if (args.picture) {
         args.picture.then(file => {
           MediaUtility.upload(file).then((media) => {
-
-          })
-        })
+            validateAndUpdate(args, media);
+          });
+        });
       } else {
-
+        validateAndUpdate(args);
       }
     })
   )),
-  updatePoliticalPartyCandidate: combineResolvers(isAdministrator, (parent, args, context) => {
-
-    // PoliticalPartyResolver.default.Query.politicalParty(
-    //   null, { name: args.political_party }, context
-    // ).then(() => {
-    //   DistrictResolver.default.Query.district(null, { name: args.district }, context)
-    //     .then(
-    //       PoliticalPartyCandidate.findOneAndUpdate(
-    //         { _id: args.id },
-    //         {
-    //           $set: {
-    //             name: args.name,
-    //             political_party: args.political_party,
-    //             district: args.district
-    //           },
-    //         }, { new: true },
-    //         (err, res) => {
-    //           if (err) return reject(err);
-    //           return resolve(res);
-    //         },
-    //       ),
-    //     )
-    //     .catch(() => {
-    //       throw new Error('The district does not exist');
-    //     });
-    // }).catch(() => {
-    //   throw new Error('The political party does not exist');
-    // });
-  }),
   deletePoliticalPartyCandidate: combineResolvers(isAdministrator, (parent, args) => (
     new Promise((resolve, reject) => {
-      PoliticalPartyCandidate.findByIdAndRemove({ _id: args.id }, (err, res) => {
+      // Ensure that it can't be deleted when there's at least one vote for this candidate
+      BallotCount.countDocuments({ candidate: args.id }, (err, count) => {
         if (rejectErrorIfNeeded(err, reject)) return;
-        if (rejectNotFoundIfNeeded(res, reject, 'Political Party', args.id)) return;
-        resolve(res);
+        if (count > 0) return reject(new Error("Cannot delete candidate as votes cannot be invalidated."));
+        PoliticalPartyCandidate.findByIdAndRemove({ _id: args.id }, (err, res) => {
+          if (rejectErrorIfNeeded(err, reject)) return;
+          if (rejectNotFoundIfNeeded(res, reject, 'Political Party', args.id)) return;
+          MediaUtility.delete(res.picture._id);
+          resolve(res);
+        });
       });
     })
   )),

@@ -1,8 +1,8 @@
 import { combineResolvers } from 'graphql-resolvers';
 import GeoJsonValidation from 'geojson-validation';
 import { ValidationError } from 'apollo-server-express';
-import { hardVerify, isAdministrator } from './auth';
-import { District } from '../../models';
+import { isAdministrator } from './auth';
+import { District, PoliticalPartyCandidate, Voter } from '../../models';
 import {
   rejectErrorIfNeeded,
   rejectNotFoundIfNeeded,
@@ -30,7 +30,6 @@ export default {
       })
     ))
   ),
-  // TODO: Test this and also fix security issue
   getDistrictByCandidate: (candidate) => (
     new Promise(((resolve, reject) => (
       District.findById(candidate.district, (err, res) => {
@@ -49,7 +48,7 @@ export default {
       })
     )))
   ),
-  createDistrict: combineResolvers(hardVerify, (parent, args) => (
+  createDistrict: combineResolvers(isAdministrator, (parent, args) => (
     new Promise((resolve, reject) => {
       if (validateJSON(args.geoJson)) return reject(new ValidationError(`GeoJSON not valid: ${validateJSON(args.geoJson)}`));
       GeoJsonValidation.isMultiPolygon(JSON.parse(args.geoJson), (valid, geoJsonErrs) => {
@@ -94,7 +93,15 @@ export default {
       District.findByIdAndRemove(args.id, (err, res) => {
         if (rejectErrorIfNeeded(err, reject)) return;
         if (rejectNotFoundIfNeeded(res, reject, 'District', args.id)) return;
-        resolve(res);
+        // Delete all candidates in a district
+        PoliticalPartyCandidate.remove({ district: args.id }).exec((err) => {
+          if (rejectErrorIfNeeded(err, reject)) return;
+          // Reset all voters in that district
+          Voter.remove({ district: args.id }).exec((err) => {
+            if (rejectErrorIfNeeded(err, reject)) return;
+            resolve(res);
+          });
+        });
       });
     })
   )),

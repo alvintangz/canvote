@@ -7,6 +7,7 @@ import schema from './schemas';
 import connectDB from './db';
 import mediaRoutes from './media';
 import { IN_PRODUCTION, JWT_SECRET_KEY, PORT } from './config';
+import depthLimit from 'graphql-depth-limit';
 
 connectDB();
 
@@ -15,13 +16,14 @@ app.use(cookieParser());
 
 const server = new ApolloServer({
   schema,
-  introspection: !IN_PRODUCTION,
-  // playground: {
-  //   settings: {
-  //     "request.credentials": "include"
-  //   },
-  // },
-  playground: true,
+  // Allow introspection and playground for demo purposes
+  introspection: true,
+  playground: {
+    settings: {
+      "request.credentials": "include"
+    },
+  },
+  validationRules: [depthLimit(4)],
   debug: !IN_PRODUCTION,
   context: ({ req }) => {
     const token = req.cookies['cv.token'];

@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 /**
  * Collection to ensure a voter has voted once.
  */
-export default mongoose.model('Vote', new mongoose.Schema(
+const voteSchema = new mongoose.Schema(
   {
     voter: {
       type: mongoose.Schema.Types.ObjectId,
@@ -15,4 +15,11 @@ export default mongoose.model('Vote', new mongoose.Schema(
       default: Date.now,
     },
   },
-));
+);
+
+// Prevent deletion of vote - no matter what
+voteSchema.pre('remove', () => {
+  throw new Error("Cannot remove a vote.");
+});
+
+export default mongoose.model('Vote', voteSchema);

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-export default mongoose.model('BallotCount', new mongoose.Schema(
+const ballotCountSchema = new mongoose.Schema(
   {
     candidate: {
       type: mongoose.Schema.Types.ObjectId,
@@ -13,4 +13,11 @@ export default mongoose.model('BallotCount', new mongoose.Schema(
       default: Date.now,
     },
   },
-));
+);
+
+// Prevent deletion of ballot counts - no matter what
+ballotCountSchema.pre('remove', () => {
+  throw new Error("Cannot remove a ballot.");
+});
+
+export default mongoose.model('BallotCount', ballotCountSchema);

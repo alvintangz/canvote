@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-export default mongoose.model('PoliticalParty', new mongoose.Schema(
+const politicalPartySchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -20,4 +20,6 @@ export default mongoose.model('PoliticalParty', new mongoose.Schema(
       required: [true, 'Please provide a logo for the party'],
     },
   },
-));
+);
+
+export default mongoose.model('PoliticalParty', politicalPartySchema);

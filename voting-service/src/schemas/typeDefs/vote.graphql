@@ -4,9 +4,9 @@ type CanVote {
 }
 
 extend type Query {
-    canVote: Boolean!
+    canVote: CanVote!
 }
 
 extend type Mutation {
-    vote(candidiate: ID!): Boolean!
+    vote(candidate: ID!): Boolean!
 }

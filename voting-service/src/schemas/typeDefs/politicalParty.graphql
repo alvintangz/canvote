@@ -13,6 +13,6 @@ extend type Query {
 
 extend type Mutation {
     createPoliticalParty(name: String!, colour: String!, logo: Upload!): PoliticalParty!
-    updatePoliticalParty(id: ID!, name: String!, colour: String!, logo: Upload!): PoliticalParty!
+    updatePoliticalParty(id: ID!, name: String, colour: String, logo: Upload): PoliticalParty!
     deletePoliticalParty(id: ID!): PoliticalParty!
 }

@@ -42,7 +42,7 @@ This will spin up a docker container for a MongoDB server which can be accessed 
 `src/config.js` sets up all the configuration variables used throughout the app. If you look in there, it reads from a set of environment variables.
 
 - Production :shipit:
-    - `PRODUCTION` - Either `0` or `1` with `0` being in debug mode which allows you to test queries using the GraphQL Playground and provides a stacktrace in errors; set to `1` by default
+    - `PRODUCTION` - Either `0` or `1` with `0` being in debug mode which provides a stacktrace in cases of errors; set to `1` by default
 - Port
     - `PORT` - The port to run the server on; set to `3002` by default
 - JWT Secret Key
@@ -147,7 +147,7 @@ mutation {
 If you want to actually see this in the database, go back to your docker container and run `mongo --port 27017 --authenticationDatabase "c09" -u "username" -p "password"`
 
 ## Security
-With GraphQL scalars and types, we don't need to validate user input. However, any strings provided has been sanitized in resolvers to prevent XSS.
+With GraphQL scalars and types, we don't need to validate user input. However, any strings provided has been sanitized in resolvers to prevent XSS. There's a maximum depth of 4.
 
 ## Deployment
 

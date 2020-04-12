@@ -36,6 +36,7 @@ export default {
     politicalPartyCandidates: PoliticalPartyCandidateResolvers.getPoliticalPartyCandidates,
     meAsVoter: VoterResolvers.meAsVoter,
     voter: VoterResolvers.getVoter,
+    canVote: VoteResolvers.canVote,
   },
   Mutation: {
     createDistrict: DistrictResolvers.createDistrict,

@@ -2,7 +2,7 @@
 import GeoJson from 'mongoose-geojson-schema';
 import mongoose from 'mongoose';
 
-export default mongoose.model('District', new mongoose.Schema(
+const districtSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -14,4 +14,6 @@ export default mongoose.model('District', new mongoose.Schema(
       required: [true, 'Please provide a MultiPolygon GeoJson object for the district']
     },
   },
-));
+);
+
+export default mongoose.model('District',  districtSchema);
