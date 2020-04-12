@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import meApi from './api/me';
+import {Link} from "react-router-dom";
 import {AxiosResponse} from "axios";
 import {User} from "./interfaces/models/user";
 import {AuthActionType} from "./enums/actions/auth.types";
@@ -86,9 +87,12 @@ class App extends React.Component<Props, State> {
                 <Route path="*" component={ NotFound } />
               </Switch>
             </main>
-            <footer className="container">
+            <footer className="container mb-3">
               <hr />
-              CSCC09 Project
+              A CSCC09 Project<br/>
+              <small>Created by: <a href="https://github.com/alvintangz" rel="noopener noreferrer" target="_blank">Alvin</a>, <a href="https://github.com/dharm1k987" rel="noopener noreferrer" target="_blank">Dharmik</a> and <a href="https://github.com/AVoxyz" rel="noopener noreferrer" target="_blank">Mikhael</a><br/>
+              <Link to="/credits">View Credits</Link></small><br/>
+              <small><Link to="/reset-password">Reset Password</Link></small>
             </footer>
           </Router>
       );

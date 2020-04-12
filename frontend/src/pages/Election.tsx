@@ -242,7 +242,7 @@ export default class Election extends React.Component<{}, State> {
                         <GenericAlert type={ AlertType.success } 
                                       message={ 
                                         <div>
-                                            The { this.state.hasDistrictBeenDeleted ? "district" : (this.state.hasCandidateBeenDeleted ? "candidate" : "political party") } has been successfully deleted. <a href="#" onClick={ handleClearAnyDeletionMessage }>Dismiss.</a>
+                                            The { this.state.hasDistrictBeenDeleted ? "district" : (this.state.hasCandidateBeenDeleted ? "candidate" : "political party") } has been successfully deleted. <span className="btn btn-link btn-link-reg" onClick={ handleClearAnyDeletionMessage }>Dismiss.</span>
                                         </div>
                                         } />
                     )

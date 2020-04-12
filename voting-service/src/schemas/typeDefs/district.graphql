@@ -1,17 +1,30 @@
+"This type represents a district that a candidate will represent, and that the voter will be a part of."
 type District {
+    "The id of the district."
     id: ID!
+    "The name of the district."
     name: String!
+    """A list of candidates which represent this district.
+    At max one candidate from each political party can represent this district.
+    In other words, two candidates from a political party cannot represent the same district.
+    """
     candidates: [PoliticalPartyCandidate]
+    "A GeoJson polygon which represents the area this district covers. Learn more [here](https://geojson.org/geojson-spec.html#multipolygon)."
     geoJson: GeoJSONMultiPolygon!
 }
 
 extend type Query {
+    "Get the list of districts."
     districts: [District!]
+    "Get a specific district based on the id."
     district(id: ID!): District
 }
 
 extend type Mutation {
+    "Create a district by passing a name and a GeoJson object."
     createDistrict(name: String!, geoJson: GeoJSONMultiPolygon!): District!
+    "Update a districts name or GeoJson area by giving the id."
     updateDistrict(id: ID!, name: String!, geoJson: GeoJSONMultiPolygon!): District!
+    "Delete a district by id, which in turn will also remove candidates that represented it."
     deleteDistrict(id: ID!): District!
 }

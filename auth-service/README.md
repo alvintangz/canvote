@@ -75,15 +75,16 @@ $ docker run -p 5432:5432 --env POSTGRES_PASSWORD=Password@123 -e POSTGRES_USER=
     - `DATABASE_HOST` - PostgreSQL Host; set to `localhost` by default
     - `DATABASE_PORT` - PostgreSQL Port; set to `5432` by default
     - `DATABASE_DB` - PostgreSQL Database; set to `canvote-auth` by default
-- JWT Configuration
+- Authentication Keys
     - `JWT_SESSION_SECRET_KEY` - Secret Key used for User Sessions which should be shared with other microservices to validate User JWT Session tokens
     - `JWT_ACTIVATION_SECRET_KEY` - Secret Key used for Activation - only for this service
+    - `INTERNAL_API_KEY` - When provided, allows other services to access limited resources via HTTP with this key being provided in the `internal_auth` header
 - E-mail (via HTTP - not SMTP - using MailGun)
     - `EMAIL_MAILGUN_API_KEY` - API Key from MailGun
     - `EMAIL_DEFAULT_SENDER` - Default sender for all emails; set to `CanVote <no-reply@mg.can-vote.works>` by default
-    - `EMAIL_DOMAIN_NAME` - Domain name for sending emails through MailGun; set to `can-vote.works` by default
+    - `EMAIL_DOMAIN_NAME` - Domain name for sending emails through MailGun; set to `mg.can-vote.works` by default
 - Account Activation URL
-    - `ACCOUNT_ACTIVATION_URL` - The front-end URL for activating an account; set to `http://localhost:3000/activate.html` by default
+    - `ACCOUNT_ACTIVATION_URL` - The front-end URL for activating an account; set to `http://localhost:3000/activate` by default
     - `ACCOUNT_ACTIVATION_QUERY_KEY` - The query parameters key where the value should be the JWT activation token; set to `tkn` by default
 - Administrator's Account
     - `ADMIN_ACCOUNT_EMAIL` - The admin's email address; set to `admin@can-vote.works` by default
@@ -92,6 +93,7 @@ $ docker run -p 5432:5432 --env POSTGRES_PASSWORD=Password@123 -e POSTGRES_USER=
     - `ADMIN_ACCOUNT_LAST_NAME` - The admin's last name; set to `DMA` by default
 
 Make sure to set up your environment variables correctly. You can set them up in an `.env` file [before running pipenv shell](https://pipenv-fork.readthedocs.io/en/latest/advanced.html#automatic-loading-of-env).
+
 ### Alembic
 
 [Alembic](https://alembic.sqlalchemy.org/en/latest/) is a lightweight migration tool to be used in conjunction with SQLAlchemy. This is similar to Django migrations, storing states of database schemas through versions.
@@ -134,6 +136,9 @@ Here's a useful command utilizing OpenSSL to generate a random 32 character stri
 openssl rand -hex 32
 ```
 
-## Deployment
+## Build and Containerize
 
-TODO.
+1. `pipenv lock -r > requirements.txt`
+1. `docker image build . --tag auth-service`
+2. `docker tag frontend gcr.io/canvote/auth-service`
+3. `docker push gcr.io/canvote/auth-service`

@@ -150,7 +150,16 @@ const getDataToBroadcast = () => new Promise((resolve, reject) => {
     resolve(toBroadcast);
 
     // TODO
-  }).catch((err) => reject(err));
+  }).catch((err) => {
+    console.log("Error occured");
+    console.log(err);
+    console.log('-------');
+    if (err instanceof Array) {
+      if (err.length > 0) return reject(err[0])
+      return reject('Something went wrong in the websocket');
+    }
+    return reject(err);
+  });
 });
 
 
@@ -163,6 +172,7 @@ const broadcastData = (data) => wss.clients.forEach((client) => client.send(data
 
 // On connection to the websocket, send the previous broadcast
 wss.on('connection', (ws) => {
+  console.log('Connected to websocket');
   ws.send(JSON.stringify(previousBroadcast));
 });
 

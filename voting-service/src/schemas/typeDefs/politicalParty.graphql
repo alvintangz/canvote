@@ -1,18 +1,31 @@
+"This type represents a political party that a candidates will represent in different districts."
 type PoliticalParty {
+    "The id of the political party."
     id: ID!
+    "The name of the political party."
     name: String!
+    "The colour of the political party, given in hex format with the # sign."
     colour: String!
+    "A MediaFile object which represents the logo of the political party."
     logo: MediaFile!
+    "The list of candidates which belong to this political party."
     candidates: [PoliticalPartyCandidate!]
 }
 
 extend type Query {
+    "Get the list of political parties."
     politicalParties: [PoliticalParty!]
+    "Get a specific political party based on the id."
     politicalParty(id: ID!): PoliticalParty
 }
 
 extend type Mutation {
+    """Create a political party by passing a name, colour, and by uploading a image file.
+    This query cannot be made from the GraphQL playground because of the uploading an image file constraint.
+    It must directly be made from the frontend application."""
     createPoliticalParty(name: String!, colour: String!, logo: Upload!): PoliticalParty!
+    "Update a political party name, colour or logo (only from frontend) by giving the id."
     updatePoliticalParty(id: ID!, name: String, colour: String, logo: Upload): PoliticalParty!
+    "Delete a political party by id, which in turn will also remove the candidates that represented it."
     deletePoliticalParty(id: ID!): PoliticalParty!
 }

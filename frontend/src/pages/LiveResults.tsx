@@ -299,7 +299,7 @@ export default class LiveResults extends React.Component<{}, State> {
                                                     ) 
                                                 }
                                                 This may have happened automatically due to inactivity.<br/>
-                                                To try connect again, <a className="btn btn-link btn-link-reg" onClick={ this.connectToBroadcast }>click this</a>.
+                                                To try connect again, <span className="btn btn-link btn-link-reg" onClick={ this.connectToBroadcast }>click this</span>.
                                             </p>
                                         </div>
                                       } />

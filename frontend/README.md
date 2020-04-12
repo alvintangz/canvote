@@ -95,3 +95,10 @@ REACT_APP_MAP_DEFAULT_POS_LAT=56.1304
 REACT_APP_MAP_DEFAULT_POS_LONG=-106.3468
 REACT_APP_MAP_DEFAULT_POS_ZOOM=4
 ```
+
+## Build and Containerize
+
+1. `yarn build`
+2. `docker image build . --tag frontend`
+3. `docker tag frontend gcr.io/canvote/frontend`
+4. `docker push gcr.io/canvote/frontend`

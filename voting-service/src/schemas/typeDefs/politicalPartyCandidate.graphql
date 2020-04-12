@@ -1,18 +1,31 @@
+"This type represents a political party candidate will belong to a certain district, and represent a single political party."
 type PoliticalPartyCandidate {
+    "The id of the political party candidate."
     id: ID!
+    "The name of the political party candidate."
     name: String!
+    "The political party object that this candidate belongs to."
     politicalParty: PoliticalParty!
+    "A MediaFile object which represents the face of this candidate."
     picture: MediaFile!
+    "The single district object that this candidate is a part of."
     district: District!
 }
 
 extend type Query {
+    "Get the list of political party candidates."
     politicalPartyCandidates: [PoliticalPartyCandidate!]
+    "Get a specific political party candidate based on the id."
     politicalPartyCandidate(id: ID!): PoliticalPartyCandidate
 }
 
 extend type Mutation {
+    """Create a political party candidate by passing a name, political party id, an image file and the district id.
+    This query cannot be made from the GraphQL playground because of the uploading an image file constraint.
+    It must directly be made from the frontend applcation."""
     createPoliticalPartyCandidate(name: String!, political_party: String!, picture: Upload!, district: String!): PoliticalPartyCandidate!
+    "Update a political party candidate name, political party, picture (only from frontend) or district by giving the id."
     updatePoliticalPartyCandidate(id: ID!, name: String, political_party: String, picture: Upload, district: String): PoliticalPartyCandidate!
+    "Delete a political party candidate by id."
     deletePoliticalPartyCandidate(id: ID!): PoliticalPartyCandidate!
 }

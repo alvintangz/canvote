@@ -110,45 +110,17 @@ run ```npm run serve:dev```, and you should see a `Connected to db` output in th
 ```bash
 curl -v -X POST http://localhost:3002/graphql \
     -H "Content-Type: application/json" \
-    --data '{ "query": "{ getDistricts { id } }" }' \
+    --data '{"query":"query { districts { id } } "}' \
     -b cookie.txt
 ```
 
 Notice how we are passing our `cookie.txt` that we got from the `auth-service`.
 
-You will get the response `{"data":{"getDistricts":[]}}`, since there is no data in the , but it works.
+Depending on what is in the database, we might get back `{"data":{"getDistricts":[]}}`, or something like `{"data":{"districts":[{"id":"5e9238b84a4ae16e385bb9dc"},{"id":"5e9239254a4ae16e385bb9dd"}]}}` if there is data inside.
 
-Now, navigate to `http://localhost:3002/graphql` and try entering the query:
-```
-{
-  getDistricts {
-    id
-  }
-}
-```
-There is **no cookie** on the frontend yet (WIP). After you hit play, the message back is `"User externalViewer cannot access resolver getDistricts"`. Since our resolvers have protected access, meaning that only certain roles can access certain methods, the role `externalViewer`, meaning someone who is not logged in, does not have access to this resolver.
+Now, navigate to `http://localhost:3002/graphql` and try entering your queries. There is more information on the graphQL playground that will guide you.
 
-**For testing purposes**, look at `authRoles.js` on how to allow `externalViewer` access to everything.
-
-Play around with it. There is a docs tab on the right that shows you what is supported.
-
-Just remember that anything that is a `mutation` must be surrounded with that tag. For example:
-
-```
-mutation {
-  addPoliticalParty(name:"pol1", colour: "red") {
-    id
-    name
-    colour
-  }
-}
-```
-
-If you want to actually see this in the database, go back to your docker container and run `mongo --port 27017 --authenticationDatabase "c09" -u "username" -p "password"`
+If you want to actually see data in the database, go back to your docker container and run `mongo --port 27017 --authenticationDatabase "c09" -u "username" -p "password"`
 
 ## Security
 With GraphQL scalars and types, we don't need to validate user input. However, any strings provided has been sanitized in resolvers to prevent XSS. There's a maximum depth of 4.
-
-## Deployment
-
-TODO.

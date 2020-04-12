@@ -1,12 +1,21 @@
+"""This type represents whether or not a voter can vote.
+If the voter has not voted, they will be allowed to, otherwise they won't.
+This query is forwarded to the auth service, so the voter is recognized via cookie."
+"""
 type CanVote {
+    "A true or false answer indicating whether this voter can vote."
     flag: Boolean!
+    "A string representing why a voter cannot vote, or null otherwise."
     info: String
 }
 
 extend type Query {
+    "Get the information about whether a voter can vote or not."
     canVote: CanVote!
 }
 
 extend type Mutation {
+    """Vote for a candidate based on the candidates id.
+    This will only go through if CanVote has returned false for the flag."""
     vote(candidate: ID!): Boolean!
 }

@@ -49,18 +49,23 @@ interface State {
         id: string,
         name: string
     },
-    districts: District[]
+    districts: District[],
+    loaded: boolean
 }
 
 
 export class UserUpdate extends Component<Props, State> {
+    private roleForCreation;
+
     constructor(props: Props) {
         super(props);
+
+        this.roleForCreation = this.props.currentUser.role === UserRole.administrator ? UserRole.election_officer : UserRole.voter;
         this.state = {
             currentUser: { email: '', firstName: '', lastName: ''},
+            loaded: false,
             userId: -1, 
             isActive: false, 
-            role: UserRole.election_officer,
             created: null,
             error: null,
             districts: [],
@@ -95,6 +100,9 @@ export class UserUpdate extends Component<Props, State> {
                 })
             })
             .catch((e) => console.log(e.data))
+            .finally(() => {
+                this.setState({ loaded: true });
+            });
         });
 
 
@@ -130,7 +138,9 @@ export class UserUpdate extends Component<Props, State> {
     handleSubmit = (event: React.SyntheticEvent): void => {
         event.preventDefault();
 
-        users.updateByRole(this.state.role === UserRole.administrator ? UserRole.election_officer : UserRole.voter, this.state.userId, this.state.currentUser)
+        users.updateByRole(
+            this.props.currentUser.role === UserRole.administrator ? UserRole.election_officer : UserRole.voter,
+            this.state.userId, this.state.currentUser)
             .then((res) => {
                 // if we created an election officer, then there is no voting service here, so update state and leave
                 if (this.props.currentUser.role === UserRole.administrator) {
@@ -152,7 +162,8 @@ export class UserUpdate extends Component<Props, State> {
     }
 
     render() {
-        const roleForCreation = this.state.role === UserRole.election_officer ? 'Voter' : 'Election Officer';
+        if (!this.state.loaded) return (<div>Loading...</div>);
+        const roleForCreation = this.roleForCreation === UserRole.voter ? 'Voter' : 'Election Officer';
 
         return (
             <div>

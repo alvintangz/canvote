@@ -1,13 +1,20 @@
+"This type represents a voter who will vote for a candidate."
 type Voter {
+    """The voter is created through the auth service, not the voting service.
+    Hence there is an auth id associated with each voter, which comes from the auth service."""
     authId: String!
+    "The district id that the voter is a part of."
     district: District
 }
 
 extend type Query {
+    "Get the Voter, which includes the auth id and district information."
     meAsVoter: Voter
+    "Get a specific Voter based on auth id."
     voter(id: ID!): Voter
 }
 
 extend type Mutation {
+    "Update a voter district based on the auth id."
     updateVoter(authId: String!, district: String): Voter!
 }

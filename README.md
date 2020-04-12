@@ -41,7 +41,7 @@ Due: March 15, 2020
 
 - Ability for Administrative Officers to create, update and delete Election Officers, political parties, ridings and candidates
 - Ability for Election Officers to create, update, and delete Voters
-- User authentication completed without facial and voice recoginition
+- ~~User authentication completed without facial and voice recoginition~~
 - Ability for the voter to vote (only vote once in their assigned electoral district)
 
 ## Key Features to be Completed by Final Version
@@ -49,7 +49,7 @@ Due: March 29, 2020
 
 - Bar chart display that updates with every vote
 - Choropleth map that shows the final results
-- Facial recognition login for the voters only
+- ~~Facial recognition login for the voters only~~
 
 ## Description of Technologies to be Utilized
 

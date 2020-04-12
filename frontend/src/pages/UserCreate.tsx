@@ -76,9 +76,9 @@ export class UserCreate extends Component<Props, State> {
                 districts: data.data.districts
             });
         }).catch(error => console.error(error))
-            .finally(() => {
-                this.setState({ loaded: true });
-            });
+        .finally(() => {
+            this.setState({ loaded: true });
+        });
     }
 
     handleEmailChange = (event: React.FormEvent<HTMLInputElement>): void => {

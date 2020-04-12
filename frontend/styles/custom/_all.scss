@@ -132,9 +132,10 @@ hr {
   width: 100%;
 }
 
-.btn-link-reg {
+span.btn-link-reg {
   min-height: auto;
   padding: 0;
+  cursor: pointer;
   text-decoration: underline !important;
 }
 

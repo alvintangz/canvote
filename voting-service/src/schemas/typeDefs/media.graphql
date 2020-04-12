@@ -1,5 +1,10 @@
+"""This type represents how an image is encoded into the application.
+This is used for the display picture of the candidates and their political party logo."""
 type MediaFile {
+    "The name of the image file, including the extension."
     filename: String!
+    "The mimetype of the file. Easily obtainable by uploading image online and getting answer."
     mimetype: String!
+    "The full path location of the image file on disk."
     location: String!
 }

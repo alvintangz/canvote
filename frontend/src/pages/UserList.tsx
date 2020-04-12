@@ -55,7 +55,7 @@ class UserList extends React.Component<Props, State> {
         };
     }
 
-    retrieveData = (e) => {
+    retrieveData = () => {
         let userSearch = this.state.searchProper;
         let userRole = this.props.currentUser.role === UserRole.administrator ? UserRole.election_officer : UserRole.voter
 
@@ -123,12 +123,12 @@ class UserList extends React.Component<Props, State> {
             let classNameDecide = this.state.current.page === i ? "active" : ""
             result.push(
                 <li className={classNameDecide} key={i}>
-                    <a href="#" onClick={(e) => {
+                    <span className="btn btn-link btn-link-reg" onClick={(e) => {
                         e.preventDefault()
                         let clone = this.state.searchProper
                         clone.page = i
                         this.setState({ searchProper: clone }, () => this.retrieveData())
-                    }}>{i} <span className="wb-inv">Go to Page {i}</span></a>
+                    }}>{i} <span className="wb-inv">Go to Page {i}</span></span>
                 </li>)   
         }
         return result
@@ -203,7 +203,7 @@ class UserList extends React.Component<Props, State> {
                         <tbody>
                             {this.state.users.map((user) => (
                                 <tr key={user.id}>
-                                    <td scope="row"><Link to={`/manage/users/${user.id}`}>{user.firstName}</Link></td>
+                                    <td><Link to={`/manage/users/${user.id}`}>{user.firstName}</Link></td>
                                     <td>{user.lastName}</td>
                                     <td><a href={ `mailto:${user.email}` } title="Email user">{ user.email }</a></td>
                                 </tr>)
@@ -216,11 +216,11 @@ class UserList extends React.Component<Props, State> {
                         this.state.current ? 
                             <div className="panel-body text-center">
                                 <ul className="pagination pagination-sm">
-                                    <li><a href="#" rel="prev" onClick={this.handlePrevPageChange} disable={`${this.state.current.page === 1}`}>Previous</a></li>
+                                    <li><span rel="prev" className="btn btn-link btn-link-reg" onClick={this.handlePrevPageChange} disable={`${this.state.current.page === 1}`}>Previous</span></li>
                                     {
                                         this.paginationSetup()
                                     }
-                                    <li><a href="#" rel="next" onClick={this.handleNextPageChange} disable={`${this.state.current.page === this.state.total.pages}`}>Next</a></li>  
+                                    <li><span rel="next" className="btn btn-link btn-link-reg" onClick={this.handleNextPageChange} disable={`${this.state.current.page === this.state.total.pages}`}>Next</span></li>  
                                 </ul>
                                 <div>
                                     <small>Page {this.state.current.page} of {this.state.total.pages}</small>
