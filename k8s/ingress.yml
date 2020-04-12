@@ -1,0 +1,39 @@
+# Ingress - K8s Configuration
+# https://cloud.google.com/kubernetes-engine/docs/concepts/ingress
+# https://kubernetes.io/docs/concepts/services-networking/ingress/
+
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: canvote-ingress
+  # TODO?
+  namespace: canvote
+  # annotations:
+    # kubernetes.io/ingress.global-static-ip-name: address-name
+    # networking.gke.io/managed-certificates: canvote-certificate
+spec:
+  rules:
+  - host: can-vote.works
+    http:
+      paths:
+      - backend:
+          serviceName: frontend-svc
+          servicePort: 3000
+  - host: auth.can-vote.works
+    http:
+      paths:
+      - backend:
+          serviceName: auth-service-svc
+          servicePort: 3001
+  - host: voting.can-vote.works
+    http:
+      paths:
+      - backend:
+          serviceName: voting-service-svc
+          servicePort: 3002
+  - host: ws.can-vote.works
+    http:
+      paths:
+      - backend:
+          serviceName: ws-service-svc
+          servicePort: 3003

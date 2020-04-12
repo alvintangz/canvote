@@ -1,0 +1,100 @@
+# Voting Service - K8s Configuration
+
+# Deployment
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+# Configured to perform a rolling update: https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voting-service-deployment
+  namespace: canvote
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: voting-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: voting-service
+    spec:
+      containers:
+      - name: voting-service
+        image: gcr.io/canvote/voting-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3002
+          protocol: TCP
+        envFrom:
+          - secretRef:
+              name: canvote-mongo-secret
+        env:
+          # Either `0` or `1` with `0` being in debug mode which provides a stacktrace in cases of errors; set to `1` by default
+          - name: PRODUCTION
+            value: "1"
+          # The port to run the server on; set to 3002 by default
+          - name: PORT 
+            value: "3002"
+          # Password of user of MongoDB server
+          - name: MONGO_PASSWORD
+            valueFrom:
+                secretKeyRef:
+                  name: canvote-mongo-secret
+                  key: MONGO_PASSWORD
+          # A secret key for JWT validation and should be set to the same key in auth-service
+          - name: JWT_SECRET_KEY
+            valueFrom:
+                secretKeyRef:
+                  name: canvote-auth-secret
+                  key: JWT_SECRET_KEY
+          # Internal API Key to access specific resources in authentication service, puts this in internal_auth header of an HTTP request to authentication service when necessary
+          - name: INTERNAL_API_KEY
+            valueFrom:
+                secretKeyRef:
+                  name: canvote-auth-secret
+                  key: INTERNAL_API_KEY
+          # Timezone for Node  
+          - name: TZ
+            valueFrom:
+                configMapKeyRef:
+                  name: canvote-timezone-config-map
+                  key: TIMEZONE
+          # The base url of authentication service; set to http://localhost:3001/api/v1 by default
+          - name: AUTH_SERVICE_BASE_URL
+            valueFrom:
+                configMapKeyRef:
+                  name: canvote-base-url-config-map
+                  key: AUTH_SERVICE_API_URL
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        volumeMounts:
+          - mountPath: "/app/media"
+            name: volume
+            subPath: vs-media
+
+---
+
+# Service
+# https://kubernetes.io/docs/concepts/services-networking/service/
+apiVersion: v1
+kind: Service
+metadata:
+  name: voting-service-svc
+  namespace: canvote
+spec:
+  ports:
+  - port: 3002
+    targetPort: 3002
+    protocol: TCP
+    name: voting-service-port
+  selector:
+    app: voting-service

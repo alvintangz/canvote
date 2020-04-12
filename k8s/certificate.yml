@@ -1,0 +1,13 @@
+# Managed Certificate - K8s Configuration
+# https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs
+
+apiVersion: networking.gke.io/v1beta2
+kind: ManagedCertificate
+metadata:
+  name: canvote-certificate
+spec:
+  domains:
+    - can-vote.works
+    - auth.can-vote.works
+    - voting.can-vote.works
+    - ws.can-vote.works

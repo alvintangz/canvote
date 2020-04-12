@@ -1,0 +1,58 @@
+# Frontend - K8s Configuration
+
+# Deployment
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+# Configured to perform a rolling update: https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  namespace: canvote
+spec:
+  # Frontend is a SPA, not too many requests
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: gcr.io/canvote/frontend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+
+---
+
+# Service
+# https://kubernetes.io/docs/concepts/services-networking/service/
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-svc
+  namespace: canvote
+spec:
+  ports:
+  # TODO: Make all 8000
+  - port: 3000
+    targetPort: 3000
+    protocol: TCP
+    name: frontend-port
+  selector:
+    app: frontend

@@ -1,0 +1,64 @@
+# ConfigMaps - K8s Configuration
+# https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
+
+# Timezone: Used by all services
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: canvote-timezone-config-map
+  namespace: canvote
+data:
+  # Timezone in Toronto, Canada
+  TIMEZONE: "America/Toronto"
+
+---
+
+# Base URLS: Can be used by all services
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: canvote-base-url-config-map
+  namespace: canvote
+data:
+  AUTH_SERVICE_BASE_URL: https://auth.can-vote.works
+  AUTH_SERVICE_API_URL: https://auth.can-vote.works/api/v1
+
+---
+
+# Email: Can be used by all services
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: canvote-email-config-map
+  namespace: canvote
+data:
+  EMAIL_DEFAULT_SENDER: "CanVote <no-reply@mg.can-vote.works>"
+  EMAIL_DOMAIN_NAME: "mg.can-vote.works"
+
+---
+
+# Account Activation URL: Used by Auth service
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: canvote-account-activation-config-map
+  namespace: canvote
+data:
+  # The front-end URL for activating an account; set to http://localhost:3000/activate by default
+  ACCOUNT_ACTIVATION_URL: "http://localhost:3000/activate"
+  # The query parameters key where the value should be the JWT activation token; set to tkn by default
+  ACCOUNT_ACTIVATION_QUERY_KEY: "tkn"
+
+---
+
+# Administrator's Account: Used by Auth Service for initial user
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: canvote-admin-account-config-map
+  namespace: canvote
+data:
+  # The admin's first name; set to Team by default
+  ADMIN_ACCOUNT_FIRST_NAME: "Thierry"
+  # The admin's last name; set to DMA by default
+  ADMIN_ACCOUNT_LAST_NAME: "Sans"

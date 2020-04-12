@@ -1,0 +1,75 @@
+# WebSocket Service - K8s Configuration
+
+# Deployment
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+# Configured to perform a rolling update: https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ws-service-deployment
+  namespace: canvote
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ws-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: ws-service
+    spec:
+      containers:
+      - name: ws-service
+        image: gcr.io/canvote/ws-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3003
+          protocol: TCP
+        envFrom:
+          - secretRef:
+              name: canvote-mongo-secret
+        env:
+          # The port to run the server on; set to 3003 by default
+          - name: PORT 
+            value: "3003"
+          # Password of user of MongoDB server
+          - name: MONGO_PASSWORD
+            valueFrom:
+                secretKeyRef:
+                  name: canvote-mongo-secret
+                  key: MONGO_PASSWORD
+          # Timezone for Node  
+          - name: TZ
+            valueFrom:
+                configMapKeyRef:
+                  name: canvote-timezone-config-map
+                  key: TIMEZONE
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+
+---
+
+# Service
+# https://kubernetes.io/docs/concepts/services-networking/service/
+apiVersion: v1
+kind: Service
+metadata:
+  name: ws-service-svc
+  namespace: canvote
+spec:
+  ports:
+  - port: 3002
+    targetPort: 3002
+    protocol: TCP
+    name: voting-service-port
+  selector:
+    app: voting-service

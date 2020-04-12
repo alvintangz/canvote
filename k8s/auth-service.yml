@@ -1,0 +1,123 @@
+# Authentication Service - K8s Configuration
+
+# Deployment
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+# Configured to perform a rolling update: https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service-deployment
+  namespace: canvote
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+      - name: auth-service
+        image: gcr.io/canvote/auth-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3001
+          protocol: TCP
+        envFrom:
+          - secretRef:
+              name: canvote-postgres-secret
+          - configMapRef:
+              name: canvote-email-config-map
+          - configMapRef:
+              name: canvote-account-activation-config-map
+          - configMapRef:
+              name: canvote-admin-account-config-map
+        env:
+          # Either True or False; set to True by default. Opposite to Django's DEBUG mode.
+          - name: PRODUCTION
+            value: "True"
+          # Host base URL; set to http://localhost:3001 by default
+          - name: HOST_BASE_URL
+            valueFrom:
+                secretKeyRef:
+                  name: canvote-base-url-config-map
+                  key: AUTH_SERVICE_BASE_URL
+          # Timezone
+          - name: TIMEZONE
+            valueFrom:
+                configMapKeyRef:
+                  name: canvote-timezone-config-map
+                  key: TIMEZONE
+          # PostgreSQL password
+          - name: DATABASE_PASSWORD
+            valueFrom:
+                secretKeyRef:
+                  name: canvote-postgres-secret
+                  key: DATABASE_PASSWORD
+          # Secret Key used for User Sessions which should be shared with other microservices to validate User JWT Session tokens
+          - name: JWT_SESSION_SECRET_KEY
+            valueFrom:
+                secretKeyRef:
+                  name: canvote-auth-secret
+                  key: JWT_SECRET_KEY
+          # Secret Key used for Activation - only for this service
+          - name: JWT_ACTIVATION_SECRET_KEY
+            valueFrom:
+                secretKeyRef:
+                  name: canvote-auth-secret
+                  key: JWT_ACTIVATION_SECRET_KEY
+          # When provided, allows other services to access limited resources via HTTP with this key being provided in the `internal_auth` header
+          - name: INTERNAL_API_KEY
+            valueFrom:
+                secretKeyRef:
+                  name: canvote-auth-secret
+                  key: INTERNAL_API_KEY
+          # API Key from MailGun
+          - name: EMAIL_MAILGUN_API_KEY
+            valueFrom:
+                secretKeyRef:
+                  name: canvote-email-secret
+                  key: EMAIL_MAILGUN_API_KEY
+          # The admin's email address; set to admin@can-vote.works by default
+          - name: ADMIN_ACCOUNT_EMAIL
+            valueFrom:
+                secretKeyRef:
+                  name: canvote-email-secret
+                  key: ADMIN_ACCOUNT_EMAIL
+          # The admin's password
+          - name: ADMIN_ACCOUNT_PASSWORD
+            valueFrom:
+                secretKeyRef:
+                  name: canvote-email-secret
+                  key: ADMIN_ACCOUNT_PASSWORD
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+
+---
+
+# Service
+# https://kubernetes.io/docs/concepts/services-networking/service/
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service-svc
+  namespace: canvote
+spec:
+  ports:
+  - port: 3001
+    targetPort: 3001
+    protocol: TCP
+    name: auth-service-port
+  selector:
+    app: auth-service
