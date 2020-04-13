@@ -139,6 +139,6 @@ openssl rand -hex 32
 ## Build and Containerize
 
 1. `pipenv lock -r > requirements.txt`
-1. `docker image build . --tag auth-service`
-2. `docker tag frontend gcr.io/canvote/auth-service`
-3. `docker push gcr.io/canvote/auth-service`
+2. `docker image build . --tag auth-service`
+3. `docker tag frontend <registry-w-tag>`
+4. `docker push <registry-w-tag>`

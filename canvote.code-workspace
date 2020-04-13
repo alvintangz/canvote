@@ -17,8 +17,8 @@
             "path": "frontend"
         },
         {
-            "name": "Helm Charts - Deployment",
-            "path": "helm"
+            "name": "Kubernetes Configuration",
+            "path": "k8s"
         }
     ],
     "settings": {

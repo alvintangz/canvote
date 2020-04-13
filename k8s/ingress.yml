@@ -6,11 +6,9 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: canvote-ingress
-  # TODO?
   namespace: canvote
-  # annotations:
-    # kubernetes.io/ingress.global-static-ip-name: address-name
-    # networking.gke.io/managed-certificates: canvote-certificate
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: canvote-static
 spec:
   rules:
   - host: can-vote.works

@@ -27,7 +27,7 @@ spec:
         image: gcr.io/canvote/auth-service:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 3001
+        - containerPort: 80
           protocol: TCP
         envFrom:
           - secretRef:
@@ -45,7 +45,7 @@ spec:
           # Host base URL; set to http://localhost:3001 by default
           - name: HOST_BASE_URL
             valueFrom:
-                secretKeyRef:
+                configMapKeyRef:
                   name: canvote-base-url-config-map
                   key: AUTH_SERVICE_BASE_URL
           # Timezone
@@ -88,13 +88,13 @@ spec:
           - name: ADMIN_ACCOUNT_EMAIL
             valueFrom:
                 secretKeyRef:
-                  name: canvote-email-secret
+                  name: canvote-admin-account-secret
                   key: ADMIN_ACCOUNT_EMAIL
           # The admin's password
           - name: ADMIN_ACCOUNT_PASSWORD
             valueFrom:
                 secretKeyRef:
-                  name: canvote-email-secret
+                  name: canvote-admin-account-secret
                   key: ADMIN_ACCOUNT_PASSWORD
         resources:
           requests:
@@ -114,6 +114,7 @@ metadata:
   name: auth-service-svc
   namespace: canvote
 spec:
+  type: NodePort
   ports:
   - port: 3001
     targetPort: 3001

@@ -9,7 +9,7 @@ metadata:
   name: ws-service-deployment
   namespace: canvote
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: ws-service
@@ -66,10 +66,11 @@ metadata:
   name: ws-service-svc
   namespace: canvote
 spec:
+  type: NodePort
   ports:
-  - port: 3002
-    targetPort: 3002
+  - port: 3003
+    targetPort: 3003
     protocol: TCP
-    name: voting-service-port
+    name: ws-service-port
   selector:
-    app: voting-service
+    app: ws-service

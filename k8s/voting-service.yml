@@ -9,7 +9,7 @@ metadata:
   name: voting-service-deployment
   namespace: canvote
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: voting-service
@@ -80,6 +80,10 @@ spec:
           - mountPath: "/app/media"
             name: volume
             subPath: vs-media
+      volumes:
+        - name: volume
+          persistentVolumeClaim:
+            claimName: canvote-pvc
 
 ---
 
@@ -91,6 +95,7 @@ metadata:
   name: voting-service-svc
   namespace: canvote
 spec:
+  type: NodePort
   ports:
   - port: 3002
     targetPort: 3002
