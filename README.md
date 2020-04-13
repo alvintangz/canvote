@@ -11,6 +11,10 @@
     - UTORid: makarovm
     - Student Number: 1003401525
 
+[Video Link Here](https://www.youtube.com/watch?v=pdOD73GqIrU&feature=youtu.be)
+
+Please go to respective folders to access specific API documentation.
+
 ## Description of Web Application
 **CanVote** :canada:, short for Canada Vote, is a web application that allows Canadian voters to vote for a candidate in their electoral district in a quick and efficient fashion. As well, it features the ability to show real-time election results, allowing the public to understand the grasp of which direction the country is heading towards. Overall, the web application works in the confines of an election, where the election contains multiple political parties, and electoral districts (or ridings) with candidates from each political party.
 
