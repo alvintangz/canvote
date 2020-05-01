@@ -52,11 +52,8 @@ const getDataToBroadcast = () => new Promise((resolve, reject) => {
       const candInDistrictById = candInDistrict.map((c) => c.id.toString());
 
       // 2. find how many ballots each of these candidates got
-      const candToBallotCount = candInDistrictById.map((c) => {
-        const obj = {};
-        obj[c] = 0;
-        return obj;
-      });
+      const candToBallotCount = candInDistrictById.map((c) => ({ [c]: 0 }));
+
       ballots.forEach((b) => {
         // see if this ballot belongs to any candidates
         const index = candInDistrictById.indexOf(b.candidate.toString());
@@ -69,7 +66,8 @@ const getDataToBroadcast = () => new Promise((resolve, reject) => {
       const maxValue = Math.max.apply(0, candToBallotCount.map((c) => c[Object.keys(c)]));
       const totalSum = candToBallotCount.map((c) => c[Object.keys(c)]).reduce((a, b) => a + b, 0);
 
-      const mostVotedCandInDist = candToBallotCount.filter((c) => c[Object.keys(c)] === maxValue).map((f) => Object.keys(f)[0]);
+      const mostVotedCandInDist = candToBallotCount
+        .filter((c) => c[Object.keys(c)] === maxValue).map((f) => Object.keys(f)[0]);
 
       // 4. find the party that these candidates belong to
       // expose this outside because party needs this info
@@ -81,23 +79,25 @@ const getDataToBroadcast = () => new Promise((resolve, reject) => {
       if (maxValue !== 0) whoWonWhichDistrict[obj.id] = leadingParty;
 
       obj.leadingPartyInDistrict = maxValue !== 0 ? leadingParty : null;
-      obj.leadingPartyName = maxValue !== 0 ? parties.filter((p) => leadingParty.includes(p.id.toString())).map(f => f.name) : null;
+      obj.leadingPartyName = maxValue !== 0 ? (
+        parties.filter((p) => leadingParty.includes(p.id.toString())).map((f) => f.name)
+      ) : null;
 
       // now for the candidates
       const candidatesToAdd = candInDistrictById.map((c, i) => {
         const voteCount = candToBallotCount[i][c];
-        const obj = {
+        return {
           id: c,
           name: candInDistrict[i].name,
-          votePercentageWithinDistrict: maxValue === 0 ? 0 : ((voteCount / totalSum) * 100).toFixed(2),
+          votePercentageWithinDistrict: maxValue === 0 ? 0 : (
+            ((voteCount / totalSum) * 100).toFixed(2)
+          ),
           voteCount,
         };
-        return obj;
       });
 
       obj.candidates = candidatesToAdd;
       return obj;
-
     });
 
     // now do parties
@@ -117,10 +117,8 @@ const getDataToBroadcast = () => new Promise((resolve, reject) => {
 
       // 2. out of all the ballots, see how many correspond to any of these cands
       // that's how many correspond to this party
-      const votesToParty = ballots.filter((b) =>
-        // if this ballots candidate id exists in candsInPartyById
-        // this means that they were voted for
-        candsInPartyById.indexOf(b.candidate.toString()) !== -1).length;
+      const votesToParty = ballots
+        .filter((b) => candsInPartyById.indexOf(b.candidate.toString()) !== -1).length;
       obj.voteCount = votesToParty;
 
       // calculate the projected number of seats
@@ -148,20 +146,16 @@ const getDataToBroadcast = () => new Promise((resolve, reject) => {
     // now do date
     toBroadcast.lastUpdated = new Date();
     resolve(toBroadcast);
-
-    // TODO
   }).catch((err) => {
-    console.log("Error occured");
-    console.log(err);
+    console.error(err);
     console.log('-------');
     if (err instanceof Array) {
-      if (err.length > 0) return reject(err[0])
-      return reject('Something went wrong in the websocket');
+      if (err.length > 0) return reject(err[0]);
+      return reject(new Error('Something went wrong in the websocket'));
     }
     return reject(err);
   });
 });
-
 
 // Store last state of broadcast
 let previousBroadcast = { error: 'Initial broadcast data not set.' };
@@ -172,7 +166,6 @@ const broadcastData = (data) => wss.clients.forEach((client) => client.send(data
 
 // On connection to the websocket, send the previous broadcast
 wss.on('connection', (ws) => {
-  console.log('Connected to websocket');
   ws.send(JSON.stringify(previousBroadcast));
 });
 
