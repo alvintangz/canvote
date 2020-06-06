@@ -26,7 +26,7 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
-    "apollo-server-express": "^2.11.0",
+    "apollo-server-express": "^2.14.2",
     "axios": "^0.19.2",
     "cookie-parser": "^1.4.4",
     "dotenv": "^8.2.0",
