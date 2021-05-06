@@ -42,7 +42,7 @@
     "mongoose": "^5.9.3",
     "mongoose-geojson-schema": "^2.1.5",
     "mongoose-transactions": "^1.1.4",
-    "sanitize-html": "^1.23.0",
+    "sanitize-html": "^2.3.2",
     "uuid": "^7.0.2"
   }
 }
