@@ -40,7 +40,7 @@
     "graphql.macro": "^1.4.2",
     "leaflet": "^1.6.0",
     "moment": "^2.24.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "react": "^16.13.0",
     "react-chartist": "^0.14.3",
     "react-color": "^2.18.0",
